@@ -1,0 +1,31 @@
+packages:
+  - 'plugins/*'
+  - 'packages/*'
+
+allowBuilds:
+  '@biomejs/biome': true
+  esbuild: true
+
+catalog:
+  typescript: 7.0.2
+  esbuild: 0.28.2
+  turbo: 2.11.2
+  vitest: 5.0.1
+  vite-tsconfig-paths: 6.1.1
+  '@changesets/cli': 3.0.3
+  '@types/node': 26.6.2
+  builtin-modules: 5.4.0
+  repomix: 1.18.0
+  obsidian: 1.13.1
+  tsx: 4.23.13
+  '@biomejs/biome': 2.5.14
+
+minimumReleaseAgeExclude:
+  - '@turbo/darwin-64@2.11.2'
+  - '@turbo/darwin-arm64@2.11.2'
+  - '@turbo/linux-64@2.11.2'
+  - '@turbo/linux-arm64@2.11.2'
+  - '@turbo/windows-64@2.11.2'
+  - '@turbo/windows-arm64@2.11.2'
+  - '@types/node@26.6.2'
+  - turbo@2.11.2

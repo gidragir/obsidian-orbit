@@ -1,0 +1,27 @@
+{
+  "name": "@packages/obsidian-utils",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "obsidian": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "obsidian": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@packages/tsconfig": "workspace:*",
+    "obsidian": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

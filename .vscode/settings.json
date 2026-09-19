@@ -1,0 +1,57 @@
+{
+  // File nesting / grouping in Explorer
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, turbo.json, biome.json, vitest.config.ts, mise.toml, .npmrc, skills-lock.json, repomix.config.json",
+    "tsconfig.json": "tsconfig.*.json",
+    "*.ts": "${capture}.test.ts, ${capture}.d.ts"
+  },
+
+  // Hide extraneous and generated folders from the IDE file tree
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.turbo": true,
+    "**/.vault": true,
+    "**/dev-vault": true,
+    "**/.agent": true,
+    "**/reference": true,
+    "**/dist": true,
+    "plugins/*/main.js": true,
+    "plugins/*/main.js.map": true,
+    "plugins/*/styles.css": true,
+    "plugins/*/styles.css.map": true
+  },
+
+  // Exclude non-source / generated directories from global search
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.turbo": true,
+    "**/.vault": true,
+    "**/dev-vault": true,
+    "**/.agent": true,
+    "**/reference": true,
+    "**/dist": true,
+    "**/*-context.md": true,
+    "**/repomix-output.md": true,
+    "plugins/*/main.js": true,
+    "plugins/*/styles.css": true
+  },
+
+  // Exclude heavy / generated directories from file watchers
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.turbo/**": true,
+    "**/.vault/**": true,
+    "**/dev-vault/**": true,
+    "**/dist/**": true
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "obsidian-orbit",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.21.0",
+  "scripts": {
+    "dev": "tsx scripts/link-vault.ts && turbo run dev",
+    "vault:link": "tsx scripts/link-vault.ts",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "biome check --write .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "check": "biome check . && turbo run typecheck test build",
+    "change": "changeset",
+    "version:bump": "changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
+    "release:merge": "tsx scripts/merge-release-pr.ts",
+    "release": "turbo run build && tsx scripts/deploy-downstream.ts",
+    "ai:context": "tsx scripts/generate-ai-context.ts",
+    "ai:context:all": "tsx scripts/generate-ai-context.ts --all"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@changesets/cli": "catalog:",
+    "@types/node": "catalog:",
+    "builtin-modules": "catalog:",
+    "esbuild": "catalog:",
+    "obsidian": "catalog:",
+    "repomix": "catalog:",
+    "tsx": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
+  }
+}

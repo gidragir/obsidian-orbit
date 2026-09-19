@@ -1,0 +1,8 @@
+@import '@packages/ui/styles.css';
+
+.orbit-example-banner {
+  padding: 8px 12px;
+  border-radius: var(--radius-m, 8px);
+  background-color: var(--background-secondary);
+  color: var(--text-normal);
+}

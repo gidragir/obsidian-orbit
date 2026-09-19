@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/yamadashy/repomix/main/repomix.config.json",
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown",
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 20,
+    "showLineNumbers": true
+  },
+  "include": ["**/*"],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "node_modules/**",
+      ".git/**",
+      "dist/**",
+      ".vault/**",
+      "**/*.map",
+      "**/.vitepress/cache/**",
+      "**/.turbo/**"
+    ]
+  }
+}

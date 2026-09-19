@@ -1,0 +1,59 @@
+# Dependencies & Package Managers
+node_modules/
+.pnpm-store/
+.npm/
+
+# Obsidian Local Dev Vault & Link Artifacts
+.vault/
+dev-vault/
+dev-vault
+
+# Reference Plugins & Migrations
+reference/
+
+# Build Outputs & Bundler Artifacts
+dist/
+.turbo/
+plugins/*/main.js
+plugins/*/main.js.map
+plugins/*/styles.css
+plugins/*/styles.css.map
+*.tsbuildinfo
+
+# AI Context, Snapshots & LLM Prompts
+*-context.md
+repomix-output.md
+repomix-output.txt
+
+# Environment, Secrets & Local Overrides
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test Coverage & Tooling Caches
+coverage/
+.vitest/
+.biome/
+
+# OS & Editor Artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+

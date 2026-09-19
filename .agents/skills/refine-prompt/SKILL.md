@@ -1,6 +1,5 @@
 ---
 name: refine-prompt
-class: meta
 description: "Transforms vague prompts into precise, structured AI instructions. Use for prompt engineering or creating rigid system prompts."
 ---
 

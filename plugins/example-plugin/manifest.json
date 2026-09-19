@@ -1,0 +1,10 @@
+{
+  "id": "example-plugin",
+  "name": "Example Plugin",
+  "version": "1.0.0",
+  "minAppVersion": "1.7.0",
+  "description": "Example Obsidian Orbit plugin demonstrating Ports and Adapters architecture.",
+  "author": "Obsidian Orbit Contributors",
+  "authorUrl": "https://github.com/owner",
+  "isDesktopOnly": false
+}

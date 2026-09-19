@@ -1,6 +1,5 @@
 ---
 name: meta-prompting
-class: meta
 description: "Structured decision modifiers to stress-test conclusions, assumptions, and edge cases. Use when validating architecture, design decisions, or ambiguous plans."
 ---
 
