@@ -1,0 +1,10 @@
+{
+  "extends": "@packages/tsconfig/tsconfig.plugin.json",
+  "compilerOptions": {
+    "paths": {
+      "@ui/*": ["./src/ui/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

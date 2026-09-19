@@ -1,0 +1,9 @@
+{
+  "id": "tabs-renderer",
+  "name": "Tabs Renderer",
+  "version": "1.0.0",
+  "minAppVersion": "1.7.0",
+  "description": "Create tabs in your notes to organize content effectively.",
+  "author": "Obsidian Orbit",
+  "isDesktopOnly": false
+}

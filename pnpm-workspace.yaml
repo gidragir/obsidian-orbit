@@ -19,6 +19,13 @@ catalog:
   obsidian: 1.13.1
   tsx: 4.23.13
   '@biomejs/biome': 2.5.14
+  '@codemirror/commands': 6.10.3
+  '@codemirror/lang-html': 6.4.11
+  '@codemirror/lang-markdown': 6.2.4
+  '@codemirror/language': 6.12.3
+  '@codemirror/state': 6.7.5
+  '@codemirror/view': 6.38.6
+  '@lezer/highlight': 1.2.3
 
 minimumReleaseAgeExclude:
   - '@turbo/darwin-64@2.11.2'

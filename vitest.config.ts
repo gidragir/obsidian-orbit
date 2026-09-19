@@ -7,6 +7,12 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     include: ['**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.vault/**', '**/reference/**'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.vault/**',
+      '**/dev-vault/**',
+      '**/reference/**',
+    ],
   },
 })

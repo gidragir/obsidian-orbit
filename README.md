@@ -61,7 +61,9 @@ pnpm release:merge
 │   ├── tsconfig/        # Базовые конфигурации TypeScript
 │   ├── obsidian-utils/  # Доменные утилиты без зависимостей от DOM/Obsidian
 │   └── ui/              # Общие UI-компоненты и стили
-├── plugins/             # Плагины Obsidian
-│   └── example-plugin/  # Пример плагина
+├── plugins/             # Семейство плагинов Obsidian (*-renderer)
+│   ├── html-renderer/     # HTML Renderer (```html-renderer)
+│   ├── snippet-renderer/  # Snippet Renderer (```snippet-renderer)
+│   └── tabs-renderer/     # Tabs Renderer (```tabs-renderer)
 └── scripts/             # Служебные скрипты сборки, релизов и линковки
 ```

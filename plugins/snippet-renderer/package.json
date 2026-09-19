@@ -1,0 +1,24 @@
+{
+  "name": "snippet-renderer",
+  "version": "1.0.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "build": "tsx ../../scripts/build.ts",
+    "dev": "tsx ../../scripts/build.ts --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@packages/obsidian-utils": "workspace:*",
+    "@packages/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@packages/tsconfig": "workspace:*",
+    "esbuild": "catalog:",
+    "obsidian": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

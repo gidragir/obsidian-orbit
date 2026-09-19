@@ -1,30 +1,22 @@
 {
-  "name": "@packages/ui",
+  "name": "@packages/core",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "main": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./styles.css": "./src/styles.css"
+    ".": "./src/index.ts"
   },
   "scripts": {
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@packages/types": "workspace:*"
   },
-  "peerDependencies": {
-    "obsidian": "catalog:"
-  },
-  "peerDependenciesMeta": {
-    "obsidian": {
-      "optional": false
-    }
-  },
   "devDependencies": {
     "@packages/tsconfig": "workspace:*",
-    "obsidian": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
