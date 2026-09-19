@@ -49,7 +49,7 @@
    * `reference-migrator` — Разбор Markdown-снимков Repomix и адаптация сторонних референсов.
    * `semver-changeset` — Расчет инкремента SemVer для Obsidian и оформление ченджсетов.
    * `subagent-driven-development` — Исполнение планов реализации через изолированные роли субагентов.
-4. **Каталог ролевых субагентов (`.agents/subagents/*.md`):** Спецификации ролей распределенного тандема:
+4. **Каталог ролевых субагентов (`.agents/agents/*.md`):** Спецификации субагентов Antigravity 2.0:
    * `executor.md` — Субагент исполнения (Flash): субсекундный кодинг ядра и Vitest-тестов.
    * `verifier.md` — Субагент верификации (Flash): цикл Biome -> TS -> Vitest -> Turbo.
    * `researcher.md` — Субагент аудита (Flash): поиск символов и разбор Repomix-снимков.
