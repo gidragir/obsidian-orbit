@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-fetch"
+      ],
+      "env": {},
+      "description": "Загрузка актуальной документации Obsidian API, спецификаций CodeMirror 6 и changelog Obsidian в формате чистый Markdown."
+    }
+  }
+}
