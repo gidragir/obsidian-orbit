@@ -48,8 +48,14 @@
    * `biome-refactor` — Ликвидация `any`, `enum`, non-null assertion `!`, parameter properties.
    * `reference-migrator` — Разбор Markdown-снимков Repomix и адаптация сторонних референсов.
    * `semver-changeset` — Расчет инкремента SemVer для Obsidian и оформление ченджсетов.
-4. **Рабочие процессы (`.agent/workflows/*.md`):** Регламентированные пошаговые сценарии для вызова через Slash-команды (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
-5. **Протокол контекста MCP (`.agents/mcp.json`):** Внешний сервер `fetch` для выгрузки актуальной документации Obsidian API и CodeMirror 6.
+   * `subagent-driven-development` — Исполнение планов реализации через изолированные роли субагентов.
+4. **Каталог ролевых субагентов (`.agents/subagents/*.md`):** Спецификации ролей распределенного тандема:
+   * `executor.md` — Субагент исполнения (Flash): субсекундный кодинг ядра и Vitest-тестов.
+   * `verifier.md` — Субагент верификации (Flash): цикл Biome -> TS -> Vitest -> Turbo.
+   * `researcher.md` — Субагент аудита (Flash): поиск символов и разбор Repomix-снимков.
+   * `reviewer.md` — Субагент ревью (Pro): проверка инвариантов, лимитов сложности и памяти.
+5. **Рабочие процессы (`.agents/workflows/*.md`):** Регламентированные пошаговые сценарии для вызова через Slash-команды (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
+6. **Протокол контекста MCP (`.agents/mcp.json`):** Внешний сервер `fetch` для выгрузки актуальной документации Obsidian API и CodeMirror 6.
 
 ## 3. Фундаментальные архитектурные инварианты (Жесткие табу)
 

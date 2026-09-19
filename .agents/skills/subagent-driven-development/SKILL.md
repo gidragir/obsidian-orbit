@@ -14,13 +14,12 @@ This workflow executes multi-step plans by delegating each task to isolated suba
        │
        ▼
   For each task step:
-       ├── 1. Gather Context (Optional)  ──► researcher (Flash)
-       ├── 2. System Pre-Audit (If OS)   ──► system-architect (Pro)
-       ├── 3. Discrete Implementation    ──► implementer (Inherit)
-       ├── 4. Spec & Code Review         ──► code-reviewer (Pro)
-       │         └── If changes requested: loop back to implementer (max 3 cycles)
-       ├── 5. Automated Validation       ──► tester-validator (Flash)
-       └── 6. Mark Complete in Plan
+       ├── 1. Gather Context / Repomix   ──► researcher (Flash)
+       ├── 2. Discrete Implementation    ──► executor (Flash)
+       ├── 3. Architecture & Spec Review ──► reviewer (Pro)
+       │         └── If changes requested: loop back to executor (max 3 cycles)
+       ├── 4. Automated Verification     ──► verifier (Flash)
+       └── 5. Mark Complete in Plan
 ```
 
 ## Step-by-Step Instructions
@@ -29,28 +28,31 @@ This workflow executes multi-step plans by delegating each task to isolated suba
 - Extract the single current step from the active plan (`implementation_plan.md`).
 - Ensure prerequisites and dependencies from previous steps are met.
 
-### Step 2: Context Gathering (Optional / Fast)
-- If the step requires locating symbols, usages, or configs across directories, invoke `researcher` (model: `flash`).
-- **Input**: Target concept, suspected directories, and question.
-- **Output**: Compact summary with exact file and line references.
+### Step 2: Context Gathering & Reference Audit (researcher - Flash)
+- If the step involves migrating reference code, locating symbols, or analyzing Repomix snapshots (`reference/*-context.md`), invoke `researcher`.
+- **Input**: Target plugin/feature, relevant files in `reference/` or `plugins/`, and required symbols.
+- **Output**: Compact summary of legacy patterns to replace, public contracts, and suggested domain isolation.
 
-### Step 3: System Pre-Audit (Conditional)
-- If the step touches block devices, `/etc/fstab`, systemd system units, KVM/QEMU, or Niri core, invoke `system-architect` (model: `pro`).
-- **Input**: Proposed system modification and targeted block devices or services.
-- **Condition**: Proceed to implementation only if Risk Score is `LOW` or mitigations are confirmed.
+### Step 3: Discrete Implementation (executor - Flash)
+- Invoke `executor` with the specific task scope and gathered context.
+- **Input**: Exact file paths, target behavior, and strict monorepo rules (no `any`, no `enum`, no `!`, no relative `../../` imports).
+- **Output**: Confirmation of changes, newly created files, and Vitest test coverage for domain utils.
 
-### Step 4: Discrete Implementation
-- Invoke `implementer` with the specific task scope and gathered context.
-- **Input**: Exact file paths, target behavior, and architectural rules.
-- **Output**: Confirmation of changes and modified file list.
+### Step 4: Spec & Architecture Review (reviewer - Pro)
+1. **Invariants & Complexity Review**:
+   - Invoke `reviewer` on the newly introduced or modified files.
+   - Verify:
+     - Cognitive complexity $\le 15$, cyclomatic $\le 10$, function length $\le 40$ lines.
+     - Pure domain logic in `src/utils/` (zero Obsidian/DOM imports).
+     - Thin `main.ts` facade (`onload()` $\le 20-30$ lines).
+     - Memory leak safety (`registerEvent`, `registerDomEvent`, `registerInterval`).
+   - If findings are marked `CHANGES_REQUESTED`, re-dispatch `executor` to address fixes (max 3 cycles).
 
-### Step 5: Two-Stage Review & Validation
-1. **Spec & Architecture Review**:
-   - Invoke `code-reviewer` (model: `pro`) on the changes.
-   - If findings are marked `CRITICAL` or `WARNING`, re-dispatch `implementer` to address fixes.
-   - Cap iterations at **3 review cycles** to avoid infinite review loops.
-2. **Automated Validation**:
-   - Invoke `tester-validator` (model: `flash`) to run linters, format checks, or test suites.
+### Step 5: Automated Verification (verifier - Flash)
+- Invoke `verifier` to run the autonomous verification cycle:
+  `pnpm biome check .` -> `pnpm turbo run typecheck` -> `pnpm turbo run test` -> `pnpm turbo run build`.
+- In case of formatting/lint issues, run `pnpm lint && pnpm format`.
+- Adhere to the 3-retry guard clause to prevent infinite loops.
 
 ### Step 6: Step Completion & Progress Update
 - Update `implementation_plan.md` checking off the completed task.
