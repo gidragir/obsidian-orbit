@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["**/*.ts", "**/*.tsx"]
+globs: ["**/*.ts", "**/*.tsx", "*.ts"]
 description: "Design patterns and architectural limits on code complexity. Enforces cognitive complexity <= 15, cyclomatic complexity <= 10, nesting depth <= 3, and SRP."
 ---
 
