@@ -1,6 +1,10 @@
 {
   "name": "snippet-renderer",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gidragir/obsidian-snippet-renderer.git"
+  },
   "private": true,
   "main": "main.js",
   "scripts": {
