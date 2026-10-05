@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { parseTabs } from './tabs-parser'
 import { calculateBackquoteCount, serializeTabs } from './tabs-serializer'
 
 describe('calculateBackquoteCount', () => {
@@ -36,5 +37,22 @@ describe('serializeTabs', () => {
     const tabs = [{ title: 'Tab', content: 'Simple\n' }]
     const result = serializeTabs(tabs, 'tab: ', '', '~')
     expect(result).toBe('~~~tabs-renderer\ntab: Tab\nSimple\n~~~')
+  })
+
+  it('is idempotent across parse and serialize cycles without accumulating newlines or backticks', () => {
+    const initial = '```tabs-renderer\ntab: Tab 1\nLine 1\nLine 2\ntab: Tab 2\nLine 3\n```'
+    const parsed1 = parseTabs(
+      initial.replace(/^```tabs-renderer\n/, '').replace(/\n```$/, ''),
+      'tab: '
+    )
+    const serialized1 = serializeTabs(parsed1.tabs, 'tab: ', parsed1.rawConfig)
+    expect(serialized1).toBe(initial)
+
+    const parsed2 = parseTabs(
+      serialized1.replace(/^```tabs-renderer\n/, '').replace(/\n```$/, ''),
+      'tab: '
+    )
+    const serialized2 = serializeTabs(parsed2.tabs, 'tab: ', parsed2.rawConfig)
+    expect(serialized2).toBe(initial)
   })
 })

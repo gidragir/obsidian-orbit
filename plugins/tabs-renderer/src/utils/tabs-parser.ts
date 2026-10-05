@@ -8,25 +8,39 @@ export interface ParsedTabsResult {
   readonly tabs: readonly ParsedTab[]
 }
 
-function updateInnerTabsDepth(line: string, currentDepth: number): number {
-  const trimmed = line.trim()
-  const tag = 'tabs-renderer'
-  if (trimmed.startsWith('```')) {
-    if (currentDepth === 0 && trimmed.endsWith(tag)) {
-      return trimmed.length - tag.length
-    }
-    if (currentDepth > 0 && trimmed.endsWith('`'.repeat(currentDepth))) {
-      return 0
-    }
-  } else if (trimmed.startsWith('~~~')) {
-    if (currentDepth === 0 && trimmed.endsWith(tag)) {
-      return trimmed.length - tag.length
-    }
-    if (currentDepth > 0 && trimmed.endsWith('~'.repeat(currentDepth))) {
-      return 0
-    }
+interface FenceState {
+  readonly char: '`' | '~'
+  readonly length: number
+}
+
+function parseFenceStart(trimmed: string): FenceState | null {
+  const match = /^(`{3,}|~{3,})/.exec(trimmed)
+  if (!match?.[1]) {
+    return null
   }
-  return currentDepth
+  const fenceStr = match[1]
+  return {
+    char: fenceStr[0] as '`' | '~',
+    length: fenceStr.length,
+  }
+}
+
+function isFenceEnd(trimmed: string, fence: FenceState): boolean {
+  if (fence.char === '`') {
+    return /^`{3,}$/.test(trimmed) && trimmed.length >= fence.length
+  }
+  return /^~{3,}$/.test(trimmed) && trimmed.length >= fence.length
+}
+
+function updateFenceState(line: string, currentFence: FenceState | null): FenceState | null {
+  const trimmed = line.trim()
+  if (currentFence === null) {
+    return parseFenceStart(trimmed)
+  }
+  if (isFenceEnd(trimmed, currentFence)) {
+    return null
+  }
+  return currentFence
 }
 
 export function parseTabs(
@@ -51,12 +65,12 @@ export function parseTabs(
   let rawConfig = ''
   let currentTitle = ''
   let currentContent = ''
-  let innerTabs = 0
+  let currentFence: FenceState | null = null
   let isFirst = true
   const tabs: ParsedTab[] = []
 
   for (const line of lines) {
-    if (innerTabs === 0 && line.startsWith(split)) {
+    if (currentFence === null && line.startsWith(split)) {
       if (isFirst) {
         rawConfig = currentContent
         isFirst = false
@@ -67,7 +81,7 @@ export function parseTabs(
       currentContent = ''
     } else {
       currentContent += `${line}\n`
-      innerTabs = updateInnerTabsDepth(line, innerTabs)
+      currentFence = updateFenceState(line, currentFence)
     }
   }
 

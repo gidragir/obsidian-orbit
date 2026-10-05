@@ -68,4 +68,21 @@ Outer 2 content`
     expect(result.tabs[0]?.content).toContain('tab: Inner Tab Tilde')
     expect(result.tabs[1]?.title).toBe('Outer 2')
   })
+
+  it('does not split when tab: is inside a standard code block', () => {
+    const source = `tab: Script
+\`\`\`bash
+echo "hello"
+tab: ignored_inside_code
+\`\`\`
+tab: Tab 2
+Content 2`
+
+    const result = parseTabs(source, 'tab: ')
+    expect(result.tabs).toHaveLength(2)
+    expect(result.tabs[0]?.title).toBe('Script')
+    expect(result.tabs[0]?.content).toContain('tab: ignored_inside_code')
+    expect(result.tabs[1]?.title).toBe('Tab 2')
+    expect(result.tabs[1]?.content.trim()).toBe('Content 2')
+  })
 })

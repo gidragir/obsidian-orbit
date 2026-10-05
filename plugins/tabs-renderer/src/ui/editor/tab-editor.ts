@@ -16,7 +16,8 @@ export class TabEditor {
     initialDoc: string,
     tabSize: number,
     showToolbar: boolean,
-    onSave?: () => void
+    onSave?: () => void,
+    onDocChange?: (doc: string) => void
   ) {
     const editorWrapper = containerEl.createDiv({ cls: 'tabs-editor-wrapper' })
 
@@ -24,6 +25,7 @@ export class TabEditor {
       if (update.docChanged) {
         this.lastEditTime = Date.now()
         this.hasDocChanged = true
+        onDocChange?.(this.getDoc())
       }
     })
 

@@ -24,10 +24,12 @@ export function serializeTabs(
 ): string {
   let tabsBody = ''
   for (const tab of tabs) {
-    tabsBody += `${split}${tab.title}\n${tab.content}`
+    const trimmedContent = tab.content.replace(/\r\n/g, '\n').trimEnd()
+    const contentBlock = trimmedContent.length > 0 ? `${trimmedContent}\n` : ''
+    tabsBody += `${split}${tab.title}\n${contentBlock}`
   }
 
-  const fullContent = rawConfig ? `${rawConfig.trim()}\n${tabsBody}` : tabsBody
+  const fullContent = rawConfig.trim() ? `${rawConfig.trim()}\n${tabsBody}` : tabsBody
   const innerMax = calculateBackquoteCount(fullContent, 0)
   const backquoteCount = innerMax >= minBackquoteCount ? innerMax + 1 : minBackquoteCount
   const fence = backquoteChar.repeat(backquoteCount)

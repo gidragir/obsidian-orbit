@@ -1,3 +1,4 @@
+import { replaceCodeBlock } from '@packages/adapters'
 import type { EditorService } from '@services/editor-service'
 import type { TabsCacheService } from '@services/tabs-cache-service'
 import type { TabsSettings } from '@settings/settings'
@@ -174,6 +175,7 @@ export class TabsView extends MarkdownRenderChild {
     this.editorModal.startEditing(
       activeTab.title,
       activeTab.content,
+      this.sourcePath,
       (updatedTitle, updatedContent) => {
         const titleChanged = updatedTitle !== activeTab.title
         const updatedTabs = this.parsedResult.tabs.map((tab, i) =>
@@ -199,14 +201,7 @@ export class TabsView extends MarkdownRenderChild {
     const activeEditor = this.editorService.getActiveEditor()
     if (!activeEditor) return
 
-    activeEditor.replaceRange(
-      newDoc,
-      { line: this.sectionInfo.lineStart, ch: 0 },
-      {
-        line: this.sectionInfo.lineEnd,
-        ch: activeEditor.getLine(this.sectionInfo.lineEnd)?.length ?? 0,
-      }
-    )
+    replaceCodeBlock(activeEditor, this.sectionInfo, newDoc, '```tabs-renderer')
   }
 
   private getCacheKey(): string {
