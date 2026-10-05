@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "obsidian-orbit",
+  "description": "Централизованный монорепозиторий (Single Source of Truth, SSOT) для проектирования, разработки, тестирования, сборки и независимого распространения плагинов экосистемы Obsidian.md, а также сопутствующ",
+  "root_path": "/data/projects/obsidian-orbit",
+  "updated_at": "2026-09-19",
+  "project_type": "TypeScript / JavaScript (Node/Bun/Deno)",
+  "subsystems": [
+    {
+      "id": ".changeset",
+      "name": ".changeset",
+      "summary": "Модуль и компоненты директории .changeset",
+      "l1_path": "subsystems/.changeset.md",
+      "tags": [".changeset"]
+    },
+    {
+      "id": ".github",
+      "name": ".github",
+      "summary": "Модуль и компоненты директории .github",
+      "l1_path": "subsystems/.github.md",
+      "tags": [".github"]
+    },
+    {
+      "id": ".turbo",
+      "name": ".turbo",
+      "summary": "Модуль и компоненты директории .turbo",
+      "l1_path": "subsystems/.turbo.md",
+      "tags": [".turbo"]
+    },
+    {
+      "id": ".vault",
+      "name": ".vault",
+      "summary": "Модуль и компоненты директории .vault",
+      "l1_path": "subsystems/.vault.md",
+      "tags": [".vault"]
+    },
+    {
+      "id": "packages",
+      "name": "Packages",
+      "summary": "Модуль и компоненты директории packages",
+      "l1_path": "subsystems/packages.md",
+      "tags": ["packages"]
+    },
+    {
+      "id": "plugins",
+      "name": "Plugins",
+      "summary": "Модуль и компоненты директории plugins",
+      "l1_path": "subsystems/plugins.md",
+      "tags": ["plugins"]
+    },
+    {
+      "id": "reference",
+      "name": "Reference",
+      "summary": "Модуль и компоненты директории reference",
+      "l1_path": "subsystems/reference.md",
+      "tags": ["reference"]
+    },
+    {
+      "id": "scripts",
+      "name": "Scripts",
+      "summary": "Модуль и компоненты директории scripts",
+      "l1_path": "subsystems/scripts.md",
+      "tags": ["scripts"]
+    }
+  ],
+  "core_rules": [
+    "Строгая типизация (TypeScript strict mode) обязательна.",
+    "Все зависимости управляются через package.json (pnpm / bun).",
+    "Код должен форматироваться через biome / prettier."
+  ]
+}
