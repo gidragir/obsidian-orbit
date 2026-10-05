@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
     "@packages/adapters": "workspace:*",
     "@packages/obsidian-utils": "workspace:*",
     "@packages/ports": "workspace:*",

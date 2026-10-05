@@ -17,7 +17,20 @@ export default class HTMLRendererPlugin extends Plugin {
     this.registerMarkdownCodeBlockProcessor(
       'html-renderer',
       (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
-        ctx.addChild(new HTMLRenderChild(el, source, this.settings, contentLoader, themeService))
+        const sectionInfo = ctx.getSectionInfo(el)
+        ctx.addChild(
+          new HTMLRenderChild(
+            el,
+            this.app,
+            this,
+            source,
+            this.settings,
+            contentLoader,
+            themeService,
+            ctx.sourcePath,
+            sectionInfo
+          )
+        )
       }
     )
 
