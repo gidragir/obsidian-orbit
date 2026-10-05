@@ -136,3 +136,14 @@
 | `pnpm change` | Генерация файла ченджсета Changesets. | При подготовке функциональных изменений к релизу. |
 | `pnpm release:merge` | Автослияние релизного PR через GitHub CLI и `git pull`. | При выполнении релиза из консоли. |
 | `pnpm ai:context <name>` | Упаковка референс-плагина из `reference/` через Repomix. | Перед началом портирования стороннего плагина. |
+
+
+---
+
+## 🧠 OpenViking Context Protocol
+
+This repository contains a 3-tier OpenViking knowledge base in `.agents/knowledge/` and rules in `.agents/rules/project_context.md`.
+- **L0 (Mental Map):** Inspect `.agents/knowledge/L0_index.json` (or use `project_knowledge(level="L0")`).
+- **L1 (Subsystems):** Inspect `.agents/knowledge/subsystems/<subsystem_id>.md` before modifying module files.
+- **L2 (ADR & CLI):** Check `.agents/knowledge/adr/` and `.agents/knowledge/cli/commands.md`.
+- **Sync Knowledge:** Run `sync-knowledge .` to update subsystem documentation.

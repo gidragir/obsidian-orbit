@@ -43,7 +43,7 @@
 │  • Разработка всех плагинов (plugins/*) и библиотек (packages/*)            │
 │  • Оркестрация проверок и сборки (Turborepo + Biome + Vitest)               │
 │  • Версионирование через @changesets/cli и теги <plugin>@<version>          │
-│  • Контекстная система ИИ: .agents/rules/, .agents/skills/, .agent/workflows│
+│  • Контекстная система ИИ: .agents/rules, .agents/skills, .agents/workflows │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │ CI/CD: scripts/deploy-downstream.ts
                                        │ (push артефактов по токену RELEASE_PAT)
@@ -64,13 +64,9 @@
 
 ```
 .
-├── .agent/
-│   └── workflows/                  # Симлинк на .agents/workflows
-│       ├── new-plugin.md           # Воркфлоу: /new-plugin
-│       ├── refactor-reference.md   # Воркфлоу: /refactor-reference
-│       ├── verify.md               # Воркфлоу: /verify
-│       └── prepare-release.md      # Воркфлоу: /prepare-release
-├── .agents/
+├── .agents/                        # ИИ-контекст Antigravity 2.0 и OpenViking
+│   ├── agents/                     # Ролевые спецификации субагентов (executor, verifier, etc.)
+│   ├── knowledge/                  # База знаний OpenViking (L0_index.json, subsystems, adr, cli)
 │   ├── mcp.json                    # Декларация MCP-серверов (fetch)
 │   ├── rules/                      # Гранулярные правила для контекстного окна
 │   │   ├── 00-architecture.md      # Always On: инварианты монорепозитория
@@ -79,13 +75,21 @@
 │   │   ├── 20-obsidian-plugins.md  # Glob: жизненный цикл плагинов
 │   │   ├── 30-packages-source.md   # Glob: модель Direct TS Source
 │   │   ├── 40-pure-testing.md      # Glob: чистые тесты Vitest
-│   │   └── 50-changesets.md        # Model Decision: релизные правила
-│   └── skills/                     # On-Demand навыки с пошаговыми инструкциями
-│       ├── obsidian-architect/     # Архитектура плагинов и безопасность памяти
-│       ├── complexity-guard/       # Снижение когнитивной и цикломатической сложности
-│       ├── biome-refactor/         # Ликвидация any, enum, !, parameter properties
-│       ├── reference-migrator/     # Разбор снимков Repomix и адаптация кода
-│       └── semver-changeset/       # Расчет версий SemVer для Obsidian
+│   │   ├── 50-changesets.md        # Model Decision: релизные правила
+│   │   └── project_context.md      # Правила протокола OpenViking
+│   ├── skills/                     # On-Demand навыки с пошаговыми инструкциями
+│   │   ├── obsidian-architect/     # Архитектура плагинов и безопасность памяти
+│   │   ├── complexity-guard/       # Снижение когнитивной и цикломатической сложности
+│   │   ├── biome-refactor/         # Ликвидация any, enum, !, parameter properties
+│   │   ├── reference-migrator/     # Разбор снимков Repomix и адаптация кода
+│   │   ├── semver-changeset/       # Расчет версий SemVer для Obsidian
+│   │   ├── subagent-driven-development/ # Исполнение планов субагентами
+│   │   └── verify/                 # Цикл автоверификации
+│   └── workflows/                  # Воркфлоу по Slash-командам
+│       ├── new-plugin.md           # Воркфлоу: /new-plugin
+│       ├── refactor-reference.md   # Воркфлоу: /refactor-reference
+│       ├── verify.md               # Воркфлоу: /verify
+│       └── prepare-release.md      # Воркфлоу: /prepare-release
 ├── .changeset/                     # Каталог накопительных изменений Changesets
 │   └── config.json
 ├── .github/
@@ -104,28 +108,17 @@
 │   ├── deploy-downstream.ts        # Доставка артефактов в сателлиты и создание релизов
 │   └── generate-ai-context.ts      # Упаковка сторонних референсов через Repomix
 ├── plugins/                        # Директория плагинов Obsidian
-│   └── <plugin-id>/
-│       ├── src/
-│       │   ├── ui/                 # Компоненты интерфейса (алиас: @ui/*)
-│       │   ├── settings/           # Настройки плагина (алиас: @settings/*)
-│       │   ├── services/           # Адаптеры API Obsidian (алиас: @services/*)
-│       │   ├── utils/              # Чистая бизнес-логика (покрыта юнит-тестами)
-│       │   │   ├── parser.ts
-│       │   │   └── parser.test.ts
-│       │   ├── styles.css          # Локальные стили плагина (опционально)
-│       │   └── main.ts             # Тонкий адаптер точки входа
-│       ├── manifest.json           # Манифест Obsidian
-│       ├── versions.json           # Хранилище версий плагина (SSOT)
-│       ├── package.json            # Манифест воркспейса
-│       └── tsconfig.json           # Конфигурация компилятора плагина
-├── packages/                       # Разделяемые пакеты (@packages/*)
-│   ├── tsconfig/                   # Базовые конфигурации TypeScript
-│   │   ├── package.json
-│   │   ├── tsconfig.base.json
-│   │   ├── tsconfig.plugin.json
-│   │   └── tsconfig.library.json
-│   ├── obsidian-utils/             # name: "@packages/obsidian-utils"
-│   └── ui/                         # name: "@packages/ui"
+│   ├── html-renderer/              # HTML Renderer (изолированный iframe для HTML/CSS/JS)
+│   ├── snippet-renderer/           # Snippet Renderer (шаблоны с интерактивными переменными)
+│   └── tabs-renderer/              # Tabs Renderer (организация заметок во вкладках, редактор)
+├── packages/                       # Разделяемые пакеты Direct TS Source (@packages/*)
+│   ├── adapters/                   # name: "@packages/adapters" (реализация портов для Obsidian)
+│   ├── core/                       # name: "@packages/core" (доменные парсеры и утилиты)
+│   ├── obsidian-utils/             # name: "@packages/obsidian-utils" (утилиты метаданных)
+│   ├── ports/                      # name: "@packages/ports" (порты гексагональной архитектуры)
+│   ├── tsconfig/                   # name: "@packages/tsconfig" (базовые tsconfig.*.json)
+│   ├── types/                      # name: "@packages/types" (чистые доменные интерфейсы и Result)
+│   └── ui/                         # name: "@packages/ui" (общие UI-компоненты, модалы, стили)
 ├── .npmrc                          # save-exact=true для строгого версионирования
 ├── AGENTS.md                       # Главный системный регламент ИИ-агентов
 ├── biome.json                      # Единый конфигуратор Biome
@@ -147,19 +140,21 @@
 |---|---|---|---|
 | **Среда разработки** | Google Antigravity IDE | 2.0 | Основная среда разработки с тандемом Gemini Pro и Flash. |
 | **Менеджер окружения** | `mise` | latest | Фиксация локальных версий Node.js, pnpm, Biome на CachyOS Linux. |
-| **Менеджер пакетов** | `pnpm` | 9.x | Изоляция зависимостей, CAS-хранилище, Catalogs, `workspace:*`. |
+| **Менеджер пакетов** | `pnpm` | 11.21.0 | Изоляция зависимостей, CAS-хранилище, Catalogs, `workspace:*`. |
 | **Фиксация зависимостей** | `.npmrc` | — | `save-exact=true`, `link-workspace-packages=true`. |
-| **Оркестрация сборки** | `Turborepo` | 2.2.3 | Гранулярное кэширование, топологическое построение графа задач. |
-| **Качество кода** | `Biome` | latest | Сверхбыстрый линтинг, форматирование, запрет `any`, `enum`, `!`. |
-| **Система типов** | `TypeScript` | 5.6.3 | Статическая строгая типизация, абсолютные алиасы. |
-| **Сборщик плагинов** | `esbuild` | 0.24.0 | Инлайн-компиляция Direct TS Source в CJS `main.js` и сборка CSS. |
-| **Тестирование** | `Vitest` | 2.1.8 | Чистые юнит-тесты в рантайме Node.js без DOM и моков Obsidian. |
-| **Резолв путей тестов** | `vite-tsconfig-paths` | 5.1.4 | Трансляция алиасов `tsconfig.json` в рантайм Vitest. |
-| **Версионирование** | `@changesets/cli` | 2.27.9 | Независимое версионирование SemVer, генерация Version PR. |
+| **Оркестрация сборки** | `Turborepo` | 2.11.2 | Гранулярное кэширование, топологическое построение графа задач. |
+| **Качество кода** | `Biome` | 2.5.14 | Сверхбыстрый линтинг, форматирование, запрет `any`, `enum`, `!`. |
+| **Система типов** | `TypeScript` | 7.0.2 | Статическая строгая типизация, абсолютные алиасы. |
+| **Сборщик плагинов** | `esbuild` | 0.28.2 | Инлайн-компиляция Direct TS Source в CJS `main.js` и сборка CSS. |
+| **Тестирование** | `Vitest` | 5.0.1 | Чистые юнит-тесты в рантайме Node.js без DOM и моков Obsidian. |
+| **Резолв путей тестов** | `vite-tsconfig-paths` | 6.1.1 | Трансляция алиасов `tsconfig.json` в рантайм Vitest. |
+| **Версионирование** | `@changesets/cli` | 3.0.3 | Независимое версионирование SemVer, генерация Version PR. |
+| **Редакторский стек** | `CodeMirror 6` | 6.x / 1.x | Компоненты редактора заметок и подсветки (`@codemirror/*`, `@lezer/*`). |
+| **TypeScript Runner** | `tsx` | 4.23.13 | Исполнение скриптов тулчейна и сборщика в TypeScript. |
 | **GitHub CLI** | `gh` | latest | Автоматизация слияния релизного PR через терминал (`release:merge`). |
 | **CI/CD раннеры** | GitHub Actions | v4 | Параллельные PR-проверки и транзакционный деплой в сателлиты. |
 | **Авторизация сателлитов**| `RELEASE_PAT` | — | Секрет GitHub с правами `repo` на запись в сателлиты. |
-| **Анализ референсов** | `Repomix` | 0.2.19 | Сборка исходников сторонних плагинов в Markdown-снимки. |
+| **Анализ референсов** | `Repomix` | 1.18.0 | Сборка исходников сторонних плагинов в Markdown-снимки. |
 
 ---
 
@@ -237,22 +232,64 @@
 ## 5. Архитектура разделяемых пакетов (`packages/*`)
 
 ### 5.1 Модель прямого импорта исходников (Direct TS Source)
-* Библиотеки `@packages/obsidian-utils` и `@packages/ui` функционируют без промежуточной компиляции и каталогов `dist/`.
-* В `package.json` точка входа экспортирует TypeScript-исходник:
+* Все разделяемые библиотеки (`@packages/*`) функционируют без промежуточной компиляции и каталогов `dist/`.
+* В `package.json` точка входа экспортирует чистый TypeScript-исходник:
   ```json
   {
-    "name": "@packages/obsidian-utils",
+    "name": "@packages/core",
     "version": "1.0.0",
     "private": true,
     "type": "module",
+    "main": "src/index.ts",
     "exports": {
       ".": "./src/index.ts"
     }
   }
   ```
 
-### 5.2 Контракт зависимостей от `obsidian`
-Для обеспечения работы языкового сервера (LSP) в среде разработки при отсутствии рантайма Obsidian в npm, зависимости объявляются синхронно:
+### 5.2 Реестр пакетов и Гексагональная архитектура (Ports & Adapters)
+
+Пакеты строго разделены по слоям Clean/Hexagonal Architecture:
+
+1. **`@packages/tsconfig` (Инфраструктура):**
+   - Набор конфигураций TypeScript: `tsconfig.base.json` (строгий режим, `verbatimModuleSyntax: true`), `tsconfig.plugin.json`, `tsconfig.library.json`.
+2. **`@packages/types` (Доменные примитивы):**
+   - 0% зависимостей от сторонних библиотек и Obsidian API.
+   - Чистый контейнер результата `Result<T, E>` (`ok`, `err`, `isOk`, `isErr`).
+   - Метаданные файлов `IFileMeta`, структуры команд `CommandDefinition`, шорткатов `HotkeyDefinition` и опций `NoticeOptions`.
+3. **`@packages/ports` (Контракты портов):**
+   - Интерфейсы взаимодействия с внешним миром без привязки к Obsidian:
+     - `IVaultPort`: чтение/запись текстовых и бинарных файлов, существование, листинг, метаданные.
+     - `ICommandPort`: регистрация команд.
+     - `ISettingsPort<T>`: загрузка и сохранение настроек.
+     - `INoticePort`: отображение всплывающих уведомлений.
+     - `IClipboardPort`: асинхронное чтение и запись системного буфера обмена.
+4. **`@packages/core` (Доменное ядро):**
+   - Чистые алгоритмические модули с 100% покрытием unit-тестами Vitest в Node.js:
+     - `markdown.ts`: извлечение и валидация фенс-блоков Markdown, очистка синтаксиса.
+     - `path.ts`: нормализация путей, безопасное соединение путей, выделение расширений.
+     - `settings.ts`: слияние настроек по умолчанию, глубокая валидация схемы параметров.
+5. **`@packages/adapters` (Адаптеры API Obsidian):**
+   - Конкретные реализации интерфейсов `@packages/ports`:
+     - `VaultAdapter`: адаптер к `app.vault` (TFile, TFolder, DataAdapter).
+     - `CommandAdapter`: адаптер к `app.commands` и `plugin.addCommand()`.
+     - `SettingsAdapter`: адаптер к `plugin.loadData()` и `plugin.saveData()`.
+     - `NoticeAdapter`: адаптер к классу `Notice` из Obsidian.
+     - `ClipboardAdapter`: безопасный адаптер к `navigator.clipboard`.
+     - `EditorAdapter`: манипуляции с активным редактором заметки.
+6. **`@packages/obsidian-utils` (Утилиты Obsidian):**
+   - Вспомогательные функции для работы с кэшем заметок (`app.metadataCache`), ссылками и фронтматтером.
+7. **`@packages/ui` (Пользовательский интерфейс):**
+   - Переиспользуемые визуальные компоненты, модальные окна и редакторы:
+     - `Badge`: бейджи статуса.
+     - `Modal`: базовое модальное окно на чистом DOM.
+     - `Setting`: обертка над элементами настроек.
+     - `SplitEditorModal`: модальный сплит-редактор.
+     - `CodeEditor`, `EditorToolbar`: обертки над редактором кода CodeMirror 6.
+     - `styles.css`: общие стили темы Obsidian.
+
+### 5.3 Контракт зависимостей от `obsidian`
+Для обеспечения работы языкового сервера (LSP) в среде разработки при отсутствии рантайма Obsidian в npm, адаптеры и UI-пакеты объявляют зависимости синхронно:
 ```json
 {
   "peerDependencies": {
@@ -271,7 +308,7 @@
 }
 ```
 
-### 5.3 Разделяемые стили (`@packages/ui`)
+### 5.4 Разделяемые стили (`@packages/ui`)
 * Общие стили объявляются в `packages/ui/src/styles.css`.
 * В плагинах стили подключаются через директиву `@import '@packages/ui/styles.css';` в файле `plugins/<id>/src/styles.css`.
 * Бандлер `esbuild` инлайнит разделяемые CSS-правила в конечный `plugins/<id>/styles.css`.
@@ -367,17 +404,25 @@ packages:
   - 'packages/*'
 
 catalog:
-  typescript: 5.6.3
-  esbuild: 0.24.0
-  turbo: 2.2.3
-  vitest: 2.1.8
-  vite-tsconfig-paths: 5.1.4
-  '@changesets/cli': 2.27.9
-  '@types/node': 22.9.0
-  builtin-modules: 4.0.0
-  repomix: 0.2.19
-  obsidian: 1.7.2
-  tsx: 4.19.2
+  typescript: 7.0.2
+  esbuild: 0.28.2
+  turbo: 2.11.2
+  vitest: 5.0.1
+  vite-tsconfig-paths: 6.1.1
+  '@changesets/cli': 3.0.3
+  '@types/node': 26.6.2
+  builtin-modules: 5.4.0
+  repomix: 1.18.0
+  obsidian: 1.13.1
+  tsx: 4.23.13
+  '@biomejs/biome': 2.5.14
+  '@codemirror/commands': 6.10.3
+  '@codemirror/lang-html': 6.4.11
+  '@codemirror/lang-markdown': 6.2.4
+  '@codemirror/language': 6.12.3
+  '@codemirror/state': 6.7.5
+  '@codemirror/view': 6.38.6
+  '@lezer/highlight': 1.2.3
 ```
 
 ---
@@ -785,10 +830,22 @@ jobs:
 
 ### 14.2 Пятиуровневая система контекста
 1. **Генеральный SSOT (`AGENTS.md`):** Базовые инварианты, табу, роли и консольные команды (всегда в контексте).
-2. **Гранулярные правила (`.agents/rules/*.md`):** Активируются по glob-триггерам (`00-architecture.md`, `10-biome-typescript.md`, `15-patterns-complexity.md`, `20-obsidian-plugins.md`, `30-packages-source.md`, `40-pure-testing.md`, `50-changesets.md`).
-3. **Специализированные навыки (`.agents/skills/*/SKILL.md`):** Динамическая загрузка экспертизы по семантическому описанию (`obsidian-architect`, `complexity-guard`, `biome-refactor`, `reference-migrator`, `semver-changeset`).
-4. **Рабочие процессы (`.agent/workflows/*.md`):** Исполняемые сценарии по slash-командам (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
+2. **Гранулярные правила (`.agents/rules/*.md`):** Активируются по glob-триггерам (`00-architecture.md`, `10-biome-typescript.md`, `15-patterns-complexity.md`, `20-obsidian-plugins.md`, `30-packages-source.md`, `40-pure-testing.md`, `50-changesets.md`, `project_context.md`).
+3. **Специализированные навыки (`.agents/skills/*/SKILL.md`):** Динамическая загрузка экспертизы по семантическому описанию (`obsidian-architect`, `complexity-guard`, `biome-refactor`, `reference-migrator`, `semver-changeset`, `subagent-driven-development`, `verify` и др.).
+4. **Рабочие процессы (`.agents/workflows/*.md`):** Исполняемые сценарии по slash-командам (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
 5. **Протокол контекста MCP (`.agents/mcp.json`):** Легковесный сервер `fetch` (`@modelcontextprotocol/server-fetch`) для оперативного чтения актуальной документации Obsidian API и CodeMirror 6 без расхода токенов.
+
+### 14.3 Каталог ролевых субагентов Antigravity 2.0 (`.agents/agents/`)
+* **`executor.md` (Flash):** Быстрая реализация чистых функций, классов адаптеров и модульных тестов.
+* **`verifier.md` (Flash):** Автономный верификационный цикл (`pnpm check`) с автоисправлением Biome и TypeScript.
+* **`researcher.md` (Flash):** Поиск символов, разбор Repomix-снимков из `reference/` и маппинг API.
+* **`reviewer.md` (Pro):** Строгий аудит чистоты архитектуры («Порты и Адаптеры»), лимитов сложности и утечек памяти.
+
+### 14.4 Протокол контекста OpenViking (`.agents/knowledge/`)
+* **L0 (Ментальная карта):** `.agents/knowledge/L0_index.json` — обзор проекта, метаданные и реестр подсистем.
+* **L1 (Подсистемы):** `.agents/knowledge/subsystems/<subsystem_id>.md` — детальное описание архитектуры модулей.
+* **L2 (ADR и CLI):** `.agents/knowledge/adr/` (архитектурные решения) и `.agents/knowledge/cli/commands.md` (реестр консольных интерфейсов).
+* **Синхронизация знаний:** команда `sync-knowledge .` для обновления контекстной базы монорепозитория.
 
 ---
 
@@ -811,7 +868,8 @@ jobs:
     "version:bump": "changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
     "release:merge": "tsx scripts/merge-release-pr.ts",
     "release": "turbo run build && tsx scripts/deploy-downstream.ts",
-    "ai:context": "tsx scripts/generate-ai-context.ts"
+    "ai:context": "tsx scripts/generate-ai-context.ts",
+    "ai:context:all": "tsx scripts/generate-ai-context.ts --all"
   }
 }
 ```
