@@ -4,6 +4,7 @@
 
 export * from './clipboard'
 export * from './command'
+export * from './editor'
 export * from './notice'
 export * from './settings'
 export * from './vault'

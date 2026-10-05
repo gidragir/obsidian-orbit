@@ -12,6 +12,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@codemirror/commands": "catalog:",
+    "@codemirror/lang-html": "catalog:",
+    "@codemirror/lang-markdown": "catalog:",
+    "@codemirror/language": "catalog:",
+    "@codemirror/state": "catalog:",
+    "@codemirror/view": "catalog:",
+    "@lezer/highlight": "catalog:",
     "@packages/types": "workspace:*"
   },
   "peerDependencies": {

@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { formatWikiLink, parseKeyValueFrontmatter, parseWikiLink, sanitizeFileName } from './index'
+import {
+  formatCodeBlock,
+  formatWikiLink,
+  parseKeyValueFrontmatter,
+  parseWikiLink,
+  sanitizeFileName,
+} from './index'
 
 describe('obsidian-utils pure domain functions', () => {
   describe('formatWikiLink', () => {
@@ -58,6 +64,33 @@ describe('obsidian-utils pure domain functions', () => {
       const yaml = '# Comment\nkey: value\n\n# Another comment'
       const parsed = parseKeyValueFrontmatter(yaml)
       expect(parsed).toEqual({ key: 'value' })
+    })
+  })
+
+  describe('formatCodeBlock', () => {
+    it('formats a basic code block with 3 backticks', () => {
+      const result = formatCodeBlock('html-renderer', '<div>Hello</div>')
+      expect(result).toBe('```html-renderer\n<div>Hello</div>\n```')
+    })
+
+    it('trims trailing whitespace/newlines from content before closing fence', () => {
+      const result = formatCodeBlock('html-renderer', '<div>Hello</div>\n\n  \n')
+      expect(result).toBe('```html-renderer\n<div>Hello</div>\n```')
+    })
+
+    it('handles empty content', () => {
+      const result = formatCodeBlock('html-renderer', '')
+      expect(result).toBe('```html-renderer\n```')
+    })
+
+    it('expands backticks if content contains 3 backticks', () => {
+      const result = formatCodeBlock('tabs-renderer', '```js\nconsole.log(1)\n```')
+      expect(result).toBe('````tabs-renderer\n```js\nconsole.log(1)\n```\n````')
+    })
+
+    it('supports tilde fence', () => {
+      const result = formatCodeBlock('tabs-renderer', 'test', '~')
+      expect(result).toBe('~~~tabs-renderer\ntest\n~~~')
     })
   })
 })

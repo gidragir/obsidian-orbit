@@ -29,3 +29,214 @@
   color: var(--text-error, #dc2626);
   background-color: var(--background-modifier-error, rgba(220, 38, 38, 0.15));
 }
+
+/* -------------------------------------------------------------
+ * Orbit Split Editor Modal & CodeMirror Controls
+ * ------------------------------------------------------------- */
+.orbit-split-editor-modal {
+  width: min(1050px, 94vw);
+  max-width: 94vw;
+}
+
+.orbit-split-editor-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2);
+  padding: 0;
+}
+
+.orbit-editor-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-3);
+}
+
+.orbit-editor-top-bar .setting-item {
+  flex: 1;
+  border-top: none;
+  padding: 0;
+}
+
+.orbit-editor-top-bar .setting-item-control input[type='text'] {
+  width: 100%;
+  min-width: 200px;
+}
+
+.orbit-editor-mode-switcher {
+  display: flex;
+  background-color: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  padding: 2px;
+  gap: 2px;
+}
+
+.orbit-editor-mode-switcher button.clickable-icon {
+  border-radius: var(--radius-s);
+  padding: var(--size-4-1);
+}
+
+.orbit-editor-mode-switcher button.clickable-icon.is-active {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+/* split body & panes */
+.orbit-editor-split-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--size-4-3);
+  height: 52vh;
+  min-height: 280px;
+}
+
+.orbit-editor-split-body.mode-source {
+  grid-template-columns: 1fr;
+}
+
+.orbit-editor-split-body.mode-source .orbit-editor-pane-preview {
+  display: none;
+}
+
+.orbit-editor-split-body.mode-preview {
+  grid-template-columns: 1fr;
+}
+
+.orbit-editor-split-body.mode-preview .orbit-editor-pane-source {
+  display: none;
+}
+
+.orbit-editor-pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1);
+  min-height: 0;
+  height: 100%;
+}
+
+.orbit-pane-label {
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none;
+}
+
+.orbit-editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background-color: var(--background-primary);
+}
+
+.orbit-editor-wrapper:focus-within {
+  border-color: var(--interactive-accent);
+}
+
+.orbit-editor-toolbar {
+  display: flex;
+  height: 36px;
+  align-items: center;
+  padding: 0 var(--size-4-2);
+  gap: var(--size-4-1);
+  background-color: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.orbit-editor-toolbar .toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1);
+}
+
+.orbit-editor-toolbar .toolbar-divider {
+  width: 1px;
+  height: 18px;
+  background-color: var(--background-modifier-border);
+  margin: 0 var(--size-4-1);
+}
+
+.orbit-editor-toolbar button.clickable-icon {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: var(--size-4-1);
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-editor-toolbar button.clickable-icon:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.orbit-editor {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.orbit-editor .cm-editor {
+  height: 100%;
+}
+
+.orbit-editor .cm-scroller {
+  font-family: var(--font-text);
+  font-size: var(--font-text-size);
+  padding: var(--size-4-2);
+}
+
+.orbit-live-preview-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  padding: var(--size-4-3);
+  background-color: var(--background-primary);
+}
+
+.orbit-editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--size-4-2);
+  margin-top: var(--size-4-2);
+  padding-top: var(--size-4-2);
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.orbit-editor-status {
+  margin-right: auto;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+
+.table-generator-container {
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 150px;
+  padding: 4px;
+}
+
+.table-generator-grid {
+  width: 14px;
+  height: 14px;
+  background-color: var(--interactive-normal);
+  margin: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.table-generator-grid:hover {
+  background-color: var(--interactive-accent);
+}

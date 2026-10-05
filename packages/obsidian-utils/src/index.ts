@@ -68,3 +68,42 @@ export function parseKeyValueFrontmatter(raw: string): Record<string, string> {
 
   return result
 }
+
+/**
+ * Formats a Markdown code block, calculating required fence length to safely enclose
+ * any inner code blocks, and trimming trailing whitespace.
+ */
+export function formatCodeBlock(
+  tag: string,
+  content: string,
+  fenceChar: '`' | '~' = '`',
+  minFenceLength = 3
+): string {
+  const trimmedContent = content.replace(/\r\n/g, '\n').trimEnd()
+  let maxConsecutive = 0
+  let currentCount = 0
+
+  for (let i = 0; i < trimmedContent.length; i++) {
+    if (trimmedContent[i] === fenceChar) {
+      currentCount++
+      if (currentCount > maxConsecutive) {
+        maxConsecutive = currentCount
+      }
+    } else {
+      currentCount = 0
+    }
+  }
+
+  const fenceLength = Math.max(
+    minFenceLength,
+    maxConsecutive >= minFenceLength ? maxConsecutive + 1 : minFenceLength
+  )
+  const fence = fenceChar.repeat(fenceLength)
+  const tagPart = tag.trim()
+
+  if (trimmedContent.length === 0) {
+    return `${fence}${tagPart}\n${fence}`
+  }
+
+  return `${fence}${tagPart}\n${trimmedContent}\n${fence}`
+}
