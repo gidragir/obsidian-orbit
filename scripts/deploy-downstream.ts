@@ -122,6 +122,11 @@ function deployPlugin(pluginDir: string, repoRoot: string, isForce: boolean): vo
     copyReleaseMetadata(pluginDir, repoRoot, tempDir)
 
     runCommand('git add .', tempDir)
+    runCommand('git config user.name "github-actions[bot]"', tempDir)
+    runCommand(
+      'git config user.email "41898282+github-actions[bot]@users.noreply.github.com"',
+      tempDir
+    )
     runCommand(`git commit -m "chore(release): release ${version}"`, tempDir)
     runCommand('git push origin main', tempDir)
 
