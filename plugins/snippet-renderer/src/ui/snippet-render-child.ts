@@ -1,11 +1,24 @@
+import { replaceCodeBlock } from '@packages/adapters'
+import { formatCodeBlock } from '@packages/obsidian-utils'
+import { SplitEditorModal } from '@packages/ui'
 import { extractVariables, parseLanguageAndSource, substituteVariables } from '@utils/parser'
-import { type App, MarkdownRenderChild, MarkdownRenderer } from 'obsidian'
+import {
+  type App,
+  ButtonComponent,
+  MarkdownRenderChild,
+  MarkdownRenderer,
+  type MarkdownSectionInformation,
+  MarkdownView,
+  type Plugin,
+} from 'obsidian'
 
 export class SnippetRenderChild extends MarkdownRenderChild {
   private readonly app: App
+  private readonly plugin: Plugin
   private readonly source: string
   private readonly sourcePath: string
   private readonly fenceHeader: string | undefined
+  private readonly sectionInfo: MarkdownSectionInformation | null
 
   private language = 'bash'
   private cleanSource = ''
@@ -16,15 +29,19 @@ export class SnippetRenderChild extends MarkdownRenderChild {
   constructor(
     containerEl: HTMLElement,
     app: App,
+    plugin: Plugin,
     source: string,
     sourcePath: string,
-    fenceHeader?: string | undefined
+    fenceHeader?: string | undefined,
+    sectionInfo?: MarkdownSectionInformation | null
   ) {
     super(containerEl)
     this.app = app
+    this.plugin = plugin
     this.source = source
     this.sourcePath = sourcePath
     this.fenceHeader = fenceHeader
+    this.sectionInfo = sectionInfo ?? null
   }
 
   onload(): void {
@@ -106,14 +123,32 @@ export class SnippetRenderChild extends MarkdownRenderChild {
     const sourceSection = parentEl.createDiv({
       cls: 'script-template-section script-template-source-section',
     })
-    sourceSection.createDiv({
+    const headerRow = sourceSection.createDiv({
+      cls: 'script-template-section-header',
+    })
+    headerRow.createDiv({
       text: 'Source template',
       cls: 'script-template-section-title',
     })
 
+    if (this.sectionInfo) {
+      new ButtonComponent(headerRow)
+        .setIcon('lucide-pencil')
+        .setTooltip('Edit snippet template')
+        .setClass('clickable-icon')
+        .onClick(() => this.openEditModal())
+    }
+
     const sourcePreContainer = sourceSection.createDiv({
       cls: 'script-template-code-pre',
     })
+
+    if (this.sectionInfo) {
+      this.registerDomEvent(sourcePreContainer, 'dblclick', (e) => {
+        e.preventDefault()
+        this.openEditModal()
+      })
+    }
 
     void MarkdownRenderer.render(
       this.app,
@@ -122,6 +157,44 @@ export class SnippetRenderChild extends MarkdownRenderChild {
       this.sourcePath,
       this
     )
+  }
+
+  private openEditModal(): void {
+    const activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
+    const editor = activeView?.editor
+    if (!editor || !this.sectionInfo) return
+
+    const modal = new SplitEditorModal(this.app, this.plugin, {
+      modalTitle: 'Edit Snippet Template',
+      initialDoc: this.cleanSource,
+      defaultMode: 'split',
+      editorOptions: {
+        language: 'markdown',
+        showToolbar: true,
+      },
+      renderPreview: async (doc, previewEl) => {
+        const parsed = substituteVariables(doc, this.values)
+        await MarkdownRenderer.render(
+          this.app,
+          `\`\`\`${this.language}\n${parsed}\n\`\`\``,
+          previewEl,
+          this.sourcePath,
+          this.plugin
+        )
+      },
+      onSave: (newTemplate) => {
+        const section = this.sectionInfo
+        if (!section) return
+        const trimmedTemplate = newTemplate.replace(/\r\n/g, '\n').trimEnd()
+        const content = this.language
+          ? `lang: ${this.language}\n${trimmedTemplate}`
+          : trimmedTemplate
+        const fullBlock = formatCodeBlock('snippet-renderer', content)
+        replaceCodeBlock(editor, section, fullBlock, '```snippet-renderer')
+      },
+    })
+
+    modal.open()
   }
 
   private renderPreviewSection(parentEl: HTMLElement): void {

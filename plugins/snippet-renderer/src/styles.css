@@ -1,4 +1,7 @@
+@import '../../../packages/ui/src/styles.css';
+
 /* Obsidian Script Template Plugin Styles */
+
 
 .script-template-container {
 	display: grid;
@@ -47,13 +50,19 @@
 	padding-top: 16px;
 }
 
+.script-template-section-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
 .script-template-section-title {
 	font-size: 0.8em;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	color: var(--text-muted);
-	margin-bottom: 8px;
 }
 
 .script-template-inputs {

@@ -74,13 +74,13 @@ describe('extractVariables', () => {
     expect(vars).toEqual(['NAME', 'ROLE'])
   })
 
-  it('extracts braced variables with ${VAR} syntax', () => {
-    const vars = extractVariables('Hello ${NAME}, your role is ${ROLE}')
+  it('extracts braced variables with ${...} syntax', () => {
+    const vars = extractVariables('Hello ' + '${' + 'NAME}, your role is ' + '${' + 'ROLE}')
     expect(vars).toEqual(['NAME', 'ROLE'])
   })
 
   it('extracts unique variables avoiding duplicates', () => {
-    const vars = extractVariables('$NAME ${NAME} $NAME')
+    const vars = extractVariables('$NAME ' + '${' + 'NAME} $NAME')
     expect(vars).toEqual(['NAME'])
   })
 
@@ -91,7 +91,7 @@ describe('extractVariables', () => {
 
 describe('substituteVariables', () => {
   it('substitutes known variables', () => {
-    const source = 'echo "Hello $NAME ${SURNAME}!"'
+    const source = 'echo "Hello $NAME ' + '${' + 'SURNAME}!"'
     const values = {
       NAME: 'John',
       SURNAME: 'Doe',
@@ -101,7 +101,7 @@ describe('substituteVariables', () => {
   })
 
   it('keeps original token if value is empty string or undefined', () => {
-    const source = 'echo "$FOO ${BAR} $BAZ"'
+    const source = 'echo "$FOO ' + '${' + 'BAR} $BAZ"'
     const values = {
       FOO: '',
       BAR: 'filled',

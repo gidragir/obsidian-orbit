@@ -9,7 +9,9 @@ export default class SnippetRendererPlugin extends Plugin {
       const fenceHeader = sectionInfo
         ? extractFenceHeader(sectionInfo.text, sectionInfo.lineStart)
         : ''
-      ctx.addChild(new SnippetRenderChild(el, this.app, source, ctx.sourcePath, fenceHeader))
+      ctx.addChild(
+        new SnippetRenderChild(el, this.app, this, source, ctx.sourcePath, fenceHeader, sectionInfo)
+      )
     }
 
     this.registerMarkdownCodeBlockProcessor('snippet-renderer', processor)
