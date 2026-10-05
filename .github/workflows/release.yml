@@ -47,3 +47,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}

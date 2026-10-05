@@ -16,11 +16,12 @@ interface PluginPackage {
   [key: string]: unknown
 }
 
-function runCommand(command: string, cwd?: string): string {
+function runCommand(command: string, cwd?: string, env?: Record<string, string>): string {
   return execSync(command, {
     cwd,
     encoding: 'utf-8',
     stdio: ['pipe', 'pipe', 'pipe'],
+    env: { ...process.env, ...env },
   }).trim()
 }
 
@@ -127,6 +128,13 @@ function deployPlugin(pluginDir: string, repoRoot: string, isForce: boolean): vo
       'git config user.email "41898282+github-actions[bot]@users.noreply.github.com"',
       tempDir
     )
+    if (pat) {
+      const basicAuth = Buffer.from(`x-access-token:${pat}`).toString('base64')
+      runCommand(
+        `git config http.https://github.com/.extraheader "AUTHORIZATION: basic ${basicAuth}"`,
+        tempDir
+      )
+    }
     runCommand(`git commit -m "chore(release): release ${version}"`, tempDir)
     runCommand('git push origin main', tempDir)
 
