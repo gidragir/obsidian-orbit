@@ -9,3 +9,5 @@ description: "Provides architectural patterns, lifecycle safety contracts, event
 2. **Жизненный цикл:** Регистрация всех подписок строго через `this.registerEvent`, `this.registerDomEvent`, `this.registerInterval`.
 3. **Тонкий `main.ts`:** Метод `onload()` разгружается в приватные методы `registerCommands()`, `registerViews()`.
 4. **Безопасные стили:** Использование нативных CSS-переменных темы Obsidian.
+5. **Безопасный DND:** Контроллеры перетаскивания элементов UI используют изолированные MIME-типы (`application/x-*`) и блокируют всплытие событий в текстовые редакторы.
+6. **Паттерн Preview / Edit:** При создании тайловых/блочных представлений заметок интерфейс проектируется по двухрежимной модели: чтение через `MarkdownRenderer.render` и редактирование по требованию через CM6 с `syntaxHighlighting`.
