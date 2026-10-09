@@ -1,0 +1,70 @@
+{
+  "masterRatio": 0.6,
+  "frontmatterKey": "orbit-tiling",
+  "debounceMs": 500,
+  "panelGap": 10,
+  "fileLayouts": {
+    "Тест.md": {
+      "tree": {
+        "type": "branch",
+        "id": "branch-1791549264308-628",
+        "direction": "column",
+        "weight": 1,
+        "children": [
+          {
+            "type": "branch",
+            "id": "branch-1791550123163-798",
+            "direction": "row",
+            "weight": 1,
+            "children": [
+              {
+                "type": "leaf",
+                "id": "leaf-0",
+                "sectionIndex": 0,
+                "weight": 1
+              },
+              {
+                "type": "leaf",
+                "id": "leaf-1791550123163",
+                "sectionIndex": 5,
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "type": "branch",
+            "id": "branch-1791550501438-47",
+            "direction": "row",
+            "weight": 1,
+            "children": [
+              {
+                "type": "leaf",
+                "id": "leaf-3",
+                "sectionIndex": 3,
+                "weight": 1.5413662645442217
+              },
+              {
+                "type": "leaf",
+                "id": "leaf-1791548530958",
+                "sectionIndex": 2,
+                "weight": 0.45863373545577835
+              }
+            ]
+          },
+          {
+            "type": "leaf",
+            "id": "leaf-1",
+            "sectionIndex": 1,
+            "weight": 1
+          },
+          {
+            "type": "leaf",
+            "id": "leaf-2",
+            "sectionIndex": 4,
+            "weight": 1
+          }
+        ]
+      }
+    }
+  }
+}

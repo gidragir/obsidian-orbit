@@ -1,0 +1,273 @@
+.orbit-tiling-view {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.orbit-tiling-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: var(--orbit-tiling-gap, 10px);
+  gap: var(--orbit-tiling-gap, 10px);
+  box-sizing: border-box;
+  background-color: var(--background-primary-alt);
+  overflow: hidden;
+}
+
+.orbit-tiling-branch {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  gap: var(--orbit-tiling-gap, 10px);
+}
+
+.orbit-tiling-branch-column {
+  flex-direction: row;
+}
+
+.orbit-tiling-branch-row {
+  flex-direction: column;
+}
+
+.orbit-tiling-splitter-col {
+  width: 6px;
+  cursor: col-resize;
+  background-color: transparent;
+  flex-shrink: 0;
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.orbit-tiling-splitter-col:hover,
+.orbit-tiling-splitter-col.is-dragging {
+  background-color: var(--interactive-accent);
+}
+
+.orbit-tiling-splitter-row {
+  height: 6px;
+  cursor: row-resize;
+  background-color: transparent;
+  flex-shrink: 0;
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.orbit-tiling-splitter-row:hover,
+.orbit-tiling-splitter-row.is-dragging {
+  background-color: var(--interactive-accent);
+}
+
+.orbit-tiling-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background-color: var(--background-primary);
+  box-shadow: var(--shadow-s);
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+  transition: opacity 0.15s ease;
+}
+
+.orbit-tiling-panel.is-dragging {
+  opacity: 0.45;
+}
+
+.orbit-tiling-drop-indicator {
+  position: absolute;
+  pointer-events: none;
+  background-color: var(--interactive-accent);
+  opacity: 0.25;
+  border: 2px dashed var(--interactive-accent);
+  border-radius: var(--radius-m);
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.orbit-tiling-drop-indicator.zone-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+}
+
+.orbit-tiling-drop-indicator.zone-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+}
+
+.orbit-tiling-drop-indicator.zone-left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 50%;
+}
+
+.orbit-tiling-drop-indicator.zone-right {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+}
+
+.orbit-tiling-drop-indicator.zone-center {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.orbit-tiling-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background-color: var(--background-secondary);
+  border-bottom: 1px solid var(--background-modifier-border);
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-semibold);
+  user-select: none;
+  flex-shrink: 0;
+  cursor: grab;
+}
+
+.orbit-tiling-panel-header:active {
+  cursor: grabbing;
+}
+
+.orbit-tiling-panel-grip {
+  color: var(--text-faint);
+  margin-right: 4px;
+  font-size: 14px;
+  user-select: none;
+}
+
+.orbit-tiling-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.orbit-tiling-panel-badge {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border-radius: var(--radius-s);
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.orbit-tiling-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.orbit-tiling-panel-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 6px;
+  min-width: 22px;
+  min-height: 22px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-s);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.orbit-tiling-panel-actions button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.orbit-tiling-panel-actions button:hover {
+  background-color: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.orbit-tiling-panel-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.orbit-tiling-panel-preview {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  padding: 12px 16px;
+  user-select: text;
+  box-sizing: border-box;
+  font-family: var(--font-text);
+  font-size: var(--font-text-size);
+  line-height: var(--line-height-normal);
+  color: var(--text-normal);
+}
+
+.orbit-tiling-panel-preview:focus {
+  outline: none;
+}
+
+.orbit-tiling-panel-preview > :first-child {
+  margin-top: 0;
+}
+
+.orbit-tiling-panel-empty-hint {
+  color: var(--text-faint);
+  font-style: italic;
+  font-size: var(--font-ui-smaller);
+  padding: 8px 0;
+  user-select: none;
+}
+
+.orbit-tiling-panel-editor-container {
+  flex: 1 1 0;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.orbit-tiling-panel-editor-container .cm-editor {
+  height: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  outline: none;
+}
+
+.orbit-tiling-panel-editor-container .cm-scroller {
+  overflow-y: auto !important;
+  font-family: var(--font-text);
+}
+
+.orbit-tiling-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-medium);
+}
