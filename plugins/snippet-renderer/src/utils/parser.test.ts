@@ -74,7 +74,7 @@ describe('extractVariables', () => {
     expect(vars).toEqual(['NAME', 'ROLE'])
   })
 
-  it('extracts braced variables with ${...} syntax', () => {
+  it('extracts braced variables with dollar-brace syntax', () => {
     const vars = extractVariables('Hello ' + '${' + 'NAME}, your role is ' + '${' + 'ROLE}')
     expect(vars).toEqual(['NAME', 'ROLE'])
   })
