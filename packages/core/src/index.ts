@@ -6,3 +6,6 @@
 export * from './markdown'
 export * from './path'
 export * from './settings'
+export * from './tiling-geometry'
+export * from './tiling-splitter'
+export * from './tiling-tree'
