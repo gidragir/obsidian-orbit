@@ -11,6 +11,7 @@ export interface TilingSettings {
   readonly frontmatterKey: string
   readonly debounceMs: number
   readonly panelGap: number
+  readonly syncTextOrder: boolean
   readonly fileLayouts: Record<string, FileLayoutState>
 }
 
@@ -19,5 +20,6 @@ export const DEFAULT_SETTINGS: TilingSettings = {
   frontmatterKey: 'orbit-tiling',
   debounceMs: 500,
   panelGap: 10,
+  syncTextOrder: true,
   fileLayouts: {},
 }

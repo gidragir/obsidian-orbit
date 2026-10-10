@@ -312,3 +312,79 @@ export function moveLeafToPosition(
     isBefore
   )
 }
+
+/**
+ * Re-indexes all leaves in the tree in traversal order starting from 0.
+ */
+export function reindexTreeLeaves(root: TileNode): TileNode {
+  let nextIndex = 0
+
+  function transform(node: TileNode): TileNode {
+    if (node.type === 'leaf') {
+      const reindexed: TileLeafNode = {
+        ...node,
+        sectionIndex: nextIndex++,
+      }
+      return reindexed
+    }
+
+    return {
+      ...node,
+      children: node.children.map(transform),
+    }
+  }
+
+  return transform(root)
+}
+
+/**
+ * Reconciles an existing tree with a target section count:
+ * - Appends leaves for newly added sections
+ * - Removes excess leaves if sections were deleted
+ * - Preserves existing layout geometry and weights
+ */
+export function reconcileTreeWithSections(
+  root: TileNode | null | undefined,
+  sectionCount: number
+): TileNode {
+  const targetCount = Math.max(1, sectionCount)
+  if (!root) {
+    return createDefaultTree(targetCount)
+  }
+
+  let currentTree: TileNode = root
+  let leaves = getAllLeaves(currentTree)
+
+  // 1. Remove excess leaves if sections were removed
+  while (leaves.length > targetCount) {
+    const excessLeaf =
+      leaves.find((l) => l.sectionIndex >= targetCount) ?? leaves[leaves.length - 1]
+    if (!excessLeaf) break
+
+    const pruned = removeLeaf(currentTree, excessLeaf.id)
+    if (!pruned) {
+      return createDefaultTree(targetCount)
+    }
+    currentTree = pruned
+    leaves = getAllLeaves(currentTree)
+  }
+
+  // 2. Add missing leaves if sections were added
+  const existingIndices = new Set(leaves.map((l) => l.sectionIndex))
+  for (let idx = 0; idx < targetCount; idx++) {
+    if (!existingIndices.has(idx)) {
+      const precedingLeaf =
+        leaves.find((l) => l.sectionIndex === idx - 1) ?? leaves[leaves.length - 1]
+      if (!precedingLeaf) {
+        return createDefaultTree(targetCount)
+      }
+
+      const newLeafId = `leaf-${Date.now()}-${idx}`
+      currentTree = splitLeaf(currentTree, precedingLeaf.id, 'row', idx, newLeafId, true)
+      leaves = getAllLeaves(currentTree)
+      existingIndices.add(idx)
+    }
+  }
+
+  return currentTree
+}

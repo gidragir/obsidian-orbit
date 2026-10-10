@@ -2,7 +2,8 @@
   "masterRatio": 0.6,
   "frontmatterKey": "orbit-tiling",
   "debounceMs": 500,
-  "panelGap": 10,
+  "panelGap": 2,
+  "syncTextOrder": false,
   "fileLayouts": {
     "Тест.md": {
       "tree": {
@@ -62,6 +63,56 @@
             "id": "leaf-2",
             "sectionIndex": 4,
             "weight": 1
+          }
+        ]
+      }
+    },
+    "Test tiling renderer.md": {
+      "tree": {
+        "type": "branch",
+        "id": "root-branch",
+        "direction": "column",
+        "weight": 1,
+        "children": [
+          {
+            "type": "branch",
+            "id": "branch-1791575350773-987",
+            "direction": "row",
+            "weight": 0.8032364698646987,
+            "children": [
+              {
+                "type": "leaf",
+                "id": "leaf-1",
+                "sectionIndex": 1,
+                "weight": 0.8763951576537258
+              },
+              {
+                "type": "leaf",
+                "id": "leaf-1791575331779-3",
+                "sectionIndex": 3,
+                "weight": 0.6723469322542294
+              }
+            ]
+          },
+          {
+            "type": "branch",
+            "id": "branch-1791561575952-939",
+            "direction": "row",
+            "weight": 1.1967635301353012,
+            "children": [
+              {
+                "type": "leaf",
+                "id": "leaf-2",
+                "sectionIndex": 2,
+                "weight": 1.8
+              },
+              {
+                "type": "leaf",
+                "id": "leaf-0",
+                "sectionIndex": 0,
+                "weight": 0.19999999999999996
+              }
+            ]
           }
         ]
       }

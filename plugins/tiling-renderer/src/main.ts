@@ -5,12 +5,12 @@ import { TILING_VIEW_TYPE, type TilingLayoutHost, TilingView } from '@ui/tiling-
 import { MarkdownView, Plugin, type TFile } from 'obsidian'
 
 export default class TilingRendererPlugin extends Plugin implements TilingLayoutHost {
-  private pluginSettings: TilingSettings = DEFAULT_SETTINGS
+  settings: TilingSettings = DEFAULT_SETTINGS
   private syncService: TilingSyncService = new TilingSyncService()
 
   async onload(): Promise<void> {
     await this.loadPluginSettings()
-    this.syncService = new TilingSyncService(this.pluginSettings.debounceMs)
+    this.syncService = new TilingSyncService(this.settings.debounceMs, this.settings.syncTextOrder)
 
     this.registerViews()
     this.registerCommands()
@@ -24,40 +24,47 @@ export default class TilingRendererPlugin extends Plugin implements TilingLayout
   }
 
   getSettings(): TilingSettings {
-    return this.pluginSettings
+    return this.settings
   }
 
   getGap(): number {
-    return this.pluginSettings.panelGap
+    return this.settings.panelGap
+  }
+
+  getSyncTextOrder(): boolean {
+    return this.settings.syncTextOrder
   }
 
   async updateSettings(partial: Partial<TilingSettings>): Promise<void> {
-    this.pluginSettings = {
-      ...this.pluginSettings,
+    this.settings = {
+      ...this.settings,
       ...partial,
     }
-    await this.saveData(this.pluginSettings)
+    if (partial.syncTextOrder !== undefined) {
+      this.syncService.setSyncTextOrder(partial.syncTextOrder)
+    }
+    await this.saveData(this.settings)
   }
 
   getLayout(filePath: string): FileLayoutState | null {
-    return this.pluginSettings.fileLayouts[filePath] ?? null
+    return this.settings.fileLayouts[filePath] ?? null
   }
 
   async saveLayout(filePath: string, state: FileLayoutState): Promise<void> {
     const updatedLayouts = {
-      ...this.pluginSettings.fileLayouts,
+      ...this.settings.fileLayouts,
       [filePath]: state,
     }
-    this.pluginSettings = {
-      ...this.pluginSettings,
+    this.settings = {
+      ...this.settings,
       fileLayouts: updatedLayouts,
     }
-    await this.saveData(this.pluginSettings)
+    await this.saveData(this.settings)
   }
 
   private async loadPluginSettings(): Promise<void> {
     const loadedData = (await this.loadData()) as Partial<TilingSettings> | null
-    this.pluginSettings = Object.assign({}, DEFAULT_SETTINGS, loadedData ?? {})
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData ?? {})
   }
 
   private registerViews(): void {
@@ -108,30 +115,30 @@ export default class TilingRendererPlugin extends Plugin implements TilingLayout
   private registerVaultEvents(): void {
     this.registerEvent(
       this.app.vault.on('rename', async (file, oldPath) => {
-        const existing = this.pluginSettings.fileLayouts[oldPath]
+        const existing = this.settings.fileLayouts[oldPath]
         if (existing) {
-          const layouts = { ...this.pluginSettings.fileLayouts }
+          const layouts = { ...this.settings.fileLayouts }
           delete layouts[oldPath]
           layouts[file.path] = existing
-          this.pluginSettings = {
-            ...this.pluginSettings,
+          this.settings = {
+            ...this.settings,
             fileLayouts: layouts,
           }
-          await this.saveData(this.pluginSettings)
+          await this.saveData(this.settings)
         }
       })
     )
 
     this.registerEvent(
       this.app.vault.on('delete', async (file) => {
-        if (this.pluginSettings.fileLayouts[file.path]) {
-          const layouts = { ...this.pluginSettings.fileLayouts }
+        if (this.settings.fileLayouts[file.path]) {
+          const layouts = { ...this.settings.fileLayouts }
           delete layouts[file.path]
-          this.pluginSettings = {
-            ...this.pluginSettings,
+          this.settings = {
+            ...this.settings,
             fileLayouts: layouts,
           }
-          await this.saveData(this.pluginSettings)
+          await this.saveData(this.settings)
         }
       })
     )

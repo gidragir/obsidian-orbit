@@ -3,7 +3,7 @@
   "project": "obsidian-orbit",
   "description": "Централизованный монорепозиторий (Single Source of Truth, SSOT) для проектирования, разработки, тестирования, сборки и независимого распространения плагинов экосистемы Obsidian.md, а также сопутствующ",
   "root_path": "/data/projects/obsidian-orbit",
-  "updated_at": "2026-09-19",
+  "updated_at": "2026-10-09",
   "project_type": "TypeScript / JavaScript (Node/Bun/Deno)",
   "subsystems": [
     {

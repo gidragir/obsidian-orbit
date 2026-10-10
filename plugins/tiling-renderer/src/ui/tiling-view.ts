@@ -4,6 +4,7 @@ import {
   type DropZonePosition,
   getAllLeaves,
   moveLeafToPosition,
+  reconcileTreeWithSections,
   removeLeaf,
   type SplitDirection,
   splitLeaf,
@@ -32,6 +33,7 @@ export interface TilingLayoutHost {
   getLayout(filePath: string): FileLayoutState | null
   saveLayout(filePath: string, state: FileLayoutState): Promise<void>
   getGap(): number
+  getSyncTextOrder(): boolean
 }
 
 export class TilingView extends ItemView {
@@ -92,7 +94,7 @@ export class TilingView extends ItemView {
     const savedLayout = this.layoutHost.getLayout(file.path)
 
     if (savedLayout?.tree) {
-      this.currentTree = savedLayout.tree
+      this.currentTree = reconcileTreeWithSections(savedLayout.tree, sections.length)
     } else {
       this.currentTree = createDefaultTree(sections.length)
     }
@@ -102,6 +104,30 @@ export class TilingView extends ItemView {
 
   async onOpen(): Promise<void> {
     this.containerEl.addClass('orbit-tiling-view')
+
+    this.registerEvent(
+      this.app.vault.on('modify', async (file) => {
+        if (!this.currentFile || file.path !== this.currentFile.path) return
+
+        const diskContent = await this.app.vault.read(this.currentFile)
+        const inMemorySerialized = this.syncService.serialize(
+          this.currentTree,
+          this.layoutHost.getSyncTextOrder()
+        )
+        if (diskContent === inMemorySerialized) return
+
+        this.syncService.loadDocument(diskContent)
+        const sections = this.syncService.getSections()
+        if (this.currentTree) {
+          this.currentTree = reconcileTreeWithSections(this.currentTree, sections.length)
+        } else {
+          this.currentTree = createDefaultTree(sections.length)
+        }
+        await this.persistGeometry()
+        this.renderLayout()
+      })
+    )
+
     if (this.currentFile) {
       await this.setFile(this.currentFile)
     } else {
@@ -429,13 +455,31 @@ export class TilingView extends ItemView {
     const existingEditor = this.activeEditors.get(leaf.id)
     if (existingEditor) {
       const latestContent = existingEditor.getContent()
+      const sectionsBefore = this.syncService.getSections().length
       this.syncService.updateSectionContent(leaf.sectionIndex, latestContent)
+      existingEditor.destroy()
+      this.activeEditors.delete(leaf.id)
+
       if (this.currentFile) {
+        const serialized = this.syncService.serialize(
+          this.currentTree,
+          this.layoutHost.getSyncTextOrder()
+        )
+        this.syncService.loadDocument(serialized)
+        const updatedSections = this.syncService.getSections()
+
+        if (this.currentTree && updatedSections.length !== sectionsBefore) {
+          this.currentTree = reconcileTreeWithSections(this.currentTree, updatedSections.length)
+          void this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
+          this.syncOpenMarkdownViews()
+          void this.persistGeometry()
+          this.renderLayout()
+          return
+        }
+
         this.syncService.scheduleSave(this.app.vault, this.currentFile, this.currentTree)
         this.syncOpenMarkdownViews()
       }
-      existingEditor.destroy()
-      this.activeEditors.delete(leaf.id)
     }
 
     this.panelModes.set(leaf.id, nextMode)
@@ -473,6 +517,9 @@ export class TilingView extends ItemView {
   ): Promise<void> {
     if (!this.currentTree || !this.currentFile) return
     this.currentTree = moveLeafToPosition(this.currentTree, fromId, toId, position)
+    if (this.layoutHost.getSyncTextOrder()) {
+      this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
+    }
     await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
     this.syncOpenMarkdownViews()
     await this.persistGeometry()
@@ -506,6 +553,10 @@ export class TilingView extends ItemView {
       true
     )
 
+    if (this.layoutHost.getSyncTextOrder()) {
+      this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
+    }
+
     await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
     this.syncOpenMarkdownViews()
     await this.persistGeometry()
@@ -523,6 +574,9 @@ export class TilingView extends ItemView {
         this.activeEditors.delete(leafId)
       }
       this.currentTree = updated
+      if (this.layoutHost.getSyncTextOrder()) {
+        this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
+      }
       await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
       this.syncOpenMarkdownViews()
       await this.persistGeometry()
@@ -532,7 +586,10 @@ export class TilingView extends ItemView {
 
   private syncOpenMarkdownViews(): void {
     if (!this.currentFile) return
-    const serialized = this.syncService.serialize(this.currentTree)
+    const serialized = this.syncService.serialize(
+      this.currentTree,
+      this.layoutHost.getSyncTextOrder()
+    )
     const leaves = this.app.workspace.getLeavesOfType('markdown')
     for (const leaf of leaves) {
       const view = leaf.view

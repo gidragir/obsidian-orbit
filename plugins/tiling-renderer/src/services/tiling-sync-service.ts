@@ -2,6 +2,7 @@ import {
   type DocumentSection,
   getAllLeaves,
   mergeTilingDocument,
+  reindexTreeLeaves,
   splitTilingDocument,
   type TileNode,
   type TilingDocument,
@@ -15,9 +16,19 @@ export class TilingSyncService {
   }
   private saveTimeout: ReturnType<typeof setTimeout> | null = null
   private readonly debounceMs: number
+  private syncTextOrder: boolean
 
-  constructor(debounceMs = 500) {
+  constructor(debounceMs = 500, syncTextOrder = true) {
     this.debounceMs = debounceMs
+    this.syncTextOrder = syncTextOrder
+  }
+
+  setSyncTextOrder(syncTextOrder: boolean): void {
+    this.syncTextOrder = syncTextOrder
+  }
+
+  getSyncTextOrder(): boolean {
+    return this.syncTextOrder
   }
 
   loadDocument(rawContent: string): TilingDocument {
@@ -95,8 +106,27 @@ export class TilingSyncService {
     }
   }
 
-  serialize(tree?: TileNode | null): string {
-    if (!tree) {
+  syncSectionsToTree(tree: TileNode): TileNode {
+    const leaves = getAllLeaves(tree)
+    const orderedSections = leaves.map((leaf, idx) => {
+      const sec = this.document.sections[leaf.sectionIndex]
+      return {
+        id: `section-${idx}`,
+        index: idx,
+        content: sec?.content ?? '',
+      }
+    })
+
+    this.document = {
+      rawFrontmatter: this.document.rawFrontmatter,
+      sections: orderedSections,
+    }
+
+    return reindexTreeLeaves(tree)
+  }
+
+  serialize(tree?: TileNode | null, syncTextOrder = this.syncTextOrder): string {
+    if (!tree || !syncTextOrder) {
       return mergeTilingDocument(this.document.sections, this.document.rawFrontmatter)
     }
 
@@ -119,7 +149,7 @@ export class TilingSyncService {
     }
 
     this.saveTimeout = setTimeout(async () => {
-      const serialized = this.serialize(tree)
+      const serialized = this.serialize(tree, this.syncTextOrder)
       await vault.modify(file, serialized)
       this.saveTimeout = null
     }, this.debounceMs)
@@ -130,7 +160,7 @@ export class TilingSyncService {
       clearTimeout(this.saveTimeout)
       this.saveTimeout = null
     }
-    const serialized = this.serialize(tree)
+    const serialized = this.serialize(tree, this.syncTextOrder)
     await vault.modify(file, serialized)
   }
 

@@ -3,6 +3,8 @@ import {
   createDefaultTree,
   getAllLeaves,
   moveLeafToPosition,
+  reconcileTreeWithSections,
+  reindexTreeLeaves,
   removeLeaf,
   splitLeaf,
   swapLeavesById,
@@ -89,5 +91,39 @@ describe('tiling-tree', () => {
     if (moved.type === 'branch') {
       expect(moved.direction).toBe('row')
     }
+  })
+
+  it('re-indexes tree leaves sequentially starting from 0', () => {
+    const tree = createDefaultTree(3)
+    const swapped = swapLeavesById(tree, 'leaf-0', 'leaf-2')
+    const reindexed = reindexTreeLeaves(swapped)
+    const leaves = getAllLeaves(reindexed)
+    expect(leaves.map((l) => l.sectionIndex)).toEqual([0, 1, 2])
+  })
+
+  it('reconciles tree by adding new leaves when sections count increases', () => {
+    // Initially 2 sections (leaves 0 and 1)
+    const tree = createDefaultTree(2)
+    // Section count increased to 4 (e.g. 2 new separators added)
+    const reconciled = reconcileTreeWithSections(tree, 4)
+    const leaves = getAllLeaves(reconciled)
+
+    expect(leaves).toHaveLength(4)
+    expect(leaves.map((l) => l.sectionIndex)).toEqual([0, 1, 2, 3])
+  })
+
+  it('reconciles tree by pruning leaves when sections count decreases', () => {
+    const tree = createDefaultTree(4)
+    const reconciled = reconcileTreeWithSections(tree, 2)
+    const leaves = getAllLeaves(reconciled)
+
+    expect(leaves).toHaveLength(2)
+    expect(leaves.map((l) => l.sectionIndex)).toEqual([0, 1])
+  })
+
+  it('returns default tree if root is null or undefined', () => {
+    const tree = reconcileTreeWithSections(null, 3)
+    const leaves = getAllLeaves(tree)
+    expect(leaves).toHaveLength(3)
   })
 })
