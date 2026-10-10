@@ -1,29 +1,13 @@
+import { DeclarativePluginSettingTab, type DeclarativeSettingHost } from '@packages/adapters'
 import type { TilingSettings } from '@settings/settings'
-import { type App, PluginSettingTab, Setting, type SettingDefinitionItem } from 'obsidian'
-import type TilingRendererPlugin from '../main'
+import { type App, type Plugin, Setting, type SettingDefinitionItem } from 'obsidian'
 
-export class TilingSettingTab extends PluginSettingTab {
-  private readonly plugin: TilingRendererPlugin
-
-  constructor(app: App, plugin: TilingRendererPlugin) {
-    super(app, plugin)
-    this.plugin = plugin
+export class TilingSettingTab extends DeclarativePluginSettingTab<TilingSettings> {
+  constructor(app: App, plugin: Plugin, settingHost?: DeclarativeSettingHost<TilingSettings>) {
+    super(app, plugin, settingHost)
   }
 
-  override getControlValue(key: string): unknown {
-    const settings = this.plugin.getSettings()
-    if (key in settings) {
-      const settingsRecord = settings as unknown as Record<string, unknown>
-      return settingsRecord[key]
-    }
-    return undefined
-  }
-
-  override async setControlValue(key: string, value: unknown): Promise<void> {
-    await this.plugin.updateSettings({ [key]: value })
-  }
-
-  override getSettingDefinitions(): SettingDefinitionItem<keyof TilingSettings>[] {
+  override getSettingDefinitions(): SettingDefinitionItem<string>[] {
     return [
       {
         name: 'Panel gap',
@@ -78,7 +62,7 @@ export class TilingSettingTab extends PluginSettingTab {
     const { containerEl } = this
     containerEl.empty()
 
-    const settings = this.plugin.getSettings()
+    const settings = this.settingHost.getSettings()
 
     new Setting(containerEl)
       .setName('Panel gap')
@@ -89,7 +73,7 @@ export class TilingSettingTab extends PluginSettingTab {
           .setValue(settings.panelGap)
           .setDynamicTooltip()
           .onChange(async (value) => {
-            await this.plugin.updateSettings({ panelGap: value })
+            await this.settingHost.updateSettings({ panelGap: value })
           })
       )
 
@@ -103,7 +87,7 @@ export class TilingSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             const parsed = Number.parseInt(value, 10)
             if (!Number.isNaN(parsed) && parsed >= 100) {
-              await this.plugin.updateSettings({ debounceMs: parsed })
+              await this.settingHost.updateSettings({ debounceMs: parsed })
             }
           })
       )
@@ -115,7 +99,7 @@ export class TilingSettingTab extends PluginSettingTab {
       )
       .addToggle((toggle) =>
         toggle.setValue(settings.syncTextOrder).onChange(async (value) => {
-          await this.plugin.updateSettings({ syncTextOrder: value })
+          await this.settingHost.updateSettings({ syncTextOrder: value })
         })
       )
   }

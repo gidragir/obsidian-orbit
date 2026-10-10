@@ -19,6 +19,7 @@
     "@codemirror/state": "catalog:",
     "@codemirror/view": "catalog:",
     "@lezer/highlight": "catalog:",
+    "@packages/core": "workspace:*",
     "@packages/types": "workspace:*"
   },
   "peerDependencies": {

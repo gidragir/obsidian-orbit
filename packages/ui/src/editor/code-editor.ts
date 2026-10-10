@@ -11,6 +11,7 @@ export interface CodeEditorOptions {
   readonly language?: 'markdown' | 'html'
   readonly tabSize?: number
   readonly showToolbar?: boolean
+  readonly minimal?: boolean
   readonly toolbarOptions?: EditorToolbarOptions
   readonly onSave?: () => void
   readonly onDocChange?: (doc: string) => void
@@ -24,9 +25,12 @@ export class CodeEditor {
   constructor(containerEl: HTMLElement, initialDoc: string, options?: CodeEditorOptions) {
     const opts = options ?? {}
     const tabSize = opts.tabSize ?? 4
-    const showToolbar = opts.showToolbar ?? true
+    const showToolbar = opts.minimal ? false : (opts.showToolbar ?? true)
 
-    const editorWrapper = containerEl.createDiv({ cls: 'orbit-editor-wrapper' })
+    const wrapperCls = opts.minimal
+      ? 'orbit-editor-wrapper orbit-editor-minimal'
+      : 'orbit-editor-wrapper'
+    const editorWrapper = containerEl.createDiv({ cls: wrapperCls })
 
     const updateListener = EditorView.updateListener.of((update) => {
       if (update.docChanged) {
@@ -67,6 +71,14 @@ export class CodeEditor {
 
   getDoc(): string {
     return this.view.state.doc.toString()
+  }
+
+  getContent(): string {
+    return this.getDoc()
+  }
+
+  focus(): void {
+    this.view.focus()
   }
 
   get hasChanges(): boolean {

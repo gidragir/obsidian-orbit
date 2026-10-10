@@ -18,6 +18,7 @@ plugins/*/main.js
 plugins/*/main.js.map
 plugins/*/styles.css
 plugins/*/styles.css.map
+plugins/**/data.json
 *.tsbuildinfo
 
 # AI Context, Snapshots & LLM Prompts

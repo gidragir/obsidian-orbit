@@ -1,4 +1,5 @@
 import type { DropZonePosition } from '@packages/core'
+import { computeDropZone2D } from '@packages/ui'
 
 export const TILING_DND_MIME = 'application/x-orbit-tiling-panel'
 
@@ -46,21 +47,7 @@ export class PanelDndController {
     }
 
     const rect = panelEl.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return
-
-    const relX = (e.clientX - rect.left) / rect.width
-    const relY = (e.clientY - rect.top) / rect.height
-
-    let zone: DropZonePosition = 'center'
-    if (relY < 0.25) {
-      zone = 'top'
-    } else if (relY > 0.75) {
-      zone = 'bottom'
-    } else if (relX < 0.25) {
-      zone = 'left'
-    } else if (relX > 0.75) {
-      zone = 'right'
-    }
+    const zone = computeDropZone2D(rect, e.clientX, e.clientY)
 
     this.currentDropZone = zone
     this.showIndicator(panelEl, zone)

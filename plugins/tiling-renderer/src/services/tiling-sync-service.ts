@@ -3,24 +3,29 @@ import {
   getAllLeaves,
   mergeTilingDocument,
   reindexTreeLeaves,
+  reorderArray,
   splitTilingDocument,
   type TileNode,
   type TilingDocument,
 } from '@packages/core'
-import type { TFile, Vault } from 'obsidian'
 
+/**
+ * Pure domain store managing tiled markdown document sections and serialization.
+ * 0% dependencies on Obsidian API, DOM, or timers.
+ */
 export class TilingSyncService {
   private document: TilingDocument = {
     rawFrontmatter: '',
     sections: [],
   }
-  private saveTimeout: ReturnType<typeof setTimeout> | null = null
-  private readonly debounceMs: number
   private syncTextOrder: boolean
 
-  constructor(debounceMs = 500, syncTextOrder = true) {
-    this.debounceMs = debounceMs
-    this.syncTextOrder = syncTextOrder
+  constructor(debounceOrSync?: number | boolean, syncTextOrder = true) {
+    if (typeof debounceOrSync === 'boolean') {
+      this.syncTextOrder = debounceOrSync
+    } else {
+      this.syncTextOrder = syncTextOrder
+    }
   }
 
   setSyncTextOrder(syncTextOrder: boolean): void {
@@ -75,26 +80,8 @@ export class TilingSyncService {
   }
 
   reorderSections(fromIndex: number, toIndex: number): void {
-    if (
-      fromIndex < 0 ||
-      fromIndex >= this.document.sections.length ||
-      toIndex < 0 ||
-      toIndex >= this.document.sections.length ||
-      fromIndex === toIndex
-    ) {
-      return
-    }
-
-    const currentSections = [...this.document.sections]
-    const item = currentSections[fromIndex]
-    if (!item) {
-      return
-    }
-
-    currentSections.splice(fromIndex, 1)
-    currentSections.splice(toIndex, 0, item)
-
-    const reindexed = currentSections.map((sec, idx) => ({
+    const reordered = reorderArray(this.document.sections, fromIndex, toIndex)
+    const reindexed = reordered.map((sec, idx) => ({
       id: sec.id,
       index: idx,
       content: sec.content,
@@ -141,33 +128,5 @@ export class TilingSyncService {
     })
 
     return mergeTilingDocument(orderedSections, this.document.rawFrontmatter)
-  }
-
-  scheduleSave(vault: Vault, file: TFile, tree?: TileNode | null): void {
-    if (this.saveTimeout !== null) {
-      clearTimeout(this.saveTimeout)
-    }
-
-    this.saveTimeout = setTimeout(async () => {
-      const serialized = this.serialize(tree, this.syncTextOrder)
-      await vault.modify(file, serialized)
-      this.saveTimeout = null
-    }, this.debounceMs)
-  }
-
-  async flushSave(vault: Vault, file: TFile, tree?: TileNode | null): Promise<void> {
-    if (this.saveTimeout !== null) {
-      clearTimeout(this.saveTimeout)
-      this.saveTimeout = null
-    }
-    const serialized = this.serialize(tree, this.syncTextOrder)
-    await vault.modify(file, serialized)
-  }
-
-  dispose(): void {
-    if (this.saveTimeout !== null) {
-      clearTimeout(this.saveTimeout)
-      this.saveTimeout = null
-    }
   }
 }

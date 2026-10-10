@@ -14,16 +14,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@codemirror/commands": "catalog:",
-    "@codemirror/lang-markdown": "catalog:",
-    "@codemirror/language": "catalog:",
-    "@codemirror/state": "catalog:",
-    "@codemirror/view": "catalog:",
     "@packages/adapters": "workspace:*",
     "@packages/core": "workspace:*",
-    "@packages/obsidian-utils": "workspace:*",
     "@packages/ports": "workspace:*",
-    "@packages/types": "workspace:*",
     "@packages/ui": "workspace:*"
   },
   "devDependencies": {

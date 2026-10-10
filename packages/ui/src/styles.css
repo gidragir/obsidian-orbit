@@ -138,6 +138,16 @@
   border-color: var(--interactive-accent);
 }
 
+.orbit-editor-wrapper.orbit-editor-minimal {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+}
+
+.orbit-editor-wrapper.orbit-editor-minimal .orbit-editor .cm-scroller {
+  padding: 0;
+}
+
 .orbit-editor-toolbar {
   display: flex;
   height: 36px;

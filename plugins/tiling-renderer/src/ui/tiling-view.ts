@@ -1,31 +1,23 @@
+import { DebouncedWorkspaceFileAdapter } from '@packages/adapters'
 import {
   createDefaultTree,
-  type DocumentSection,
+  type Direction,
   type DropZonePosition,
+  findAdjacentLeaf,
   getAllLeaves,
   moveLeafToPosition,
   reconcileTreeWithSections,
-  removeLeaf,
+  resizeLeafInDirection,
   type SplitDirection,
-  splitLeaf,
-  type TileBranchNode,
-  type TileLeafNode,
+  swapLeavesById,
   type TileNode,
-  updateBranchWeights,
 } from '@packages/core'
+import type { CodeEditor } from '@packages/ui'
 import type { TilingSyncService } from '@services/tiling-sync-service'
 import type { FileLayoutState } from '@settings/settings'
 import { PanelDndController } from '@ui/panel-dnd-controller'
-import { PanelEditor } from '@ui/panel-editor'
-import {
-  ItemView,
-  MarkdownRenderer,
-  MarkdownView,
-  setIcon,
-  TFile,
-  type ViewStateResult,
-  type WorkspaceLeaf,
-} from 'obsidian'
+import { type TilingPanelHost, TilingPanelRenderer } from '@ui/tiling-panel-renderer'
+import { type Component, ItemView, TFile, type ViewStateResult, type WorkspaceLeaf } from 'obsidian'
 
 export const TILING_VIEW_TYPE = 'orbit-tiling-view'
 
@@ -36,24 +28,35 @@ export interface TilingLayoutHost {
   getSyncTextOrder(): boolean
 }
 
-export class TilingView extends ItemView {
-  private currentFile: TFile | null = null
-  private readonly syncService: TilingSyncService
-  private readonly layoutHost: TilingLayoutHost
-  private readonly dndController: PanelDndController
-  private readonly activeEditors = new Map<string, PanelEditor>()
-  private readonly panelModes = new Map<string, 'preview' | 'edit'>()
-  private currentTree: TileNode | null = null
+export class TilingView extends ItemView implements TilingPanelHost {
+  currentFile: TFile | null = null
+  currentTree: TileNode | null = null
+  readonly syncService: TilingSyncService
+  readonly layoutHost: TilingLayoutHost
+  readonly dndController: PanelDndController
+  readonly activeEditors = new Map<string, CodeEditor>()
+  readonly panelModes = new Map<string, 'preview' | 'edit'>()
+  readonly panelElements = new Map<string, HTMLElement>()
+  private readonly fileAdapter: DebouncedWorkspaceFileAdapter
+  private readonly panelRenderer: TilingPanelRenderer
+  private cleanups: (() => void)[] = []
+  private activeLeafId: string | null = null
 
   constructor(leaf: WorkspaceLeaf, syncService: TilingSyncService, layoutHost: TilingLayoutHost) {
     super(leaf)
     this.syncService = syncService
     this.layoutHost = layoutHost
+    this.fileAdapter = new DebouncedWorkspaceFileAdapter(this.app)
     this.dndController = new PanelDndController({
       onMoveToPosition: (fromId, toId, position) => {
         void this.handleMoveLeafToPosition(fromId, toId, position)
       },
     })
+    this.panelRenderer = new TilingPanelRenderer(this)
+  }
+
+  get component(): Component {
+    return this
   }
 
   getViewType(): string {
@@ -69,9 +72,7 @@ export class TilingView extends ItemView {
   }
 
   getState(): Record<string, unknown> {
-    return {
-      file: this.currentFile?.path ?? '',
-    }
+    return { file: this.currentFile?.path ?? '' }
   }
 
   async setState(state: Record<string, unknown>, result: ViewStateResult): Promise<void> {
@@ -86,6 +87,11 @@ export class TilingView extends ItemView {
   }
 
   async setFile(file: TFile): Promise<void> {
+    if (this.currentFile && this.currentFile.path !== file.path) {
+      await this.flushSave()
+      await this.persistGeometry()
+    }
+
     this.currentFile = file
     const content = await this.app.vault.read(file)
     this.syncService.loadDocument(content)
@@ -93,11 +99,9 @@ export class TilingView extends ItemView {
     const sections = this.syncService.getSections()
     const savedLayout = this.layoutHost.getLayout(file.path)
 
-    if (savedLayout?.tree) {
-      this.currentTree = reconcileTreeWithSections(savedLayout.tree, sections.length)
-    } else {
-      this.currentTree = createDefaultTree(sections.length)
-    }
+    this.currentTree = savedLayout?.tree
+      ? reconcileTreeWithSections(savedLayout.tree, sections.length)
+      : createDefaultTree(sections.length)
 
     this.renderLayout()
   }
@@ -110,19 +114,18 @@ export class TilingView extends ItemView {
         if (!this.currentFile || file.path !== this.currentFile.path) return
 
         const diskContent = await this.app.vault.read(this.currentFile)
-        const inMemorySerialized = this.syncService.serialize(
+        const inMemory = this.syncService.serialize(
           this.currentTree,
           this.layoutHost.getSyncTextOrder()
         )
-        if (diskContent === inMemorySerialized) return
+        if (diskContent === inMemory) return
 
         this.syncService.loadDocument(diskContent)
         const sections = this.syncService.getSections()
-        if (this.currentTree) {
-          this.currentTree = reconcileTreeWithSections(this.currentTree, sections.length)
-        } else {
-          this.currentTree = createDefaultTree(sections.length)
-        }
+        this.currentTree = this.currentTree
+          ? reconcileTreeWithSections(this.currentTree, sections.length)
+          : createDefaultTree(sections.length)
+
         await this.persistGeometry()
         this.renderLayout()
       })
@@ -137,48 +140,57 @@ export class TilingView extends ItemView {
 
   async onClose(): Promise<void> {
     if (this.currentFile) {
-      await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
-      this.syncOpenMarkdownViews()
+      await this.flushSave()
       await this.persistGeometry()
     }
-    this.cleanupEditors()
+    this.fileAdapter.dispose()
+    this.cleanupRenderedState()
   }
 
-  toggleAllPanelsMode(): void {
-    if (!this.currentTree) return
-    const leaves = getAllLeaves(this.currentTree)
-    const anyPreview = leaves.some((l) => (this.panelModes.get(l.id) ?? 'preview') === 'preview')
-    const targetMode = anyPreview ? 'edit' : 'preview'
-    for (const leaf of leaves) {
-      this.panelModes.set(leaf.id, targetMode)
-    }
-    this.renderLayout()
+  addCleanup(cleanup: () => void): void {
+    this.cleanups.push(cleanup)
   }
 
-  private cleanupEditors(): void {
-    for (const editor of this.activeEditors.values()) {
-      editor.destroy()
+  scheduleSave(): void {
+    if (this.currentFile) {
+      this.fileAdapter.scheduleSave(this.currentFile, () => this.getSerializedContent())
     }
+  }
+
+  async flushSave(): Promise<void> {
+    if (this.currentFile) {
+      await this.fileAdapter.flushSave(this.currentFile, () => this.getSerializedContent())
+    }
+  }
+
+  private getSerializedContent(): string {
+    return this.syncService.serialize(this.currentTree, this.layoutHost.getSyncTextOrder())
+  }
+
+  private cleanupRenderedState(): void {
+    for (const cleanup of this.cleanups) cleanup()
+    this.cleanups = []
+    for (const editor of this.activeEditors.values()) editor.destroy()
     this.activeEditors.clear()
+    this.panelElements.clear()
   }
 
   private renderEmptyState(): void {
-    this.cleanupEditors()
+    this.cleanupRenderedState()
+    this.activeLeafId = null
     const contentEl = this.contentEl
     contentEl.empty()
 
     const empty = contentEl.createDiv({ cls: 'orbit-tiling-empty' })
-    empty.createDiv({
-      text: 'No active note selected for Tiling Renderer.',
-    })
+    empty.createDiv({ text: 'No active note selected for Tiling Renderer.' })
     empty.createDiv({
       text: 'Open a markdown note and run "Tiling renderer: Open current note".',
       cls: 'text-muted',
     })
   }
 
-  private renderLayout(): void {
-    this.cleanupEditors()
+  renderLayout(): void {
+    this.cleanupRenderedState()
     const contentEl = this.contentEl
     contentEl.empty()
 
@@ -191,323 +203,25 @@ export class TilingView extends ItemView {
     const container = contentEl.createDiv({ cls: 'orbit-tiling-container' })
     container.style.setProperty('--orbit-tiling-gap', `${this.layoutHost.getGap()}px`)
 
-    this.renderNode(container, this.currentTree, sections)
-  }
+    this.panelRenderer.renderNode(container, this.currentTree, sections)
 
-  private renderNode(
-    parentEl: HTMLElement,
-    node: TileNode,
-    sections: ReadonlyArray<DocumentSection>
-  ): HTMLElement {
-    if (node.type === 'branch') {
-      return this.renderBranch(parentEl, node, sections)
-    }
-    return this.renderLeaf(parentEl, node, sections)
-  }
-
-  private renderBranch(
-    parentEl: HTMLElement,
-    branch: TileBranchNode,
-    sections: ReadonlyArray<DocumentSection>
-  ): HTMLElement {
-    const branchEl = parentEl.createDiv({
-      cls: `orbit-tiling-branch orbit-tiling-branch-${branch.direction}`,
-    })
-    branchEl.style.flex = `${branch.weight} 1 0`
-
-    const childEls: HTMLElement[] = []
-
-    for (let i = 0; i < branch.children.length; i++) {
-      const childNode = branch.children[i]
-      if (!childNode) continue
-
-      if (i > 0) {
-        const isCol = branch.direction === 'column'
-        const splitterCls = isCol ? 'orbit-tiling-splitter-col' : 'orbit-tiling-splitter-row'
-        const splitterEl = branchEl.createDiv({ cls: splitterCls })
-        this.attachBranchSplitter(splitterEl, branch, childEls, i - 1, i, isCol)
-      }
-
-      const childEl = this.renderNode(branchEl, childNode, sections)
-      childEls.push(childEl)
+    const leaves = getAllLeaves(this.currentTree)
+    if (!this.activeLeafId || !leaves.some((l) => l.id === this.activeLeafId)) {
+      this.activeLeafId = leaves[0]?.id ?? null
     }
 
-    return branchEl
-  }
-
-  private attachBranchSplitter(
-    splitterEl: HTMLElement,
-    branch: TileBranchNode,
-    childEls: HTMLElement[],
-    prevIdx: number,
-    nextIdx: number,
-    isCol: boolean
-  ): void {
-    splitterEl.addEventListener('pointerdown', (e: PointerEvent) => {
-      e.preventDefault()
-      splitterEl.addClass('is-dragging')
-      document.body.style.cursor = isCol ? 'col-resize' : 'row-resize'
-
-      const prevEl = childEls[prevIdx]
-      const nextEl = childEls[nextIdx]
-      const prevChild = branch.children[prevIdx]
-      const nextChild = branch.children[nextIdx]
-
-      if (!prevEl || !nextEl || !prevChild || !nextChild) return
-
-      const prevRect = prevEl.getBoundingClientRect()
-      const nextRect = nextEl.getBoundingClientRect()
-      const totalDimension = isCol
-        ? prevRect.width + nextRect.width
-        : prevRect.height + nextRect.height
-
-      if (totalDimension <= 0) return
-
-      const startCoord = isCol ? e.clientX : e.clientY
-      const initialPrevDimension = isCol ? prevRect.width : prevRect.height
-      const totalWeight = prevChild.weight + nextChild.weight
-
-      const onPointerMove = (moveEvt: PointerEvent) => {
-        const currentCoord = isCol ? moveEvt.clientX : moveEvt.clientY
-        const delta = currentCoord - startCoord
-        const targetDimension = initialPrevDimension + delta
-
-        let ratio = targetDimension / totalDimension
-        if (ratio < 0.1) ratio = 0.1
-        if (ratio > 0.9) ratio = 0.9
-
-        const newPrevWeight = totalWeight * ratio
-        const newNextWeight = totalWeight * (1 - ratio)
-
-        prevEl.style.flex = `${newPrevWeight} 1 0`
-        nextEl.style.flex = `${newNextWeight} 1 0`
-
-        const newWeights = branch.children.map((child, idx) => {
-          if (idx === prevIdx) return newPrevWeight
-          if (idx === nextIdx) return newNextWeight
-          return child.weight
-        })
-
-        if (this.currentTree) {
-          this.currentTree = updateBranchWeights(this.currentTree, branch.id, newWeights)
-        }
-      }
-
-      const onPointerUp = () => {
-        splitterEl.removeClass('is-dragging')
-        document.body.style.cursor = ''
-        window.removeEventListener('pointermove', onPointerMove)
-        window.removeEventListener('pointerup', onPointerUp)
-        void this.persistGeometry()
-      }
-
-      window.addEventListener('pointermove', onPointerMove)
-      window.addEventListener('pointerup', onPointerUp)
-    })
-  }
-
-  private renderLeaf(
-    parentEl: HTMLElement,
-    leaf: TileLeafNode,
-    sections: ReadonlyArray<DocumentSection>
-  ): HTMLElement {
-    const section = sections[leaf.sectionIndex]
-    const sectionContent = section?.content ?? ''
-    const currentMode = this.panelModes.get(leaf.id) ?? 'preview'
-
-    const panel = parentEl.createDiv({ cls: 'orbit-tiling-panel' })
-    panel.style.flex = `${leaf.weight} 1 0`
-
-    const header = panel.createDiv({ cls: 'orbit-tiling-panel-header' })
-    header.draggable = true
-
-    const title = header.createDiv({ cls: 'orbit-tiling-panel-title' })
-    const grip = title.createSpan({ cls: 'orbit-tiling-panel-grip' })
-    grip.textContent = '⠿'
-
-    const badge = title.createSpan({ cls: 'orbit-tiling-panel-badge' })
-    badge.textContent = `#${leaf.sectionIndex + 1}`
-
-    title.createSpan({
-      text: `Panel ${leaf.sectionIndex + 1}`,
-    })
-
-    const actions = header.createDiv({ cls: 'orbit-tiling-panel-actions' })
-
-    const toggleModeBtn = actions.createEl('button', {
-      cls: 'clickable-icon orbit-tiling-mode-btn',
-    })
-    this.updateToggleIcon(toggleModeBtn, currentMode)
-
-    const splitRightBtn = actions.createEl('button', { text: '|' })
-    splitRightBtn.title = 'Split into column (right)'
-    splitRightBtn.addEventListener('click', () => {
-      void this.handleSplit(leaf.id, 'column')
-    })
-
-    const splitDownBtn = actions.createEl('button', { text: '—' })
-    splitDownBtn.title = 'Split into row (down)'
-    splitDownBtn.addEventListener('click', () => {
-      void this.handleSplit(leaf.id, 'row')
-    })
-
-    const allLeaves = this.currentTree ? getAllLeaves(this.currentTree) : []
-    if (allLeaves.length > 1) {
-      const closeBtn = actions.createEl('button', { text: '×' })
-      closeBtn.title = 'Close panel'
-      closeBtn.addEventListener('click', () => {
-        void this.handleCloseLeaf(leaf.id)
-      })
-    }
-
-    this.attachDndEvents(header, panel, leaf.id)
-
-    const bodyEl = panel.createDiv({ cls: 'orbit-tiling-panel-body' })
-
-    this.renderLeafContent(bodyEl, leaf, currentMode, sectionContent, toggleModeBtn)
-
-    toggleModeBtn.addEventListener('click', () => {
-      const activeMode = this.panelModes.get(leaf.id) ?? 'preview'
-      const nextMode = activeMode === 'preview' ? 'edit' : 'preview'
-      this.setLeafMode(bodyEl, leaf, nextMode, toggleModeBtn)
-    })
-
-    return panel
-  }
-
-  private updateToggleIcon(btn: HTMLElement, mode: 'preview' | 'edit'): void {
-    btn.empty()
-    if (mode === 'preview') {
-      setIcon(btn, 'pencil')
-      btn.title = 'Edit section (or double-click content)'
-    } else {
-      setIcon(btn, 'book-open')
-      btn.title = 'Render markdown preview'
+    if (this.activeLeafId) {
+      this.highlightFocusedPanel(this.activeLeafId)
     }
   }
 
-  private renderLeafContent(
-    bodyEl: HTMLElement,
-    leaf: TileLeafNode,
-    mode: 'preview' | 'edit',
-    initialContent: string,
-    toggleBtn: HTMLElement
-  ): void {
-    bodyEl.empty()
-
-    if (mode === 'preview') {
-      const previewEl = bodyEl.createDiv({
-        cls: 'orbit-tiling-panel-preview markdown-rendered markdown-preview-view',
-      })
-
-      if (initialContent.trim() === '') {
-        const hint = previewEl.createDiv({ cls: 'orbit-tiling-panel-empty-hint' })
-        hint.textContent = 'Empty section. Double-click or click the edit icon to write.'
-      } else {
-        void MarkdownRenderer.render(
-          this.app,
-          initialContent,
-          previewEl,
-          this.currentFile?.path ?? '',
-          this
-        )
-      }
-
-      previewEl.addEventListener('dblclick', () => {
-        this.setLeafMode(bodyEl, leaf, 'edit', toggleBtn)
-      })
-
-      previewEl.addEventListener('click', (event: MouseEvent) => {
-        const target = event.target as HTMLElement | null
-        const linkEl = target?.closest('a.internal-link') as HTMLAnchorElement | null
-        if (linkEl) {
-          event.preventDefault()
-          const href = linkEl.getAttribute('data-href') ?? linkEl.getAttribute('href')
-          if (href) {
-            void this.app.workspace.openLinkText(href, this.currentFile?.path ?? '', false)
-          }
-        }
-      })
-    } else {
-      const editorEl = bodyEl.createDiv({ cls: 'orbit-tiling-panel-editor-container' })
-      const panelEditor = new PanelEditor({
-        initialContent,
-        containerEl: editorEl,
-        onContentChange: (newContent) => {
-          this.syncService.updateSectionContent(leaf.sectionIndex, newContent)
-          if (this.currentFile) {
-            this.syncService.scheduleSave(this.app.vault, this.currentFile, this.currentTree)
-            this.syncOpenMarkdownViews()
-          }
-        },
-      })
-      this.activeEditors.set(leaf.id, panelEditor)
-      setTimeout(() => panelEditor.focus(), 20)
+  async saveAndRerender(): Promise<void> {
+    if (this.layoutHost.getSyncTextOrder() && this.currentTree) {
+      this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
     }
-  }
-
-  private setLeafMode(
-    bodyEl: HTMLElement,
-    leaf: TileLeafNode,
-    nextMode: 'preview' | 'edit',
-    toggleBtn: HTMLElement
-  ): void {
-    const existingEditor = this.activeEditors.get(leaf.id)
-    if (existingEditor) {
-      const latestContent = existingEditor.getContent()
-      const sectionsBefore = this.syncService.getSections().length
-      this.syncService.updateSectionContent(leaf.sectionIndex, latestContent)
-      existingEditor.destroy()
-      this.activeEditors.delete(leaf.id)
-
-      if (this.currentFile) {
-        const serialized = this.syncService.serialize(
-          this.currentTree,
-          this.layoutHost.getSyncTextOrder()
-        )
-        this.syncService.loadDocument(serialized)
-        const updatedSections = this.syncService.getSections()
-
-        if (this.currentTree && updatedSections.length !== sectionsBefore) {
-          this.currentTree = reconcileTreeWithSections(this.currentTree, updatedSections.length)
-          void this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
-          this.syncOpenMarkdownViews()
-          void this.persistGeometry()
-          this.renderLayout()
-          return
-        }
-
-        this.syncService.scheduleSave(this.app.vault, this.currentFile, this.currentTree)
-        this.syncOpenMarkdownViews()
-      }
-    }
-
-    this.panelModes.set(leaf.id, nextMode)
-    this.updateToggleIcon(toggleBtn, nextMode)
-
-    const sections = this.syncService.getSections()
-    const section = sections[leaf.sectionIndex]
-    const content = section?.content ?? ''
-
-    this.renderLeafContent(bodyEl, leaf, nextMode, content, toggleBtn)
-  }
-
-  private attachDndEvents(headerEl: HTMLElement, panelEl: HTMLElement, leafId: string): void {
-    headerEl.addEventListener('dragstart', (e: DragEvent) => {
-      this.dndController.onDragStart(e, leafId, panelEl)
-    })
-    panelEl.addEventListener('dragover', (e: DragEvent) => {
-      this.dndController.onDragOver(e, leafId, panelEl)
-    })
-    panelEl.addEventListener('dragleave', () => {
-      this.dndController.onDragLeave(panelEl)
-    })
-    panelEl.addEventListener('drop', (e: DragEvent) => {
-      this.dndController.onDrop(e, leafId, panelEl)
-    })
-    headerEl.addEventListener('dragend', () => {
-      this.dndController.onDragEnd(panelEl)
-    })
+    await this.flushSave()
+    await this.persistGeometry()
+    this.renderLayout()
   }
 
   private async handleMoveLeafToPosition(
@@ -517,92 +231,109 @@ export class TilingView extends ItemView {
   ): Promise<void> {
     if (!this.currentTree || !this.currentFile) return
     this.currentTree = moveLeafToPosition(this.currentTree, fromId, toId, position)
-    if (this.layoutHost.getSyncTextOrder()) {
-      this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
-    }
-    await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
-    this.syncOpenMarkdownViews()
-    await this.persistGeometry()
-    this.renderLayout()
+    await this.saveAndRerender()
   }
 
-  private async handleSplit(leafId: string, direction: SplitDirection): Promise<void> {
-    if (!this.currentTree || !this.currentFile) return
-
-    const sections = this.syncService.getSections()
-    const allLeaves = getAllLeaves(this.currentTree)
-
-    let assignedIndex = sections.findIndex(
-      (sec) => !allLeaves.some((l) => l.sectionIndex === sec.index)
-    )
-
-    if (assignedIndex === -1) {
-      const newSectionIndex = sections.length
-      this.syncService.updateSectionContent(newSectionIndex, 'New Section')
-      assignedIndex = newSectionIndex
-    }
-
-    const newLeafId = `leaf-${Date.now()}`
-    this.panelModes.set(newLeafId, 'edit')
-    this.currentTree = splitLeaf(
-      this.currentTree,
-      leafId,
-      direction,
-      assignedIndex,
-      newLeafId,
-      true
-    )
-
-    if (this.layoutHost.getSyncTextOrder()) {
-      this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
-    }
-
-    await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
-    this.syncOpenMarkdownViews()
-    await this.persistGeometry()
-    this.renderLayout()
-  }
-
-  private async handleCloseLeaf(leafId: string): Promise<void> {
-    if (!this.currentTree || !this.currentFile) return
-    const updated = removeLeaf(this.currentTree, leafId)
-    if (updated) {
-      this.panelModes.delete(leafId)
-      const existing = this.activeEditors.get(leafId)
-      if (existing) {
-        existing.destroy()
-        this.activeEditors.delete(leafId)
-      }
-      this.currentTree = updated
-      if (this.layoutHost.getSyncTextOrder()) {
-        this.currentTree = this.syncService.syncSectionsToTree(this.currentTree)
-      }
-      await this.syncService.flushSave(this.app.vault, this.currentFile, this.currentTree)
-      this.syncOpenMarkdownViews()
-      await this.persistGeometry()
-      this.renderLayout()
-    }
-  }
-
-  private syncOpenMarkdownViews(): void {
-    if (!this.currentFile) return
-    const serialized = this.syncService.serialize(
-      this.currentTree,
-      this.layoutHost.getSyncTextOrder()
-    )
-    const leaves = this.app.workspace.getLeavesOfType('markdown')
-    for (const leaf of leaves) {
-      const view = leaf.view
-      if (view instanceof MarkdownView && view.file?.path === this.currentFile.path) {
-        view.setViewData(serialized, false)
-      }
-    }
-  }
-
-  private async persistGeometry(): Promise<void> {
+  async persistGeometry(): Promise<void> {
     if (!this.currentFile || !this.currentTree) return
     await this.layoutHost.saveLayout(this.currentFile.path, {
       tree: this.currentTree,
     })
+  }
+
+  // --- Hyprland Focus & Navigation ---
+
+  getActiveLeafId(): string | null {
+    return this.activeLeafId
+  }
+
+  setActiveLeaf(leafId: string, focusEditor = false): void {
+    if (this.activeLeafId === leafId) {
+      if (focusEditor) {
+        this.activeEditors.get(leafId)?.focus()
+      }
+      return
+    }
+    this.activeLeafId = leafId
+    this.highlightFocusedPanel(leafId)
+    if (focusEditor) {
+      this.activeEditors.get(leafId)?.focus()
+    }
+  }
+
+  private highlightFocusedPanel(leafId: string): void {
+    for (const [id, el] of this.panelElements.entries()) {
+      if (id === leafId) {
+        el.addClass('is-focused')
+      } else {
+        el.removeClass('is-focused')
+      }
+    }
+  }
+
+  focusInDirection(direction: Direction): void {
+    if (!this.currentTree || !this.activeLeafId) return
+    const neighborId = findAdjacentLeaf(this.currentTree, this.activeLeafId, direction)
+    if (neighborId) {
+      this.setActiveLeaf(neighborId, true)
+    }
+  }
+
+  async moveInDirection(direction: Direction): Promise<void> {
+    if (!this.currentTree || !this.activeLeafId || !this.currentFile) return
+    const neighborId = findAdjacentLeaf(this.currentTree, this.activeLeafId, direction)
+    if (!neighborId) return
+
+    this.currentTree = swapLeavesById(this.currentTree, this.activeLeafId, neighborId)
+    await this.saveAndRerender()
+  }
+
+  async resizeInDirection(direction: Direction, delta = 0.1): Promise<void> {
+    if (!this.currentTree || !this.activeLeafId || !this.currentFile) return
+
+    this.currentTree = resizeLeafInDirection(this.currentTree, this.activeLeafId, direction, delta)
+    await this.persistGeometry()
+    this.renderLayout()
+  }
+
+  async splitActivePanel(direction: SplitDirection): Promise<void> {
+    if (this.activeLeafId) {
+      await this.panelRenderer.handleSplit(this.activeLeafId, direction)
+    }
+  }
+
+  async closeActivePanel(): Promise<void> {
+    if (this.activeLeafId) {
+      await this.panelRenderer.handleCloseLeaf(this.activeLeafId)
+    }
+  }
+
+  toggleActivePanelMode(): void {
+    if (!this.activeLeafId) return
+    const activeEl = this.panelElements.get(this.activeLeafId)
+    if (!activeEl) return
+
+    const bodyEl = activeEl.querySelector('.orbit-tiling-panel-body') as HTMLElement | null
+    const toggleBtn = activeEl.querySelector('.orbit-tiling-mode-btn') as HTMLElement | null
+    const leaf = this.currentTree
+      ? getAllLeaves(this.currentTree).find((l) => l.id === this.activeLeafId)
+      : null
+
+    if (bodyEl && toggleBtn && leaf) {
+      const activeMode = this.panelModes.get(leaf.id) ?? 'preview'
+      const nextMode = activeMode === 'preview' ? 'edit' : 'preview'
+      this.panelRenderer.setLeafMode(bodyEl, leaf, nextMode, toggleBtn)
+    }
+  }
+
+  toggleAllPanelsMode(): void {
+    if (!this.currentTree) return
+    const leaves = getAllLeaves(this.currentTree)
+    const anyPreview = leaves.some((l) => (this.panelModes.get(l.id) ?? 'preview') === 'preview')
+    const targetMode = anyPreview ? 'edit' : 'preview'
+    for (const leaf of leaves) {
+      this.panelModes.set(leaf.id, targetMode)
+    }
+    this.renderLayout()
   }
 }

@@ -19,9 +19,7 @@ export default class TilingRendererPlugin extends Plugin implements TilingLayout
     this.registerSettings()
   }
 
-  onunload(): void {
-    this.syncService.dispose()
-  }
+  onunload(): void {}
 
   getSettings(): TilingSettings {
     return this.settings
@@ -72,6 +70,14 @@ export default class TilingRendererPlugin extends Plugin implements TilingLayout
   }
 
   private registerCommands(): void {
+    this.registerBasicCommands()
+    this.registerHyprlandNavigationCommands()
+    this.registerHyprlandMoveCommands()
+    this.registerHyprlandResizeCommands()
+    this.registerHyprlandWindowCommands()
+  }
+
+  private registerBasicCommands(): void {
     this.addCommand({
       id: 'open-current-note-tiling',
       name: 'Tiling renderer: Open current note in tiling view',
@@ -93,6 +99,144 @@ export default class TilingRendererPlugin extends Plugin implements TilingLayout
         if (!activeView) return false
         if (!checking) {
           activeView.toggleAllPanelsMode()
+        }
+        return true
+      },
+    })
+  }
+
+  private registerHyprlandNavigationCommands(): void {
+    const directions: ReadonlyArray<{
+      id: string
+      name: string
+      dir: 'left' | 'right' | 'up' | 'down'
+    }> = [
+      { id: 'focus-left', name: 'Focus left panel', dir: 'left' },
+      { id: 'focus-right', name: 'Focus right panel', dir: 'right' },
+      { id: 'focus-up', name: 'Focus panel above', dir: 'up' },
+      { id: 'focus-down', name: 'Focus panel below', dir: 'down' },
+    ]
+
+    for (const d of directions) {
+      this.addCommand({
+        id: `tiling-${d.id}`,
+        name: `Tiling renderer: ${d.name}`,
+        checkCallback: (checking: boolean) => {
+          const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+          if (!activeView) return false
+          if (!checking) {
+            activeView.focusInDirection(d.dir)
+          }
+          return true
+        },
+      })
+    }
+  }
+
+  private registerHyprlandMoveCommands(): void {
+    const directions: ReadonlyArray<{
+      id: string
+      name: string
+      dir: 'left' | 'right' | 'up' | 'down'
+    }> = [
+      { id: 'move-left', name: 'Move panel left', dir: 'left' },
+      { id: 'move-right', name: 'Move panel right', dir: 'right' },
+      { id: 'move-up', name: 'Move panel up', dir: 'up' },
+      { id: 'move-down', name: 'Move panel down', dir: 'down' },
+    ]
+
+    for (const d of directions) {
+      this.addCommand({
+        id: `tiling-${d.id}`,
+        name: `Tiling renderer: ${d.name}`,
+        checkCallback: (checking: boolean) => {
+          const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+          if (!activeView) return false
+          if (!checking) {
+            void activeView.moveInDirection(d.dir)
+          }
+          return true
+        },
+      })
+    }
+  }
+
+  private registerHyprlandResizeCommands(): void {
+    const resizes: ReadonlyArray<{
+      id: string
+      name: string
+      dir: 'left' | 'right' | 'up' | 'down'
+    }> = [
+      { id: 'resize-shrink-width', name: 'Shrink panel width', dir: 'left' },
+      { id: 'resize-expand-width', name: 'Expand panel width', dir: 'right' },
+      { id: 'resize-shrink-height', name: 'Shrink panel height', dir: 'up' },
+      { id: 'resize-expand-height', name: 'Expand panel height', dir: 'down' },
+    ]
+
+    for (const r of resizes) {
+      this.addCommand({
+        id: `tiling-${r.id}`,
+        name: `Tiling renderer: ${r.name}`,
+        checkCallback: (checking: boolean) => {
+          const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+          if (!activeView) return false
+          if (!checking) {
+            void activeView.resizeInDirection(r.dir, 0.1)
+          }
+          return true
+        },
+      })
+    }
+  }
+
+  private registerHyprlandWindowCommands(): void {
+    this.addCommand({
+      id: 'tiling-split-horizontal',
+      name: 'Tiling renderer: Split active panel horizontally (down)',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          void activeView.splitActivePanel('row')
+        }
+        return true
+      },
+    })
+
+    this.addCommand({
+      id: 'tiling-split-vertical',
+      name: 'Tiling renderer: Split active panel vertically (right)',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          void activeView.splitActivePanel('column')
+        }
+        return true
+      },
+    })
+
+    this.addCommand({
+      id: 'tiling-close-panel',
+      name: 'Tiling renderer: Close active panel',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          void activeView.closeActivePanel()
+        }
+        return true
+      },
+    })
+
+    this.addCommand({
+      id: 'tiling-toggle-active-panel-mode',
+      name: 'Tiling renderer: Toggle edit and preview mode for active panel',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          activeView.toggleActivePanelMode()
         }
         return true
       },

@@ -147,3 +147,26 @@ This repository contains a 3-tier OpenViking knowledge base in `.agents/knowledg
 - **L1 (Subsystems):** Inspect `.agents/knowledge/subsystems/<subsystem_id>.md` before modifying module files.
 - **L2 (ADR & CLI):** Check `.agents/knowledge/adr/` and `.agents/knowledge/cli/commands.md`.
 - **Sync Knowledge:** Run `sync-knowledge .` to update subsystem documentation.
+
+
+## 🗺 Архитектурная карта и навигация (OpenViking L0-L2)
+
+Проект `obsidian-orbit` использует трехуровневую базу знаний в `.agents/knowledge/`:
+
+- **L0 Индекс (Mental Map):** [`.agents/knowledge/L0_index.md`](.agents/knowledge/L0_index.md) | [JSON](.agents/knowledge/L0_index.json)
+- **Справочник команд (L2):** [`.agents/knowledge/cli/commands.md`](.agents/knowledge/cli/commands.md)
+- **Архитектурные решения (ADR):** [`.agents/knowledge/adr/0001_initial_architecture.md`](.agents/knowledge/adr/0001_initial_architecture.md)
+
+### Подсистемы (L1):
+- [.changeset](.agents/knowledge/subsystems/changeset.md) — Конфигурация для управления изменениями в проекте.
+- [.vault](.agents/knowledge/subsystems/vault.md) — Содержит исходные файлы плагинов и их конфигурации.
+- [dev-vault](.agents/knowledge/subsystems/dev-vault.md) — Разработка и тестирование плагинов.
+- [adapters](.agents/knowledge/subsystems/adapters.md) — Адаптеры для взаимодействия с Obsidian API.
+- [core](.agents/knowledge/subsystems/core.md) — Ядро системы, включающее структуру и геометрию тайлов.
+- [obsidian-utils](.agents/knowledge/subsystems/obsidian-utils.md) — Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.
+- [ports](.agents/knowledge/subsystems/ports.md) — Интерфейсы для взаимодействия с внешними системами.
+- [tsconfig](.agents/knowledge/subsystems/tsconfig.md) — Конфигурации TypeScript для проекта.
+- [types](.agents/knowledge/subsystems/types.md) — Типы для обработки результатов и ошибок.
+- [ui](.agents/knowledge/subsystems/ui.md) — Интерфейс пользователя для редактирования и взаимодействия.
+- [reference](.agents/knowledge/subsystems/reference.md) — Справочная информация и примеры использования плагинов.
+- [scripts](.agents/knowledge/subsystems/scripts.md) — Скрипты для автоматизации процессов сборки и развертывания.

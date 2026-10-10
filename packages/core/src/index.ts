@@ -3,6 +3,7 @@
  * 0% dependencies on Obsidian API, DOM, or Node.js runtime.
  */
 
+export * from './array'
 export * from './markdown'
 export * from './path'
 export * from './settings'

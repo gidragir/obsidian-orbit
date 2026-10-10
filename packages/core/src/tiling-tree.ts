@@ -388,3 +388,65 @@ export function reconcileTreeWithSections(
 
   return currentTree
 }
+
+/**
+ * Finds the parent branch and index of a child node within that branch.
+ */
+export function findParentBranch(
+  root: TileNode,
+  targetId: string
+): { branch: TileBranchNode; index: number } | null {
+  if (root.type === 'leaf') {
+    return null
+  }
+
+  const idx = root.children.findIndex((c) => c.id === targetId)
+  if (idx !== -1) {
+    return { branch: root, index: idx }
+  }
+
+  for (const child of root.children) {
+    const found = findParentBranch(child, targetId)
+    if (found) return found
+  }
+
+  return null
+}
+
+/**
+ * Resizes a leaf within its parent branch by adjusting weights.
+ * Direction determines whether to expand or shrink width/height based on branch orientation.
+ */
+export function resizeLeafInDirection(
+  root: TileNode,
+  leafId: string,
+  direction: 'left' | 'right' | 'up' | 'down',
+  delta = 0.1
+): TileNode {
+  const leaf = findLeafById(root, leafId)
+  if (!leaf) return root
+
+  let currentTargetId = leafId
+  let parentInfo = findParentBranch(root, currentTargetId)
+
+  // Traverse up until we find a branch matching the dimension of the resize action
+  const targetAxis = direction === 'left' || direction === 'right' ? 'column' : 'row'
+  while (parentInfo && parentInfo.branch.direction !== targetAxis) {
+    currentTargetId = parentInfo.branch.id
+    parentInfo = findParentBranch(root, currentTargetId)
+  }
+
+  if (!parentInfo) return root
+
+  const { branch, index } = parentInfo
+  const isExpand = direction === 'right' || direction === 'down'
+  const change = isExpand ? delta : -delta
+
+  const currentChild = branch.children[index]
+  if (!currentChild) return root
+
+  const newChildWeight = Math.max(0.2, currentChild.weight + change)
+  const newWeights = branch.children.map((c, i) => (i === index ? newChildWeight : c.weight))
+
+  return updateBranchWeights(root, branch.id, newWeights)
+}

@@ -1,71 +1,932 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "obsidian-orbit",
-  "description": "Централизованный монорепозиторий (Single Source of Truth, SSOT) для проектирования, разработки, тестирования, сборки и независимого распространения плагинов экосистемы Obsidian.md, а также сопутствующ",
+  "description": "Централизованный монорепозиторий (Single Source of Truth, SSOT) для проектирования, разработки, тестирования, сборки и независимого распространения плагинов экосистемы Obsidian.md, а также сопутствующих разделяемых библи",
   "root_path": "/data/projects/obsidian-orbit",
-  "updated_at": "2026-10-09",
+  "updated_at": "2026-10-10",
   "project_type": "TypeScript / JavaScript (Node/Bun/Deno)",
+  "entrypoints": ["package.json", "mise.toml"],
+  "commands": {
+    "build": "rtk pnpm run build",
+    "test": "rtk pnpm test",
+    "lint": "rtk pnpm run lint",
+    "fmt": "rtk pnpm run format",
+    "run": "rtk pnpm run dev",
+    "custom": {
+      "format": "rtk biome format --write .",
+      "typecheck": "rtk turbo run typecheck",
+      "vault:link": "rtk tsx scripts/link-vault.ts",
+      "runner": "mise (task runner)",
+      "dev": "rtk tsx scripts/link-vault.ts && turbo run dev",
+      "ai:context:all": "rtk tsx scripts/generate-ai-context.ts --all",
+      "version:bump": "rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
+      "release": "rtk turbo run build && tsx scripts/deploy-downstream.ts",
+      "lint": "rtk biome check --write .",
+      "test": "rtk vitest run",
+      "build": "rtk turbo run build",
+      "check": "rtk biome check . && turbo run typecheck test build",
+      "ai:context": "rtk tsx scripts/generate-ai-context.ts",
+      "change": "rtk changeset",
+      "release:merge": "rtk tsx scripts/merge-release-pr.ts"
+    }
+  },
   "subsystems": [
     {
-      "id": ".changeset",
+      "id": "changeset",
       "name": ".changeset",
-      "summary": "Модуль и компоненты директории .changeset",
-      "l1_path": "subsystems/.changeset.md",
-      "tags": [".changeset"]
+      "summary": "Конфигурация для управления изменениями в проекте.",
+      "l1_path": "subsystems/changeset.md",
+      "tags": ["configuration", "changeset"],
+      "key_files": [".changeset/config.json"],
+      "files": [
+        {
+          "path": ".changeset/config.json",
+          "is_entrypoint": false,
+          "lines": 15
+        }
+      ],
+      "tokens": 106
     },
     {
-      "id": ".github",
-      "name": ".github",
-      "summary": "Модуль и компоненты директории .github",
-      "l1_path": "subsystems/.github.md",
-      "tags": [".github"]
-    },
-    {
-      "id": ".turbo",
-      "name": ".turbo",
-      "summary": "Модуль и компоненты директории .turbo",
-      "l1_path": "subsystems/.turbo.md",
-      "tags": [".turbo"]
-    },
-    {
-      "id": ".vault",
+      "id": "vault",
       "name": ".vault",
-      "summary": "Модуль и компоненты директории .vault",
-      "l1_path": "subsystems/.vault.md",
-      "tags": [".vault"]
+      "summary": "Содержит исходные файлы плагинов и их конфигурации.",
+      "l1_path": "subsystems/vault.md",
+      "tags": ["plugins", "source-code"],
+      "entrypoints": [
+        ".vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+        ".vault/.obsidian/plugins/tabs-renderer/src/main.ts",
+        ".vault/.obsidian/plugins/html-renderer/src/main.ts",
+        ".vault/.obsidian/plugins/tabs-renderer/package.json",
+        ".vault/.obsidian/plugins/tiling-renderer/package.json",
+        ".vault/.obsidian/plugins/html-renderer/package.json",
+        ".vault/.obsidian/plugins/snippet-renderer/package.json",
+        ".vault/.obsidian/plugins/snippet-renderer/src/main.ts"
+      ],
+      "key_files": [
+        ".vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+        ".vault/.obsidian/plugins/tabs-renderer/src/main.ts",
+        ".vault/.obsidian/plugins/html-renderer/src/main.ts",
+        ".vault/.obsidian/plugins/tabs-renderer/package.json",
+        ".vault/.obsidian/plugins/tiling-renderer/package.json",
+        ".vault/.obsidian/plugins/html-renderer/package.json",
+        ".vault/.obsidian/plugins/snippet-renderer/package.json",
+        ".vault/.obsidian/plugins/snippet-renderer/src/main.ts",
+        ".vault/.obsidian/workspace.json",
+        ".vault/Test tiling renderer.md",
+        ".vault/.obsidian/plugins/tiling-renderer/data.json",
+        ".vault/.obsidian/hotkeys.json",
+        ".vault/.obsidian/plugins/html-renderer/main.js",
+        ".vault/.obsidian/plugins/html-renderer/README.md",
+        ".vault/.obsidian/plugins/snippet-renderer/README.md"
+      ],
+      "files": [
+        {
+          "path": ".vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 314
+        },
+        {
+          "path": ".vault/.obsidian/plugins/tabs-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 70
+        },
+        {
+          "path": ".vault/.obsidian/plugins/html-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 48
+        },
+        {
+          "path": ".vault/.obsidian/plugins/tabs-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": ".vault/.obsidian/plugins/tiling-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": ".vault/.obsidian/plugins/html-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 32
+        },
+        {
+          "path": ".vault/.obsidian/plugins/snippet-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 31
+        },
+        {
+          "path": ".vault/.obsidian/plugins/snippet-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 19
+        },
+        {
+          "path": ".vault/.obsidian/workspace.json",
+          "is_entrypoint": false,
+          "lines": 215
+        },
+        {
+          "path": ".vault/Test tiling renderer.md",
+          "is_entrypoint": false,
+          "lines": 208
+        },
+        {
+          "path": ".vault/.obsidian/plugins/tiling-renderer/data.json",
+          "is_entrypoint": false,
+          "lines": 163
+        },
+        {
+          "path": ".vault/.obsidian/hotkeys.json",
+          "is_entrypoint": false,
+          "lines": 126
+        },
+        {
+          "path": ".vault/.obsidian/plugins/html-renderer/main.js",
+          "is_entrypoint": false,
+          "lines": 91
+        },
+        {
+          "path": ".vault/.obsidian/plugins/html-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 62
+        },
+        {
+          "path": ".vault/.obsidian/plugins/snippet-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 44
+        }
+      ],
+      "tokens": 123944
     },
     {
-      "id": "packages",
-      "name": "Packages",
-      "summary": "Модуль и компоненты директории packages",
-      "l1_path": "subsystems/packages.md",
-      "tags": ["packages"]
+      "id": "dev-vault",
+      "name": "dev-vault",
+      "summary": "Разработка и тестирование плагинов.",
+      "l1_path": "subsystems/dev-vault.md",
+      "tags": ["development", "testing"],
+      "entrypoints": [
+        "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/html-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/tabs-renderer/package.json",
+        "dev-vault/.obsidian/plugins/tiling-renderer/package.json",
+        "dev-vault/.obsidian/plugins/html-renderer/package.json",
+        "dev-vault/.obsidian/plugins/snippet-renderer/package.json",
+        "dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts"
+      ],
+      "key_files": [
+        "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/html-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/tabs-renderer/package.json",
+        "dev-vault/.obsidian/plugins/tiling-renderer/package.json",
+        "dev-vault/.obsidian/plugins/html-renderer/package.json",
+        "dev-vault/.obsidian/plugins/snippet-renderer/package.json",
+        "dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts",
+        "dev-vault/.obsidian/workspace.json",
+        "dev-vault/Test tiling renderer.md",
+        "dev-vault/.obsidian/plugins/tiling-renderer/data.json",
+        "dev-vault/.obsidian/hotkeys.json",
+        "dev-vault/.obsidian/plugins/html-renderer/main.js",
+        "dev-vault/.obsidian/plugins/html-renderer/README.md",
+        "dev-vault/.obsidian/plugins/snippet-renderer/README.md"
+      ],
+      "files": [
+        {
+          "path": "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 314
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 70
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/html-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 48
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/tabs-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/tiling-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/html-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 32
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/snippet-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 31
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 19
+        },
+        {
+          "path": "dev-vault/.obsidian/workspace.json",
+          "is_entrypoint": false,
+          "lines": 215
+        },
+        {
+          "path": "dev-vault/Test tiling renderer.md",
+          "is_entrypoint": false,
+          "lines": 208
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/tiling-renderer/data.json",
+          "is_entrypoint": false,
+          "lines": 163
+        },
+        {
+          "path": "dev-vault/.obsidian/hotkeys.json",
+          "is_entrypoint": false,
+          "lines": 126
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/html-renderer/main.js",
+          "is_entrypoint": false,
+          "lines": 91
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/html-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 62
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/snippet-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 44
+        }
+      ],
+      "tokens": 123944
     },
     {
-      "id": "plugins",
-      "name": "Plugins",
-      "summary": "Модуль и компоненты директории plugins",
-      "l1_path": "subsystems/plugins.md",
-      "tags": ["plugins"]
+      "id": "adapters",
+      "name": "adapters",
+      "summary": "Адаптеры для взаимодействия с Obsidian API.",
+      "l1_path": "subsystems/adapters.md",
+      "tags": ["adapters", "api"],
+      "entrypoints": ["packages/adapters/package.json", "packages/adapters/src/index.ts"],
+      "key_files": [
+        "packages/adapters/package.json",
+        "packages/adapters/src/index.ts",
+        "packages/adapters/src/editor.ts",
+        "packages/adapters/src/vault.ts",
+        "packages/adapters/src/settings.ts",
+        "packages/adapters/src/command.ts",
+        "packages/adapters/src/clipboard.ts",
+        "packages/adapters/src/notice.ts",
+        "packages/adapters/tsconfig.json"
+      ],
+      "files": [
+        {
+          "path": "packages/adapters/package.json",
+          "is_entrypoint": true,
+          "lines": 30
+        },
+        {
+          "path": "packages/adapters/src/index.ts",
+          "is_entrypoint": true,
+          "lines": 10
+        },
+        {
+          "path": "packages/adapters/src/editor.ts",
+          "is_entrypoint": false,
+          "lines": 108
+        },
+        {
+          "path": "packages/adapters/src/vault.ts",
+          "is_entrypoint": false,
+          "lines": 97
+        },
+        {
+          "path": "packages/adapters/src/settings.ts",
+          "is_entrypoint": false,
+          "lines": 38
+        },
+        {
+          "path": "packages/adapters/src/command.ts",
+          "is_entrypoint": false,
+          "lines": 35
+        },
+        {
+          "path": "packages/adapters/src/clipboard.ts",
+          "is_entrypoint": false,
+          "lines": 20
+        },
+        {
+          "path": "packages/adapters/src/notice.ts",
+          "is_entrypoint": false,
+          "lines": 8
+        },
+        {
+          "path": "packages/adapters/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 4
+        }
+      ],
+      "key_symbols": [
+        "export function replaceCodeBlock( editor: Editor, sectionInfo: MarkdownSectionInformation, newBlockContent: string, expectedFencePrefix?: string ): boolean",
+        "export class ObsidianVaultAdapter implements IVaultPort",
+        "export interface SettingsStorage",
+        "export class ObsidianSettingsAdapter<T> implements ISettingsPort<T>",
+        "export class ObsidianCommandAdapter implements ICommandPort",
+        "export class ClipboardAdapter implements IClipboardPort",
+        "export class ObsidianNoticeAdapter implements INoticePort"
+      ],
+      "test_command": "rtk pnpm --filter adapters test",
+      "tokens": 2299
+    },
+    {
+      "id": "core",
+      "name": "core",
+      "summary": "Ядро системы, включающее структуру и геометрию тайлов.",
+      "l1_path": "subsystems/core.md",
+      "tags": ["core", "geometry"],
+      "entrypoints": ["packages/core/package.json", "packages/core/src/index.ts"],
+      "key_files": [
+        "packages/core/package.json",
+        "packages/core/src/index.ts",
+        "packages/core/src/tiling-tree.ts",
+        "packages/core/src/tiling-geometry.ts",
+        "packages/core/src/tiling-navigation.test.ts",
+        "packages/core/src/tiling-tree.test.ts",
+        "packages/core/src/markdown.ts",
+        "packages/core/src/markdown.test.ts",
+        "packages/core/src/path.ts",
+        "packages/core/src/path.test.ts",
+        "packages/core/src/settings.test.ts",
+        "packages/core/src/tiling-splitter.test.ts",
+        "packages/core/src/tiling-splitter.ts",
+        "packages/core/src/settings.ts",
+        "packages/core/src/tiling-geometry.test.ts"
+      ],
+      "files": [
+        {
+          "path": "packages/core/package.json",
+          "is_entrypoint": true,
+          "lines": 22
+        },
+        {
+          "path": "packages/core/src/index.ts",
+          "is_entrypoint": true,
+          "lines": 11
+        },
+        {
+          "path": "packages/core/src/tiling-tree.ts",
+          "is_entrypoint": false,
+          "lines": 452
+        },
+        {
+          "path": "packages/core/src/tiling-geometry.ts",
+          "is_entrypoint": false,
+          "lines": 191
+        },
+        {
+          "path": "packages/core/src/tiling-navigation.test.ts",
+          "is_entrypoint": false,
+          "lines": 164
+        },
+        {
+          "path": "packages/core/src/tiling-tree.test.ts",
+          "is_entrypoint": false,
+          "lines": 129
+        },
+        {
+          "path": "packages/core/src/markdown.ts",
+          "is_entrypoint": false,
+          "lines": 110
+        },
+        {
+          "path": "packages/core/src/markdown.test.ts",
+          "is_entrypoint": false,
+          "lines": 101
+        },
+        {
+          "path": "packages/core/src/path.ts",
+          "is_entrypoint": false,
+          "lines": 89
+        },
+        {
+          "path": "packages/core/src/path.test.ts",
+          "is_entrypoint": false,
+          "lines": 84
+        },
+        {
+          "path": "packages/core/src/settings.test.ts",
+          "is_entrypoint": false,
+          "lines": 81
+        },
+        {
+          "path": "packages/core/src/tiling-splitter.test.ts",
+          "is_entrypoint": false,
+          "lines": 77
+        },
+        {
+          "path": "packages/core/src/tiling-splitter.ts",
+          "is_entrypoint": false,
+          "lines": 68
+        },
+        {
+          "path": "packages/core/src/settings.ts",
+          "is_entrypoint": false,
+          "lines": 56
+        },
+        {
+          "path": "packages/core/src/tiling-geometry.test.ts",
+          "is_entrypoint": false,
+          "lines": 45
+        }
+      ],
+      "key_symbols": [
+        "export type SplitDirection = 'row' | 'column' export interface TileLeafNode",
+        "export interface TileBranchNode",
+        "export type TileNode = TileLeafNode | TileBranchNode /** * Traverses tree to collect all leaf nodes in order. */ export function getAllLeaves(node: TileNode): ReadonlyArray<TileLeafNode>",
+        "export function createDefaultTree(sectionCount: number): TileNode",
+        "export function updateBranchWeights( node: TileNode, branchId: string, newWeights: ReadonlyArray<number> ): TileNode",
+        "export function swapLeavesById(node: TileNode, idA: string, idB: string): TileNode",
+        "export function splitLeaf( root: TileNode, targetLeafId: string, direction: SplitDirection, newSectionIndex: number, newLeafId: string, insertAfter = true ): TileNode",
+        "export function removeLeaf(root: TileNode, leafId: string): TileNode | null",
+        "export type DropZonePosition = 'top' | 'bottom' | 'left' | 'right' | 'center' export function findLeafById(root: TileNode, leafId: string): TileLeafNode | null",
+        "export function moveLeafToPosition( root: TileNode, sourceLeafId: string, targetLeafId: string, position: DropZonePosition ): TileNode",
+        "export function reindexTreeLeaves(root: TileNode): TileNode",
+        "export function reconcileTreeWithSections( root: TileNode | null | undefined, sectionCount: number ): TileNode",
+        "export function findParentBranch( root: TileNode, targetId: string ):",
+        "export function resizeLeafInDirection( root: TileNode, leafId: string, direction: 'left' | 'right' | 'up' | 'down', delta = 0.1 ): TileNode",
+        "export interface RectBounds",
+        "export function clampRatio(ratio: number, minRatio = 0.15, maxRatio = 0.85): number",
+        "export function calculateHorizontalSplitRatio( pointerX: number, container: RectBounds, minRatio = 0.15, maxRatio = 0.85 ): number",
+        "export function calculateVerticalSplitRatio( pointerY: number, container: RectBounds, minRatio = 0.15, maxRatio = 0.85 ): number",
+        "export type Direction = 'left' | 'right' | 'up' | 'down' export interface LeafNormalizedRect",
+        "export function computeTreeLayoutRects(root: TileNode): ReadonlyMap<string, LeafNormalizedRect>",
+        "export function findAdjacentLeaf( root: TileNode, currentLeafId: string, direction: Direction ): string | null",
+        "export interface ParsedFrontmatter",
+        "export interface MarkdownBlock",
+        "export function parseFrontmatter(content: string): ParsedFrontmatter",
+        "export function extractFrontmatter(content: string): Record<string, string>",
+        "export function stripFrontmatter(content: string): string",
+        "export function extractCodeBlocks(content: string): ReadonlyArray<MarkdownBlock>",
+        "export function findMarkdownBlocks( content: string, blockType?: string ): ReadonlyArray<MarkdownBlock>",
+        "export function normalizePath(rawPath: string): string",
+        "export function joinPaths(...segments: ReadonlyArray<string>): string"
+      ],
+      "test_command": "rtk pnpm --filter core test",
+      "tokens": 12450
+    },
+    {
+      "id": "obsidian-utils",
+      "name": "obsidian-utils",
+      "summary": "Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.",
+      "l1_path": "subsystems/obsidian-utils.md",
+      "tags": ["utils", "parsing"],
+      "entrypoints": [
+        "packages/obsidian-utils/src/index.ts",
+        "packages/obsidian-utils/package.json"
+      ],
+      "key_files": [
+        "packages/obsidian-utils/src/index.ts",
+        "packages/obsidian-utils/package.json",
+        "packages/obsidian-utils/src/index.test.ts",
+        "packages/obsidian-utils/tsconfig.json"
+      ],
+      "files": [
+        {
+          "path": "packages/obsidian-utils/src/index.ts",
+          "is_entrypoint": true,
+          "lines": 109
+        },
+        {
+          "path": "packages/obsidian-utils/package.json",
+          "is_entrypoint": true,
+          "lines": 27
+        },
+        {
+          "path": "packages/obsidian-utils/src/index.test.ts",
+          "is_entrypoint": false,
+          "lines": 96
+        },
+        {
+          "path": "packages/obsidian-utils/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 4
+        }
+      ],
+      "key_symbols": [
+        "export interface ParsedWikiLink",
+        "export function formatWikiLink(target: string, alias?: string): string",
+        "export function parseWikiLink(raw: string): ParsedWikiLink | null",
+        "export function sanitizeFileName(name: string): string",
+        "export function parseKeyValueFrontmatter(raw: string): Record<string, string>",
+        "export function formatCodeBlock( tag: string, content: string, fenceChar: '`' | '~' = '`', minFenceLength = 3 ): string"
+      ],
+      "test_command": "rtk pnpm --filter obsidian-utils test",
+      "tokens": 1738
+    },
+    {
+      "id": "ports",
+      "name": "ports",
+      "summary": "Интерфейсы для взаимодействия с внешними системами.",
+      "l1_path": "subsystems/ports.md",
+      "tags": ["interfaces", "ports"],
+      "entrypoints": ["packages/ports/src/index.ts", "packages/ports/package.json"],
+      "key_files": [
+        "packages/ports/src/index.ts",
+        "packages/ports/package.json",
+        "packages/ports/tsconfig.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ports/src/index.ts",
+          "is_entrypoint": true,
+          "lines": 36
+        },
+        {
+          "path": "packages/ports/package.json",
+          "is_entrypoint": true,
+          "lines": 20
+        },
+        {
+          "path": "packages/ports/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 4
+        }
+      ],
+      "key_symbols": [
+        "export interface IVaultPort",
+        "export interface ICommandPort",
+        "export interface ISettingsPort<T = unknown>",
+        "export interface INoticePort",
+        "export interface IClipboardPort"
+      ],
+      "test_command": "rtk pnpm --filter ports test",
+      "tokens": 388
+    },
+    {
+      "id": "tsconfig",
+      "name": "tsconfig",
+      "summary": "Конфигурации TypeScript для проекта.",
+      "l1_path": "subsystems/tsconfig.md",
+      "tags": ["typescript", "configuration"],
+      "entrypoints": ["packages/tsconfig/package.json"],
+      "key_files": [
+        "packages/tsconfig/package.json",
+        "packages/tsconfig/tsconfig.base.json",
+        "packages/tsconfig/tsconfig.library.json",
+        "packages/tsconfig/tsconfig.plugin.json"
+      ],
+      "files": [
+        {
+          "path": "packages/tsconfig/package.json",
+          "is_entrypoint": true,
+          "lines": 10
+        },
+        {
+          "path": "packages/tsconfig/tsconfig.base.json",
+          "is_entrypoint": false,
+          "lines": 16
+        },
+        {
+          "path": "packages/tsconfig/tsconfig.library.json",
+          "is_entrypoint": false,
+          "lines": 8
+        },
+        {
+          "path": "packages/tsconfig/tsconfig.plugin.json",
+          "is_entrypoint": false,
+          "lines": 7
+        }
+      ],
+      "test_command": "rtk pnpm --filter tsconfig test",
+      "tokens": 263
+    },
+    {
+      "id": "types",
+      "name": "types",
+      "summary": "Типы для обработки результатов и ошибок.",
+      "l1_path": "subsystems/types.md",
+      "tags": ["types", "result-handling"],
+      "entrypoints": ["packages/types/src/index.ts", "packages/types/package.json"],
+      "key_files": [
+        "packages/types/src/index.ts",
+        "packages/types/package.json",
+        "packages/types/tsconfig.json"
+      ],
+      "files": [
+        {
+          "path": "packages/types/src/index.ts",
+          "is_entrypoint": true,
+          "lines": 54
+        },
+        {
+          "path": "packages/types/package.json",
+          "is_entrypoint": true,
+          "lines": 17
+        },
+        {
+          "path": "packages/types/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 4
+        }
+      ],
+      "key_symbols": [
+        "export type Result<T, E = Error> = |",
+        "export function ok<T>(value: T): Result<T, never>",
+        "export function err<E = Error>(error: E): Result<never, E>",
+        "export function isOk<T, E>( result: Result<T, E> ): result is",
+        "export function isErr<T, E>( result: Result<T, E> ): result is",
+        "export interface IFileMeta",
+        "export interface HotkeyDefinition",
+        "export interface CommandDefinition",
+        "export interface NoticeOptions"
+      ],
+      "test_command": "rtk pnpm --filter types test",
+      "tokens": 449
+    },
+    {
+      "id": "ui",
+      "name": "ui",
+      "summary": "Интерфейс пользователя для редактирования и взаимодействия.",
+      "l1_path": "subsystems/ui.md",
+      "tags": ["ui", "editor"],
+      "entrypoints": ["packages/ui/package.json", "packages/ui/src/index.ts"],
+      "key_files": [
+        "packages/ui/package.json",
+        "packages/ui/src/index.ts",
+        "packages/ui/src/editor/split-editor-modal.ts",
+        "packages/ui/src/editor/editor-keymaps.ts",
+        "packages/ui/src/editor/editor-toolbar.ts",
+        "packages/ui/src/editor/code-editor.ts",
+        "packages/ui/src/editor/table-menu.ts",
+        "packages/ui/src/editor/editor-theme.ts",
+        "packages/ui/src/modal.ts",
+        "packages/ui/src/badge.ts",
+        "packages/ui/src/setting.ts",
+        "packages/ui/tsconfig.json"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/package.json",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": "packages/ui/src/index.ts",
+          "is_entrypoint": true,
+          "lines": 10
+        },
+        {
+          "path": "packages/ui/src/editor/split-editor-modal.ts",
+          "is_entrypoint": false,
+          "lines": 230
+        },
+        {
+          "path": "packages/ui/src/editor/editor-keymaps.ts",
+          "is_entrypoint": false,
+          "lines": 122
+        },
+        {
+          "path": "packages/ui/src/editor/editor-toolbar.ts",
+          "is_entrypoint": false,
+          "lines": 111
+        },
+        {
+          "path": "packages/ui/src/editor/code-editor.ts",
+          "is_entrypoint": false,
+          "lines": 87
+        },
+        {
+          "path": "packages/ui/src/editor/table-menu.ts",
+          "is_entrypoint": false,
+          "lines": 63
+        },
+        {
+          "path": "packages/ui/src/editor/editor-theme.ts",
+          "is_entrypoint": false,
+          "lines": 39
+        },
+        {
+          "path": "packages/ui/src/modal.ts",
+          "is_entrypoint": false,
+          "lines": 28
+        },
+        {
+          "path": "packages/ui/src/badge.ts",
+          "is_entrypoint": false,
+          "lines": 25
+        },
+        {
+          "path": "packages/ui/src/setting.ts",
+          "is_entrypoint": false,
+          "lines": 17
+        },
+        {
+          "path": "packages/ui/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 4
+        }
+      ],
+      "key_symbols": [
+        "export type SplitViewMode = 'source' | 'preview' | 'split' export interface SplitEditorModalOptions",
+        "export class SplitEditorModal extends Modal",
+        "export function createEditorKeymaps(tabSize: number, onSave?: () => void): readonly KeyBinding[]",
+        "export interface EditorToolbarOptions",
+        "export class EditorToolbar",
+        "export interface CodeEditorOptions",
+        "export class CodeEditor",
+        "export function generateMarkdownTable(rows: number, cols: number): string",
+        "export class TableMenu extends Menu",
+        "export const baseTheme: Extension = EditorView.baseTheme(",
+        "export const baseHighlight: Extension = syntaxHighlighting( HighlightStyle.define([",
+        "export abstract class BaseModal extends Modal",
+        "export const BadgeVariant =",
+        "export type BadgeVariantType = (typeof BadgeVariant)[keyof typeof BadgeVariant] export interface BadgeOptions",
+        "export function getBadgeClassNames(variant: BadgeVariantType = BadgeVariant.Default): string",
+        "export interface SettingOptions",
+        "export function createSetting(containerEl: HTMLElement, options: SettingOptions): Setting"
+      ],
+      "test_command": "rtk pnpm --filter ui test",
+      "tokens": 5326
     },
     {
       "id": "reference",
-      "name": "Reference",
-      "summary": "Модуль и компоненты директории reference",
+      "name": "reference",
+      "summary": "Справочная информация и примеры использования плагинов.",
       "l1_path": "subsystems/reference.md",
-      "tags": ["reference"]
+      "tags": ["reference", "examples"],
+      "entrypoints": [
+        "reference/obsidian-tabs/src/main.ts",
+        "reference/snippet-templater/src/main.ts",
+        "reference/html-renderer/src/main.ts",
+        "reference/snippet-templater/package.json",
+        "reference/html-renderer/package.json",
+        "reference/obsidian-tabs/package.json",
+        "reference/obsidian-tabs/docs/.vitepress/theme/index.ts"
+      ],
+      "key_files": [
+        "reference/obsidian-tabs/src/main.ts",
+        "reference/snippet-templater/src/main.ts",
+        "reference/html-renderer/src/main.ts",
+        "reference/snippet-templater/package.json",
+        "reference/html-renderer/package.json",
+        "reference/obsidian-tabs/package.json",
+        "reference/obsidian-tabs/docs/.vitepress/theme/index.ts",
+        "reference/obsidian-tabs-context.md",
+        "reference/snippet-templater/pnpm-lock.yaml",
+        "reference/html-renderer/pnpm-lock.yaml",
+        "reference/obsidian-tabs/package-lock.json",
+        "reference/html-renderer-context.md",
+        "reference/snippet-templater-context.md",
+        "reference/obsidian-tabs/src/components/editor/tab-editor.ts",
+        "reference/obsidian-tabs/src/settings.ts"
+      ],
+      "files": [
+        {
+          "path": "reference/obsidian-tabs/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 156
+        },
+        {
+          "path": "reference/snippet-templater/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": "reference/html-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 35
+        },
+        {
+          "path": "reference/snippet-templater/package.json",
+          "is_entrypoint": true,
+          "lines": 30
+        },
+        {
+          "path": "reference/html-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 30
+        },
+        {
+          "path": "reference/obsidian-tabs/package.json",
+          "is_entrypoint": true,
+          "lines": 30
+        },
+        {
+          "path": "reference/obsidian-tabs/docs/.vitepress/theme/index.ts",
+          "is_entrypoint": true,
+          "lines": 17
+        },
+        {
+          "path": "reference/obsidian-tabs-context.md",
+          "is_entrypoint": false,
+          "lines": 7759
+        },
+        {
+          "path": "reference/snippet-templater/pnpm-lock.yaml",
+          "is_entrypoint": false,
+          "lines": 5012
+        },
+        {
+          "path": "reference/html-renderer/pnpm-lock.yaml",
+          "is_entrypoint": false,
+          "lines": 5012
+        },
+        {
+          "path": "reference/obsidian-tabs/package-lock.json",
+          "is_entrypoint": false,
+          "lines": 2870
+        },
+        {
+          "path": "reference/html-renderer-context.md",
+          "is_entrypoint": false,
+          "lines": 1379
+        },
+        {
+          "path": "reference/snippet-templater-context.md",
+          "is_entrypoint": false,
+          "lines": 1315
+        },
+        {
+          "path": "reference/obsidian-tabs/src/components/editor/tab-editor.ts",
+          "is_entrypoint": false,
+          "lines": 859
+        },
+        {
+          "path": "reference/obsidian-tabs/src/settings.ts",
+          "is_entrypoint": false,
+          "lines": 561
+        }
+      ],
+      "key_symbols": [
+        "export class TabEditor",
+        "export interface TabsSettings",
+        "export const DEFAULT_SETTINGS: TabsSettings =",
+        "export class TabsSettingsTab extends PluginSettingTab"
+      ],
+      "tokens": 332778
     },
     {
       "id": "scripts",
-      "name": "Scripts",
-      "summary": "Модуль и компоненты директории scripts",
+      "name": "scripts",
+      "summary": "Скрипты для автоматизации процессов сборки и развертывания.",
       "l1_path": "subsystems/scripts.md",
-      "tags": ["scripts"]
+      "tags": ["scripts", "automation"],
+      "key_files": [
+        "scripts/deploy-downstream.ts",
+        "scripts/generate-ai-context.ts",
+        "scripts/build.ts",
+        "scripts/merge-release-pr.ts",
+        "scripts/link-vault.ts",
+        "scripts/sync-versions.ts"
+      ],
+      "files": [
+        {
+          "path": "scripts/deploy-downstream.ts",
+          "is_entrypoint": false,
+          "lines": 188
+        },
+        {
+          "path": "scripts/generate-ai-context.ts",
+          "is_entrypoint": false,
+          "lines": 115
+        },
+        {
+          "path": "scripts/build.ts",
+          "is_entrypoint": false,
+          "lines": 107
+        },
+        {
+          "path": "scripts/merge-release-pr.ts",
+          "is_entrypoint": false,
+          "lines": 78
+        },
+        {
+          "path": "scripts/link-vault.ts",
+          "is_entrypoint": false,
+          "lines": 73
+        },
+        {
+          "path": "scripts/sync-versions.ts",
+          "is_entrypoint": false,
+          "lines": 67
+        }
+      ],
+      "tokens": 4780
     }
   ],
   "core_rules": [
-    "Строгая типизация (TypeScript strict mode) обязательна.",
-    "Все зависимости управляются через package.json (pnpm / bun).",
-    "Код должен форматироваться через biome / prettier."
+    "Строгая типизация (`TypeScript strict: true`) обязательна, запрещен `any`.",
+    "Все зависимости фиксируются строго в lockfile (`pnpm-lock.yaml` / `bun.lock`).",
+    "Форматирование и линтинг через `rtk biome / rtk prettier` без отключения проверок."
   ]
 }
