@@ -16,3 +16,5 @@ description: "Semantic versioning bump rules, Changeset artifact generation, and
 5. **CI Permissions & PAT:** 
    * Репозиторий требует `default_workflow_permissions="write"` и `can_approve_pull_request_reviews=true` для создания PR экшеном `@changesets/action`.
    * Секрет `RELEASE_PAT` с правами `repo` должен экспортироваться как `RELEASE_PAT` и `GH_TOKEN` для доставки релизов в сателлиты через `scripts/deploy-downstream.ts`.
+6. **Сквозной контракт команды «Релиз» (End-to-End Release):**
+   * Запрос на «релиз / выпуск версии» означает полный цикл: инкремент SemVer + обновление `CHANGELOG.md` -> верификация `pnpm check` -> Conventional Commit -> `git push origin main` -> верификация запуска релизных workflows (`Release & Downstream Deploy`) в GitHub Actions. Не допускается оставлять релизные изменения незапушенными.

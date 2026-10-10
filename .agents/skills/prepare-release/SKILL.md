@@ -10,4 +10,6 @@ description: "Prepare an Obsidian plugin release. Calculates SemVer increment, g
 3. Запустить верификацию: `pnpm check`.
 4. Создать Conventional Commit: `feat(<plugin>): ...` или `fix(<plugin>): ...`.
 5. Проверить наличие `repository.url` в `package.json` плагина и актуальность `README.md`.
-6. Для автоматического мерджа релизного PR использовать консольную команду `pnpm release:merge` без перехода в веб-интерфейс GitHub.
+6. Выполнить `git push origin main` для автоматического запуска GitHub Actions `Release & Downstream Deploy`.
+7. Проверить статус запуска через `rtk gh run list --limit 3` и убедиться, что сборочные jobs активны.
+8. Для автоматического мерджа релизного PR использовать консольную команду `pnpm release:merge` без перехода в веб-интерфейс GitHub.
