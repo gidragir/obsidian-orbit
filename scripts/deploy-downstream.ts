@@ -40,6 +40,15 @@ function getRepoUrlWithAuth(rawUrl: string, pat?: string): string {
   return rawUrl
 }
 
+function satelliteRepoExists(repoUrl: string): boolean {
+  try {
+    runCommand(`gh repo view ${repoUrl} --json name`)
+    return true
+  } catch {
+    return false
+  }
+}
+
 function releaseExists(repoUrl: string, version: string): boolean {
   try {
     runCommand(`gh release view ${version} --repo ${repoUrl}`)
@@ -107,6 +116,13 @@ function deployPlugin(pluginDir: string, repoRoot: string, isForce: boolean): vo
   }
 
   const version = manifest.version
+  if (!satelliteRepoExists(repoUrl)) {
+    console.warn(
+      `[deploy] Satellite repository ${repoUrl} does not exist on GitHub or is inaccessible. Skipping deployment for ${path.basename(pluginDir)}.`
+    )
+    return
+  }
+
   if (!isForce && releaseExists(repoUrl, version)) {
     console.log(`[deploy] Release ${version} for ${repoUrl} already exists. Skipping.`)
     return
@@ -141,6 +157,11 @@ function deployPlugin(pluginDir: string, repoRoot: string, isForce: boolean): vo
     console.log(`[deploy] Creating GitHub release ${version}...`)
     createGitHubRelease(pluginDir, repoUrl, version)
     console.log(`[deploy] Successfully deployed ${path.basename(pluginDir)} ${version}`)
+  } catch (err) {
+    console.error(
+      `[deploy] Failed to deploy satellite repository ${repoUrl} for ${path.basename(pluginDir)}:`,
+      err
+    )
   } finally {
     rmSync(tempDir, { recursive: true, force: true })
   }

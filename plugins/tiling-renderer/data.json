@@ -76,7 +76,7 @@
         "children": [
           {
             "type": "branch",
-            "id": "branch-1791575350773-987",
+            "id": "branch-1791620204479-60",
             "direction": "row",
             "weight": 0.8032364698646987,
             "children": [
@@ -84,13 +84,13 @@
                 "type": "leaf",
                 "id": "leaf-1",
                 "sectionIndex": 1,
-                "weight": 0.8763951576537258
+                "weight": 0.8032364698646987
               },
               {
                 "type": "leaf",
                 "id": "leaf-1791575331779-3",
                 "sectionIndex": 3,
-                "weight": 0.6723469322542294
+                "weight": 1
               }
             ]
           },
@@ -104,13 +104,13 @@
                 "type": "leaf",
                 "id": "leaf-2",
                 "sectionIndex": 2,
-                "weight": 1.8
+                "weight": 0.8411270983213429
               },
               {
                 "type": "leaf",
                 "id": "leaf-0",
                 "sectionIndex": 0,
-                "weight": 0.19999999999999996
+                "weight": 1.1588729016786572
               }
             ]
           }
