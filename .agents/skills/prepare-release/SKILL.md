@@ -6,7 +6,9 @@ description: "Prepare an Obsidian plugin release. Calculates SemVer increment, g
 # Prepare Release Skill (/prepare-release)
 
 1. Проверить статус репозитория: `git status --porcelain`.
-2. Рассчитать инкремент SemVer и вызвать `pnpm change` (или создать `.changeset/<hash>.md`).
+2. Определить тип релиза:
+   * **Первичный релиз нового плагина (v1.0.0):** Не запускать `pnpm change`. Проверить, что версия в `manifest.json`, `package.json` и `versions.json` равна `1.0.0`, создать `plugins/<id>/CHANGELOG.md` с разделом `## 1.0.0`.
+   * **Инкремент существующего плагина:** Рассчитать инкремент SemVer и вызвать `pnpm change` (или создать `.changeset/<hash>.md`).
 3. Запустить верификацию: `pnpm check`.
 4. Создать Conventional Commit: `feat(<plugin>): ...` или `fix(<plugin>): ...`.
 5. Проверить наличие `repository.url` в `package.json` плагина и актуальность `README.md`.
