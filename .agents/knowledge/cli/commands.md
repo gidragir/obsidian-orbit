@@ -17,20 +17,20 @@
 | Скрипт | Выполняемая команда |
 | :--- | :--- |
 | `format` | `rtk biome format --write .` |
-| `typecheck` | `rtk turbo run typecheck` |
-| `vault:link` | `rtk tsx scripts/link-vault.ts` |
-| `runner` | `mise (task runner)` |
 | `dev` | `rtk tsx scripts/link-vault.ts && turbo run dev` |
-| `ai:context:all` | `rtk tsx scripts/generate-ai-context.ts --all` |
-| `version:bump` | `rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile` |
+| `runner` | `mise (task runner)` |
+| `vault:link` | `rtk tsx scripts/link-vault.ts` |
 | `release` | `rtk turbo run build && tsx scripts/deploy-downstream.ts` |
+| `ai:context:all` | `rtk tsx scripts/generate-ai-context.ts --all` |
+| `release:merge` | `rtk tsx scripts/merge-release-pr.ts` |
+| `ai:context` | `rtk tsx scripts/generate-ai-context.ts` |
 | `lint` | `rtk biome check --write .` |
 | `test` | `rtk vitest run` |
-| `build` | `rtk turbo run build` |
 | `check` | `rtk biome check . && turbo run typecheck test build` |
-| `ai:context` | `rtk tsx scripts/generate-ai-context.ts` |
+| `version:bump` | `rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile` |
 | `change` | `rtk changeset` |
-| `release:merge` | `rtk tsx scripts/merge-release-pr.ts` |
+| `typecheck` | `rtk turbo run typecheck` |
+| `build` | `rtk turbo run build` |
 
 ## Быстрый запуск
 ```bash
