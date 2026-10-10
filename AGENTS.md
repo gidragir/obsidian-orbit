@@ -148,7 +148,6 @@ This repository contains a 3-tier OpenViking knowledge base in `.agents/knowledg
 - **L2 (ADR & CLI):** Check `.agents/knowledge/adr/` and `.agents/knowledge/cli/commands.md`.
 - **Sync Knowledge:** Run `sync-knowledge .` to update subsystem documentation.
 
-
 ## 🗺 Архитектурная карта и навигация (OpenViking L0-L2)
 
 Проект `obsidian-orbit` использует трехуровневую базу знаний в `.agents/knowledge/`:
@@ -170,3 +169,12 @@ This repository contains a 3-tier OpenViking knowledge base in `.agents/knowledg
 - [ui](.agents/knowledge/subsystems/ui.md) — Интерфейс пользователя для редактирования и взаимодействия.
 - [reference](.agents/knowledge/subsystems/reference.md) — Справочная информация и примеры использования плагинов.
 - [scripts](.agents/knowledge/subsystems/scripts.md) — Скрипты для автоматизации процессов сборки и развертывания.
+- [.changeset](.agents/knowledge/subsystems/.changeset.md) — Модуль и компоненты директории `.changeset` (1 файлов)
+- [.vault](.agents/knowledge/subsystems/.vault.md) — Подсистема `.vault` с ключевыми точками входа: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts
+- [Adapters](.agents/knowledge/subsystems/packages_adapters.md) — Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts
+- [Core](.agents/knowledge/subsystems/packages_core.md) — Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts
+- [Obsidian Utils](.agents/knowledge/subsystems/packages_obsidian-utils.md) — Подсистема `packages/obsidian-utils` с ключевыми точками входа: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json
+- [Ports](.agents/knowledge/subsystems/packages_ports.md) — Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json
+- [Tsconfig](.agents/knowledge/subsystems/packages_tsconfig.md) — Подсистема `packages/tsconfig` с ключевыми точками входа: packages/tsconfig/package.json
+- [Types](.agents/knowledge/subsystems/packages_types.md) — Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json
+- [Ui](.agents/knowledge/subsystems/packages_ui.md) — Подсистема `packages/ui` с ключевыми точками входа: packages/ui/package.json, packages/ui/src/index.ts
