@@ -5,6 +5,7 @@ subagent: true
 model: flash
 commandExecutionPolicy: auto
 tools:
+  - call_mcp_tool
   - run_command
   - view_file
   - grep_search

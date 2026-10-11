@@ -1,29 +1,37 @@
-# 🧠 Project Context & OpenViking Knowledge Guide
+# 🧠 Project Context & OpenViking Knowledge Guide (context-init MCP-First)
 
-> This project utilizes a 3-tier hierarchical knowledge base (OpenViking L0-L2) located in `.agents/knowledge/` to minimize context overhead and provide deterministic architectural guidance.
+> This project utilizes a 3-tier hierarchical knowledge base (OpenViking L0-L2) managed by the `context-init` native MCP server.
+> Direct reading of `.agents/knowledge/**` files via `view_file` or bash commands is strictly prohibited.
 
-## 🧭 Multi-Tier Context Protocol
+## 🧭 Multi-Tier Context Protocol (MCP-First)
 
-When working in this project, AI agents MUST follow this progressive disclosure procedure:
+When working in this project, AI agents MUST follow this progressive disclosure procedure using `call_mcp_tool` with ServerName `"context-init"`:
 
 ### 1. Level 0 (L0 Abstract) — Always First Step
-- **File:** `.agents/knowledge/L0_index.json`
-- **MCP Tool:** `project_knowledge(level="L0")` (if available)
-- **Purpose:** Fast mental map of the system, list of all subsystems with IDs, and core architectural rules.
-- **Action:** Check this file at the start of any new session or when unsure of the system boundaries before deep code exploration.
+- **Tool:** `context_get_subsystems`
+- **Arguments:** `{}`
+- **Purpose:** Fast mental map of the system, list of all subsystems with IDs, entrypoints, and token metrics.
+- **Action:** Call this tool at the start of a session or when unsure of system boundaries before deep code exploration.
 
 ### 2. Level 1 (L1 Subsystems) — Module Boundaries
-- **Files:** `.agents/knowledge/subsystems/<subsystem_id>.md`
-- **MCP Tool:** `project_knowledge(level="L1", target="<subsystem_id>")` (if available)
-- **Purpose:** Architectural contracts, entry points, dependencies, and validation commands for a specific module.
-- **Action:** Before modifying or designing components within a subsystem, inspect its L1 contract.
+- **Tool:** `context_get_subsystem`
+- **Arguments:** `{"subsystem_id": "<subsystem_id>"}`
+- **Purpose:** Architectural contracts, entry points, key files, and test commands for a specific subsystem.
+- **Action:** Before modifying or designing components within a subsystem, fetch its L1 card.
 
-### 3. Level 2 (L2 Deep Reference) — Commands & Decisions
-- **CLI References:** `.agents/knowledge/cli/commands.md` (or `project_knowledge(level="L2", target="commands")`)
-- **Architectural Decision Records:** `.agents/knowledge/adr/`
-- **Action:** Record any non-trivial architectural decisions as new ADRs in `.agents/knowledge/adr/` (or via MCP `save_decision`). Keep documentation in sync by running `sync-knowledge`.
+### 3. Level 2 (L2 Deep Reference) — AST-Packed Context
+- **Tool:** `context_pack`
+- **Arguments:** `{"subsystem_id": "<subsystem_id>", "compress": true}`
+- **Purpose:** AST-compressed interface snapshot (function bodies replaced by `⋮----`), providing code context without window bloat.
+- **Action:** Use when researching signatures or preparing implementation across module boundaries.
+
+### 4. Drift Verification & Sync — Before Task Completion
+- **Tool:** `context_check`
+- **Arguments:** `{}`
+- **Purpose:** Architectural drift detector. Validates knowledge base sync against files on disk.
+- **Action:** Run before finalizing any task. If `has_drift: true`, call `context_update`.
 
 ## ⚙️ Core Project Rules
 - Строгая типизация (TypeScript strict mode) обязательна.
-- Все зависимости управляются через package.json (pnpm / bun).
-- Код должен форматироваться через biome / prettier.
+- Все зависимости управляются через `pnpm-workspace.yaml` / `package.json` (pnpm).
+- Код должен форматироваться через Biome (`pnpm lint && pnpm format`).

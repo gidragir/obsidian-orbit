@@ -5,6 +5,7 @@ subagent: true
 model: flash
 permissionMode: acceptEdits
 tools:
+  - call_mcp_tool
   - view_file
   - replace_file_content
   - multi_replace_file_content

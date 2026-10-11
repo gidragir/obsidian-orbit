@@ -122,10 +122,41 @@ export function updateBranchWeights(
   }
 }
 
+function swapLeafNode(
+  leaf: TileLeafNode,
+  idA: string,
+  idB: string,
+  leafA: TileLeafNode,
+  leafB: TileLeafNode,
+  swapWeights: boolean
+): TileLeafNode {
+  if (leaf.id === idA) {
+    return {
+      ...leaf,
+      sectionIndex: leafB.sectionIndex,
+      weight: swapWeights ? leafB.weight : leaf.weight,
+    }
+  }
+  if (leaf.id === idB) {
+    return {
+      ...leaf,
+      sectionIndex: leafA.sectionIndex,
+      weight: swapWeights ? leafA.weight : leaf.weight,
+    }
+  }
+  return leaf
+}
+
 /**
- * Swaps section indices of two leaves by their leaf IDs.
+ * Swaps two leaves by their leaf IDs.
+ * By default swaps both sectionIndex and weight so the window preserves its size and content.
  */
-export function swapLeavesById(node: TileNode, idA: string, idB: string): TileNode {
+export function swapLeavesById(
+  node: TileNode,
+  idA: string,
+  idB: string,
+  swapWeights = true
+): TileNode {
   const leaves = getAllLeaves(node)
   const leafA = leaves.find((l) => l.id === idA)
   const leafB = leaves.find((l) => l.id === idB)
@@ -134,22 +165,20 @@ export function swapLeavesById(node: TileNode, idA: string, idB: string): TileNo
     return node
   }
 
-  const indexA = leafA.sectionIndex
-  const indexB = leafB.sectionIndex
+  const targetA = leafA
+  const targetB = leafB
 
-  function replaceSectionIndex(curr: TileNode): TileNode {
+  function transform(curr: TileNode): TileNode {
     if (curr.type === 'leaf') {
-      if (curr.id === idA) return { ...curr, sectionIndex: indexB }
-      if (curr.id === idB) return { ...curr, sectionIndex: indexA }
-      return curr
+      return swapLeafNode(curr, idA, idB, targetA, targetB, swapWeights)
     }
     return {
       ...curr,
-      children: curr.children.map(replaceSectionIndex),
+      children: curr.children.map(transform),
     }
   }
 
-  return replaceSectionIndex(node)
+  return transform(node)
 }
 
 /**

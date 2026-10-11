@@ -5,10 +5,7 @@
   "root_path": "/data/projects/obsidian-orbit",
   "updated_at": "2026-10-10",
   "project_type": "TypeScript / JavaScript (Node/Bun/Deno)",
-  "entrypoints": [
-    "package.json",
-    "mise.toml"
-  ],
+  "entrypoints": ["package.json", "mise.toml"],
   "commands": {
     "build": "rtk pnpm run build",
     "test": "rtk pnpm test",
@@ -16,21 +13,21 @@
     "fmt": "rtk pnpm run format",
     "run": "rtk pnpm run dev",
     "custom": {
-      "format": "rtk biome format --write .",
-      "dev": "rtk tsx scripts/link-vault.ts && turbo run dev",
+      "test": "rtk vitest run",
+      "release:merge": "rtk tsx scripts/merge-release-pr.ts",
+      "change": "rtk changeset",
       "runner": "mise (task runner)",
-      "vault:link": "rtk tsx scripts/link-vault.ts",
+      "ai:context": "rtk tsx scripts/generate-ai-context.ts",
+      "dev": "rtk tsx scripts/link-vault.ts && turbo run dev",
+      "version:bump": "rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
+      "format": "rtk biome format --write .",
+      "build": "rtk turbo run build",
+      "check": "rtk biome check . && turbo run typecheck test build",
+      "typecheck": "rtk turbo run typecheck",
+      "lint": "rtk biome check --write .",
       "release": "rtk turbo run build && tsx scripts/deploy-downstream.ts",
       "ai:context:all": "rtk tsx scripts/generate-ai-context.ts --all",
-      "release:merge": "rtk tsx scripts/merge-release-pr.ts",
-      "ai:context": "rtk tsx scripts/generate-ai-context.ts",
-      "lint": "rtk biome check --write .",
-      "test": "rtk vitest run",
-      "check": "rtk biome check . && turbo run typecheck test build",
-      "version:bump": "rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
-      "change": "rtk changeset",
-      "typecheck": "rtk turbo run typecheck",
-      "build": "rtk turbo run build"
+      "vault:link": "rtk tsx scripts/link-vault.ts"
     }
   },
   "subsystems": [
@@ -39,13 +36,8 @@
       "name": ".changeset",
       "summary": "Конфигурация для управления изменениями в проекте.",
       "l1_path": "subsystems/changeset.md",
-      "tags": [
-        "configuration",
-        "changeset"
-      ],
-      "key_files": [
-        ".changeset/config.json"
-      ],
+      "tags": ["configuration", "changeset"],
+      "key_files": [".changeset/config.json"],
       "files": [
         {
           "path": ".changeset/config.json",
@@ -60,10 +52,7 @@
       "name": ".vault",
       "summary": "Содержит исходные файлы плагинов и их конфигурации.",
       "l1_path": "subsystems/vault.md",
-      "tags": [
-        "plugins",
-        "source-code"
-      ],
+      "tags": ["plugins", "source-code"],
       "entrypoints": [
         ".vault/.obsidian/plugins/tiling-renderer/src/main.ts",
         ".vault/.obsidian/plugins/tabs-renderer/src/main.ts",
@@ -175,10 +164,7 @@
       "name": "dev-vault",
       "summary": "Разработка и тестирование плагинов.",
       "l1_path": "subsystems/dev-vault.md",
-      "tags": [
-        "development",
-        "testing"
-      ],
+      "tags": ["development", "testing"],
       "entrypoints": [
         "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
@@ -250,12 +236,12 @@
         {
           "path": "dev-vault/.obsidian/workspace.json",
           "is_entrypoint": false,
-          "lines": 215
+          "lines": 202
         },
         {
           "path": "dev-vault/Test tiling renderer.md",
           "is_entrypoint": false,
-          "lines": 208
+          "lines": 153
         },
         {
           "path": "dev-vault/.obsidian/hotkeys.json",
@@ -283,21 +269,15 @@
           "lines": 44
         }
       ],
-      "tokens": 123230
+      "tokens": 122382
     },
     {
       "id": "adapters",
       "name": "adapters",
       "summary": "Адаптеры для взаимодействия с Obsidian API.",
       "l1_path": "subsystems/adapters.md",
-      "tags": [
-        "adapters",
-        "api"
-      ],
-      "entrypoints": [
-        "packages/adapters/package.json",
-        "packages/adapters/src/index.ts"
-      ],
+      "tags": ["adapters", "api"],
+      "entrypoints": ["packages/adapters/package.json", "packages/adapters/src/index.ts"],
       "key_files": [
         "packages/adapters/package.json",
         "packages/adapters/src/index.ts",
@@ -373,14 +353,8 @@
       "name": "core",
       "summary": "Ядро системы, включающее структуру и геометрию тайлов.",
       "l1_path": "subsystems/core.md",
-      "tags": [
-        "core",
-        "geometry"
-      ],
-      "entrypoints": [
-        "packages/core/package.json",
-        "packages/core/src/index.ts"
-      ],
+      "tags": ["core", "geometry"],
+      "entrypoints": ["packages/core/package.json", "packages/core/src/index.ts"],
       "key_files": [
         "packages/core/package.json",
         "packages/core/src/index.ts",
@@ -515,10 +489,7 @@
       "name": "obsidian-utils",
       "summary": "Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.",
       "l1_path": "subsystems/obsidian-utils.md",
-      "tags": [
-        "utils",
-        "parsing"
-      ],
+      "tags": ["utils", "parsing"],
       "entrypoints": [
         "packages/obsidian-utils/src/index.ts",
         "packages/obsidian-utils/package.json"
@@ -567,14 +538,8 @@
       "name": "ports",
       "summary": "Интерфейсы для взаимодействия с внешними системами.",
       "l1_path": "subsystems/ports.md",
-      "tags": [
-        "interfaces",
-        "ports"
-      ],
-      "entrypoints": [
-        "packages/ports/src/index.ts",
-        "packages/ports/package.json"
-      ],
+      "tags": ["interfaces", "ports"],
+      "entrypoints": ["packages/ports/src/index.ts", "packages/ports/package.json"],
       "key_files": [
         "packages/ports/src/index.ts",
         "packages/ports/package.json",
@@ -612,13 +577,8 @@
       "name": "tsconfig",
       "summary": "Конфигурации TypeScript для проекта.",
       "l1_path": "subsystems/tsconfig.md",
-      "tags": [
-        "typescript",
-        "configuration"
-      ],
-      "entrypoints": [
-        "packages/tsconfig/package.json"
-      ],
+      "tags": ["typescript", "configuration"],
+      "entrypoints": ["packages/tsconfig/package.json"],
       "key_files": [
         "packages/tsconfig/package.json",
         "packages/tsconfig/tsconfig.base.json",
@@ -655,14 +615,8 @@
       "name": "types",
       "summary": "Типы для обработки результатов и ошибок.",
       "l1_path": "subsystems/types.md",
-      "tags": [
-        "types",
-        "result-handling"
-      ],
-      "entrypoints": [
-        "packages/types/src/index.ts",
-        "packages/types/package.json"
-      ],
+      "tags": ["types", "result-handling"],
+      "entrypoints": ["packages/types/src/index.ts", "packages/types/package.json"],
       "key_files": [
         "packages/types/src/index.ts",
         "packages/types/package.json",
@@ -704,14 +658,8 @@
       "name": "ui",
       "summary": "Интерфейс пользователя для редактирования и взаимодействия.",
       "l1_path": "subsystems/ui.md",
-      "tags": [
-        "ui",
-        "editor"
-      ],
-      "entrypoints": [
-        "packages/ui/package.json",
-        "packages/ui/src/index.ts"
-      ],
+      "tags": ["ui", "editor"],
+      "entrypoints": ["packages/ui/package.json", "packages/ui/src/index.ts"],
       "key_files": [
         "packages/ui/package.json",
         "packages/ui/src/index.ts",
@@ -815,10 +763,7 @@
       "name": "reference",
       "summary": "Справочная информация и примеры использования плагинов.",
       "l1_path": "subsystems/reference.md",
-      "tags": [
-        "reference",
-        "examples"
-      ],
+      "tags": ["reference", "examples"],
       "entrypoints": [
         "reference/obsidian-tabs/src/main.ts",
         "reference/snippet-templater/src/main.ts",
@@ -922,12 +867,6 @@
           "lines": 561
         }
       ],
-      "key_symbols": [
-        "export class TabEditor",
-        "export interface TabsSettings",
-        "export const DEFAULT_SETTINGS: TabsSettings =",
-        "export class TabsSettingsTab extends PluginSettingTab"
-      ],
       "tokens": 332778
     },
     {
@@ -935,10 +874,7 @@
       "name": "scripts",
       "summary": "Скрипты для автоматизации процессов сборки и развертывания.",
       "l1_path": "subsystems/scripts.md",
-      "tags": [
-        "scripts",
-        "automation"
-      ],
+      "tags": ["scripts", "automation"],
       "key_files": [
         "scripts/deploy-downstream.ts",
         "scripts/generate-ai-context.ts",
@@ -986,13 +922,8 @@
       "name": ".changeset",
       "summary": "Модуль и компоненты директории `.changeset` (1 файлов)",
       "l1_path": "subsystems/.changeset.md",
-      "tags": [
-        ".changeset",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "key_files": [
-        ".changeset/config.json"
-      ],
+      "tags": [".changeset", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "key_files": [".changeset/config.json"],
       "files": [
         {
           "path": ".changeset/config.json",
@@ -1007,10 +938,7 @@
       "name": ".vault",
       "summary": "Подсистема `.vault` с ключевыми точками входа: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts",
       "l1_path": "subsystems/.vault.md",
-      "tags": [
-        ".vault",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
+      "tags": [".vault", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": [
         ".vault/.obsidian/plugins/tiling-renderer/src/main.ts",
         ".vault/.obsidian/plugins/tabs-renderer/src/main.ts",
@@ -1122,14 +1050,8 @@
       "name": "Adapters",
       "summary": "Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts",
       "l1_path": "subsystems/packages_adapters.md",
-      "tags": [
-        "packages_adapters",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "entrypoints": [
-        "packages/adapters/package.json",
-        "packages/adapters/src/index.ts"
-      ],
+      "tags": ["packages_adapters", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["packages/adapters/package.json", "packages/adapters/src/index.ts"],
       "key_files": [
         "packages/adapters/package.json",
         "packages/adapters/src/index.ts",
@@ -1204,14 +1126,7 @@
         "export function replaceCodeBlock( editor: Editor, sectionInfo: MarkdownSectionInformation, newBlockContent: string, expectedFencePrefix?: string ): boolean",
         "export class ObsidianVaultAdapter implements IVaultPort",
         "export interface DebouncedWorkspaceFileAdapterOptions",
-        "export class DebouncedWorkspaceFileAdapter",
-        "export interface SettingsStorage",
-        "export class ObsidianSettingsAdapter<T> implements ISettingsPort<T>",
-        "export class ObsidianCommandAdapter implements ICommandPort",
-        "export interface DeclarativeSettingHost<TSettings extends object>",
-        "export abstract class DeclarativePluginSettingTab< TSettings extends object, > extends PluginSettingTab",
-        "export class ClipboardAdapter implements IClipboardPort",
-        "export class ObsidianNoticeAdapter implements INoticePort"
+        "export class DebouncedWorkspaceFileAdapter"
       ],
       "test_command": "rtk pnpm --filter adapters test",
       "tokens": 3137
@@ -1221,14 +1136,8 @@
       "name": "Core",
       "summary": "Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts",
       "l1_path": "subsystems/packages_core.md",
-      "tags": [
-        "packages_core",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "entrypoints": [
-        "packages/core/package.json",
-        "packages/core/src/index.ts"
-      ],
+      "tags": ["packages_core", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["packages/core/package.json", "packages/core/src/index.ts"],
       "key_files": [
         "packages/core/package.json",
         "packages/core/src/index.ts",
@@ -1260,7 +1169,7 @@
         {
           "path": "packages/core/src/tiling-tree.ts",
           "is_entrypoint": false,
-          "lines": 452
+          "lines": 481
         },
         {
           "path": "packages/core/src/tiling-geometry.ts",
@@ -1275,7 +1184,7 @@
         {
           "path": "packages/core/src/tiling-tree.test.ts",
           "is_entrypoint": false,
-          "lines": 129
+          "lines": 148
         },
         {
           "path": "packages/core/src/markdown.ts",
@@ -1329,44 +1238,21 @@
         "export type TileNode = TileLeafNode | TileBranchNode /** * Traverses tree to collect all leaf nodes in order. */ export function getAllLeaves(node: TileNode): ReadonlyArray<TileLeafNode>",
         "export function createDefaultTree(sectionCount: number): TileNode",
         "export function updateBranchWeights( node: TileNode, branchId: string, newWeights: ReadonlyArray<number> ): TileNode",
-        "export function swapLeavesById(node: TileNode, idA: string, idB: string): TileNode",
+        "export function swapLeavesById( node: TileNode, idA: string, idB: string, swapWeights = true ): TileNode",
         "export function splitLeaf( root: TileNode, targetLeafId: string, direction: SplitDirection, newSectionIndex: number, newLeafId: string, insertAfter = true ): TileNode",
-        "export function removeLeaf(root: TileNode, leafId: string): TileNode | null",
-        "export type DropZonePosition = 'top' | 'bottom' | 'left' | 'right' | 'center' export function findLeafById(root: TileNode, leafId: string): TileLeafNode | null",
-        "export function moveLeafToPosition( root: TileNode, sourceLeafId: string, targetLeafId: string, position: DropZonePosition ): TileNode",
-        "export function reindexTreeLeaves(root: TileNode): TileNode",
-        "export function reconcileTreeWithSections( root: TileNode | null | undefined, sectionCount: number ): TileNode",
-        "export function findParentBranch( root: TileNode, targetId: string ):",
-        "export function resizeLeafInDirection( root: TileNode, leafId: string, direction: 'left' | 'right' | 'up' | 'down', delta = 0.1 ): TileNode",
         "export interface RectBounds",
         "export function clampRatio(ratio: number, minRatio = 0.15, maxRatio = 0.85): number",
-        "export function calculateHorizontalSplitRatio( pointerX: number, container: RectBounds, minRatio = 0.15, maxRatio = 0.85 ): number",
-        "export function calculateVerticalSplitRatio( pointerY: number, container: RectBounds, minRatio = 0.15, maxRatio = 0.85 ): number",
-        "export type Direction = 'left' | 'right' | 'up' | 'down' export interface LeafNormalizedRect",
-        "export function computeTreeLayoutRects(root: TileNode): ReadonlyMap<string, LeafNormalizedRect>",
-        "export function findAdjacentLeaf( root: TileNode, currentLeafId: string, direction: Direction ): string | null",
-        "export interface ParsedFrontmatter",
-        "export interface MarkdownBlock",
-        "export function parseFrontmatter(content: string): ParsedFrontmatter",
-        "export function extractFrontmatter(content: string): Record<string, string>",
-        "export function stripFrontmatter(content: string): string",
-        "export function extractCodeBlocks(content: string): ReadonlyArray<MarkdownBlock>",
-        "export function findMarkdownBlocks( content: string, blockType?: string ): ReadonlyArray<MarkdownBlock>",
-        "export function normalizePath(rawPath: string): string",
-        "export function joinPaths(...segments: ReadonlyArray<string>): string"
+        "export function calculateHorizontalSplitRatio( pointerX: number, container: RectBounds, minRatio = 0.15, maxRatio = 0.85 ): number"
       ],
       "test_command": "rtk pnpm --filter core test",
-      "tokens": 12469
+      "tokens": 12811
     },
     {
       "id": "packages_obsidian-utils",
       "name": "Obsidian Utils",
       "summary": "Подсистема `packages/obsidian-utils` с ключевыми точками входа: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json",
       "l1_path": "subsystems/packages_obsidian-utils.md",
-      "tags": [
-        "packages_obsidian-utils",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
+      "tags": ["packages_obsidian-utils", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": [
         "packages/obsidian-utils/src/index.ts",
         "packages/obsidian-utils/package.json"
@@ -1415,14 +1301,8 @@
       "name": "Ports",
       "summary": "Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json",
       "l1_path": "subsystems/packages_ports.md",
-      "tags": [
-        "packages_ports",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "entrypoints": [
-        "packages/ports/src/index.ts",
-        "packages/ports/package.json"
-      ],
+      "tags": ["packages_ports", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["packages/ports/src/index.ts", "packages/ports/package.json"],
       "key_files": [
         "packages/ports/src/index.ts",
         "packages/ports/package.json",
@@ -1460,13 +1340,8 @@
       "name": "Tsconfig",
       "summary": "Подсистема `packages/tsconfig` с ключевыми точками входа: packages/tsconfig/package.json",
       "l1_path": "subsystems/packages_tsconfig.md",
-      "tags": [
-        "packages_tsconfig",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "entrypoints": [
-        "packages/tsconfig/package.json"
-      ],
+      "tags": ["packages_tsconfig", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["packages/tsconfig/package.json"],
       "key_files": [
         "packages/tsconfig/package.json",
         "packages/tsconfig/tsconfig.base.json",
@@ -1503,14 +1378,8 @@
       "name": "Types",
       "summary": "Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json",
       "l1_path": "subsystems/packages_types.md",
-      "tags": [
-        "packages_types",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "entrypoints": [
-        "packages/types/src/index.ts",
-        "packages/types/package.json"
-      ],
+      "tags": ["packages_types", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["packages/types/src/index.ts", "packages/types/package.json"],
       "key_files": [
         "packages/types/src/index.ts",
         "packages/types/package.json",
@@ -1552,14 +1421,8 @@
       "name": "Ui",
       "summary": "Подсистема `packages/ui` с ключевыми точками входа: packages/ui/package.json, packages/ui/src/index.ts",
       "l1_path": "subsystems/packages_ui.md",
-      "tags": [
-        "packages_ui",
-        "TypeScript / JavaScript (Node/Bun/Deno)"
-      ],
-      "entrypoints": [
-        "packages/ui/package.json",
-        "packages/ui/src/index.ts"
-      ],
+      "tags": ["packages_ui", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["packages/ui/package.json", "packages/ui/src/index.ts"],
       "key_files": [
         "packages/ui/package.json",
         "packages/ui/src/index.ts",
@@ -1659,28 +1522,445 @@
         "export class SplitEditorModal extends Modal",
         "export function createEditorKeymaps(tabSize: number, onSave?: () => void): readonly KeyBinding[]",
         "export interface EditorToolbarOptions",
-        "export class EditorToolbar",
-        "export type SplitterOrientation = 'column' | 'row' | 'horizontal' | 'vertical' export interface SplitterDragConfig",
-        "export function attachSplitterDrag(config: SplitterDragConfig): () => void",
-        "export interface CodeEditorOptions",
-        "export class CodeEditor",
-        "export function generateMarkdownTable(rows: number, cols: number): string",
-        "export class TableMenu extends Menu",
-        "export type DropZone2D = 'top' | 'bottom' | 'left' | 'right' | 'center' export interface DropZone2DThresholds",
-        "export function computeDropZone2D( rect: DOMRect |",
-        "export const baseTheme: Extension = EditorView.baseTheme(",
-        "export const baseHighlight: Extension = syntaxHighlighting( HighlightStyle.define([",
-        "export interface LinkOpener",
-        "export function attachInternalLinkHandler( containerEl: HTMLElement, opener: LinkOpener, sourcePath: string | (() => string) ): () => void",
-        "export abstract class BaseModal extends Modal",
-        "export const BadgeVariant =",
-        "export type BadgeVariantType = (typeof BadgeVariant)[keyof typeof BadgeVariant] export interface BadgeOptions",
-        "export function getBadgeClassNames(variant: BadgeVariantType = BadgeVariant.Default): string",
-        "export interface SettingOptions",
-        "export function createSetting(containerEl: HTMLElement, options: SettingOptions): Setting"
+        "export class EditorToolbar"
       ],
       "test_command": "rtk pnpm --filter ui test",
       "tokens": 7086
+    },
+    {
+      "id": "plugins_html-renderer",
+      "name": "Html Renderer",
+      "summary": "Подсистема `plugins/html-renderer` с ключевыми точками входа: plugins/html-renderer/src/main.ts, plugins/html-renderer/package.json",
+      "l1_path": "subsystems/plugins_html-renderer.md",
+      "tags": ["plugins_html-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["plugins/html-renderer/src/main.ts", "plugins/html-renderer/package.json"],
+      "key_files": [
+        "plugins/html-renderer/src/main.ts",
+        "plugins/html-renderer/package.json",
+        "plugins/html-renderer/src/ui/html-render-child.ts",
+        "plugins/html-renderer/src/settings/settings-tab.ts",
+        "plugins/html-renderer/src/utils/document-builder.ts",
+        "plugins/html-renderer/main.js",
+        "plugins/html-renderer/README.md",
+        "plugins/html-renderer/src/utils/document-builder.test.ts",
+        "plugins/html-renderer/src/utils/source-parser.test.ts",
+        "plugins/html-renderer/src/utils/sandbox.test.ts",
+        "plugins/html-renderer/src/utils/source-parser.ts",
+        "plugins/html-renderer/CHANGELOG.md",
+        "plugins/html-renderer/src/settings/settings.ts",
+        "plugins/html-renderer/src/services/theme-service.ts",
+        "plugins/html-renderer/src/services/content-loader.ts"
+      ],
+      "files": [
+        {
+          "path": "plugins/html-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 48
+        },
+        {
+          "path": "plugins/html-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 32
+        },
+        {
+          "path": "plugins/html-renderer/src/ui/html-render-child.ts",
+          "is_entrypoint": false,
+          "lines": 209
+        },
+        {
+          "path": "plugins/html-renderer/src/settings/settings-tab.ts",
+          "is_entrypoint": false,
+          "lines": 190
+        },
+        {
+          "path": "plugins/html-renderer/src/utils/document-builder.ts",
+          "is_entrypoint": false,
+          "lines": 123
+        },
+        {
+          "path": "plugins/html-renderer/main.js",
+          "is_entrypoint": false,
+          "lines": 91
+        },
+        {
+          "path": "plugins/html-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 62
+        },
+        {
+          "path": "plugins/html-renderer/src/utils/document-builder.test.ts",
+          "is_entrypoint": false,
+          "lines": 57
+        },
+        {
+          "path": "plugins/html-renderer/src/utils/source-parser.test.ts",
+          "is_entrypoint": false,
+          "lines": 37
+        },
+        {
+          "path": "plugins/html-renderer/src/utils/sandbox.test.ts",
+          "is_entrypoint": false,
+          "lines": 34
+        },
+        {
+          "path": "plugins/html-renderer/src/utils/source-parser.ts",
+          "is_entrypoint": false,
+          "lines": 20
+        },
+        {
+          "path": "plugins/html-renderer/CHANGELOG.md",
+          "is_entrypoint": false,
+          "lines": 20
+        },
+        {
+          "path": "plugins/html-renderer/src/settings/settings.ts",
+          "is_entrypoint": false,
+          "lines": 19
+        },
+        {
+          "path": "plugins/html-renderer/src/services/theme-service.ts",
+          "is_entrypoint": false,
+          "lines": 18
+        },
+        {
+          "path": "plugins/html-renderer/src/services/content-loader.ts",
+          "is_entrypoint": false,
+          "lines": 17
+        }
+      ],
+      "key_symbols": [
+        "export class HTMLRenderChild extends MarkdownRenderChild",
+        "export class HTMLRendererSettingTab extends PluginSettingTab",
+        "export interface ThemeTokens",
+        "export class HTMLDocumentBuilder"
+      ],
+      "test_command": "rtk pnpm --filter html-renderer test",
+      "tokens": 117754
+    },
+    {
+      "id": "plugins_snippet-renderer",
+      "name": "Snippet Renderer",
+      "summary": "Подсистема `plugins/snippet-renderer` с ключевыми точками входа: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts",
+      "l1_path": "subsystems/plugins_snippet-renderer.md",
+      "tags": ["plugins_snippet-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": [
+        "plugins/snippet-renderer/package.json",
+        "plugins/snippet-renderer/src/main.ts"
+      ],
+      "key_files": [
+        "plugins/snippet-renderer/package.json",
+        "plugins/snippet-renderer/src/main.ts",
+        "plugins/snippet-renderer/src/ui/snippet-render-child.ts",
+        "plugins/snippet-renderer/src/utils/parser.test.ts",
+        "plugins/snippet-renderer/src/utils/parser.ts",
+        "plugins/snippet-renderer/README.md",
+        "plugins/snippet-renderer/main.js",
+        "plugins/snippet-renderer/src/utils/fence.test.ts",
+        "plugins/snippet-renderer/tsconfig.json",
+        "plugins/snippet-renderer/CHANGELOG.md",
+        "plugins/snippet-renderer/manifest.json",
+        "plugins/snippet-renderer/src/utils/fence.ts",
+        "plugins/snippet-renderer/versions.json"
+      ],
+      "files": [
+        {
+          "path": "plugins/snippet-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 31
+        },
+        {
+          "path": "plugins/snippet-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 19
+        },
+        {
+          "path": "plugins/snippet-renderer/src/ui/snippet-render-child.ts",
+          "is_entrypoint": false,
+          "lines": 231
+        },
+        {
+          "path": "plugins/snippet-renderer/src/utils/parser.test.ts",
+          "is_entrypoint": false,
+          "lines": 112
+        },
+        {
+          "path": "plugins/snippet-renderer/src/utils/parser.ts",
+          "is_entrypoint": false,
+          "lines": 74
+        },
+        {
+          "path": "plugins/snippet-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 44
+        },
+        {
+          "path": "plugins/snippet-renderer/main.js",
+          "is_entrypoint": false,
+          "lines": 38
+        },
+        {
+          "path": "plugins/snippet-renderer/src/utils/fence.test.ts",
+          "is_entrypoint": false,
+          "lines": 15
+        },
+        {
+          "path": "plugins/snippet-renderer/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 10
+        },
+        {
+          "path": "plugins/snippet-renderer/CHANGELOG.md",
+          "is_entrypoint": false,
+          "lines": 10
+        },
+        {
+          "path": "plugins/snippet-renderer/manifest.json",
+          "is_entrypoint": false,
+          "lines": 9
+        },
+        {
+          "path": "plugins/snippet-renderer/src/utils/fence.ts",
+          "is_entrypoint": false,
+          "lines": 7
+        },
+        {
+          "path": "plugins/snippet-renderer/versions.json",
+          "is_entrypoint": false,
+          "lines": 3
+        }
+      ],
+      "key_symbols": [
+        "export class SnippetRenderChild extends MarkdownRenderChild",
+        "export interface ParsedTemplate",
+        "export function parseLanguageAndSource(source: string, fenceHeader?: string): ParsedTemplate",
+        "export function extractVariables(source: string): readonly string[]",
+        "export function substituteVariables( source: string, values: Readonly<Record<string, string>> ): string"
+      ],
+      "test_command": "rtk pnpm --filter snippet-renderer test",
+      "tokens": 113361
+    },
+    {
+      "id": "plugins_tabs-renderer",
+      "name": "Tabs Renderer",
+      "summary": "Подсистема `plugins/tabs-renderer` с ключевыми точками входа: plugins/tabs-renderer/src/main.ts, plugins/tabs-renderer/package.json",
+      "l1_path": "subsystems/plugins_tabs-renderer.md",
+      "tags": ["plugins_tabs-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["plugins/tabs-renderer/src/main.ts", "plugins/tabs-renderer/package.json"],
+      "key_files": [
+        "plugins/tabs-renderer/src/main.ts",
+        "plugins/tabs-renderer/package.json",
+        "plugins/tabs-renderer/src/ui/settings/tabs-setting-tab.ts",
+        "plugins/tabs-renderer/src/ui/tabs-view.ts",
+        "plugins/tabs-renderer/src/ui/editor/toolbar.ts",
+        "plugins/tabs-renderer/src/utils/tabs-parser.ts",
+        "plugins/tabs-renderer/src/utils/tabs-parser.test.ts",
+        "plugins/tabs-renderer/src/ui/editor/tab-editor.ts",
+        "plugins/tabs-renderer/src/ui/dnd-controller.ts",
+        "plugins/tabs-renderer/src/ui/editor/keymaps.ts",
+        "plugins/tabs-renderer/src/ui/editor/table-menu.ts",
+        "plugins/tabs-renderer/src/utils/tabs-serializer.test.ts",
+        "plugins/tabs-renderer/src/settings/settings.ts",
+        "plugins/tabs-renderer/src/services/editor-service.ts",
+        "plugins/tabs-renderer/src/utils/config-parser.test.ts"
+      ],
+      "files": [
+        {
+          "path": "plugins/tabs-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 70
+        },
+        {
+          "path": "plugins/tabs-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 37
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/settings/tabs-setting-tab.ts",
+          "is_entrypoint": false,
+          "lines": 306
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/tabs-view.ts",
+          "is_entrypoint": false,
+          "lines": 213
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/editor/toolbar.ts",
+          "is_entrypoint": false,
+          "lines": 97
+        },
+        {
+          "path": "plugins/tabs-renderer/src/utils/tabs-parser.ts",
+          "is_entrypoint": false,
+          "lines": 96
+        },
+        {
+          "path": "plugins/tabs-renderer/src/utils/tabs-parser.test.ts",
+          "is_entrypoint": false,
+          "lines": 88
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/editor/tab-editor.ts",
+          "is_entrypoint": false,
+          "lines": 82
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/dnd-controller.ts",
+          "is_entrypoint": false,
+          "lines": 75
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/editor/keymaps.ts",
+          "is_entrypoint": false,
+          "lines": 74
+        },
+        {
+          "path": "plugins/tabs-renderer/src/ui/editor/table-menu.ts",
+          "is_entrypoint": false,
+          "lines": 63
+        },
+        {
+          "path": "plugins/tabs-renderer/src/utils/tabs-serializer.test.ts",
+          "is_entrypoint": false,
+          "lines": 58
+        },
+        {
+          "path": "plugins/tabs-renderer/src/settings/settings.ts",
+          "is_entrypoint": false,
+          "lines": 53
+        },
+        {
+          "path": "plugins/tabs-renderer/src/services/editor-service.ts",
+          "is_entrypoint": false,
+          "lines": 46
+        },
+        {
+          "path": "plugins/tabs-renderer/src/utils/config-parser.test.ts",
+          "is_entrypoint": false,
+          "lines": 45
+        }
+      ],
+      "key_symbols": [
+        "export interface ITabsPluginHost extends Plugin",
+        "export class TabsSettingsTab extends PluginSettingTab",
+        "export class TabsView extends MarkdownRenderChild",
+        "export class EditorToolbar"
+      ],
+      "test_command": "rtk pnpm --filter tabs-renderer test",
+      "tokens": 10104
+    },
+    {
+      "id": "plugins_tiling-renderer",
+      "name": "Tiling Renderer",
+      "summary": "Подсистема `plugins/tiling-renderer` с ключевыми точками входа: plugins/tiling-renderer/src/main.ts, plugins/tiling-renderer/package.json",
+      "l1_path": "subsystems/plugins_tiling-renderer.md",
+      "tags": ["plugins_tiling-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": [
+        "plugins/tiling-renderer/src/main.ts",
+        "plugins/tiling-renderer/package.json"
+      ],
+      "key_files": [
+        "plugins/tiling-renderer/src/main.ts",
+        "plugins/tiling-renderer/package.json",
+        "plugins/tiling-renderer/src/ui/tiling-panel-renderer.ts",
+        "plugins/tiling-renderer/src/ui/tiling-view.ts",
+        "plugins/tiling-renderer/src/services/tiling-sync-service.test.ts",
+        "plugins/tiling-renderer/src/services/tiling-sync-service.ts",
+        "plugins/tiling-renderer/src/settings/settings-tab.ts",
+        "plugins/tiling-renderer/src/ui/panel-dnd-controller.ts",
+        "plugins/tiling-renderer/data.json",
+        "plugins/tiling-renderer/README.md",
+        "plugins/tiling-renderer/main.js",
+        "plugins/tiling-renderer/src/settings/settings.ts",
+        "plugins/tiling-renderer/CHANGELOG.md",
+        "plugins/tiling-renderer/tsconfig.json",
+        "plugins/tiling-renderer/manifest.json"
+      ],
+      "files": [
+        {
+          "path": "plugins/tiling-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 312
+        },
+        {
+          "path": "plugins/tiling-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 30
+        },
+        {
+          "path": "plugins/tiling-renderer/src/ui/tiling-panel-renderer.ts",
+          "is_entrypoint": false,
+          "lines": 372
+        },
+        {
+          "path": "plugins/tiling-renderer/src/ui/tiling-view.ts",
+          "is_entrypoint": false,
+          "lines": 347
+        },
+        {
+          "path": "plugins/tiling-renderer/src/services/tiling-sync-service.test.ts",
+          "is_entrypoint": false,
+          "lines": 138
+        },
+        {
+          "path": "plugins/tiling-renderer/src/services/tiling-sync-service.ts",
+          "is_entrypoint": false,
+          "lines": 132
+        },
+        {
+          "path": "plugins/tiling-renderer/src/settings/settings-tab.ts",
+          "is_entrypoint": false,
+          "lines": 106
+        },
+        {
+          "path": "plugins/tiling-renderer/src/ui/panel-dnd-controller.ts",
+          "is_entrypoint": false,
+          "lines": 101
+        },
+        {
+          "path": "plugins/tiling-renderer/data.json",
+          "is_entrypoint": false,
+          "lines": 31
+        },
+        {
+          "path": "plugins/tiling-renderer/README.md",
+          "is_entrypoint": false,
+          "lines": 29
+        },
+        {
+          "path": "plugins/tiling-renderer/main.js",
+          "is_entrypoint": false,
+          "lines": 29
+        },
+        {
+          "path": "plugins/tiling-renderer/src/settings/settings.ts",
+          "is_entrypoint": false,
+          "lines": 25
+        },
+        {
+          "path": "plugins/tiling-renderer/CHANGELOG.md",
+          "is_entrypoint": false,
+          "lines": 13
+        },
+        {
+          "path": "plugins/tiling-renderer/tsconfig.json",
+          "is_entrypoint": false,
+          "lines": 12
+        },
+        {
+          "path": "plugins/tiling-renderer/manifest.json",
+          "is_entrypoint": false,
+          "lines": 9
+        }
+      ],
+      "key_symbols": [
+        "export interface TilingPanelHost",
+        "export class TilingPanelRenderer",
+        "export const TILING_VIEW_TYPE = 'orbit-tiling-view' export interface TilingLayoutHost",
+        "export class TilingView extends ItemView implements TilingPanelHost"
+      ],
+      "test_command": "rtk pnpm --filter tiling-renderer test",
+      "tokens": 128073
     }
   ],
   "core_rules": [

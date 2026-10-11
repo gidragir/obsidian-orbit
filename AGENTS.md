@@ -143,38 +143,62 @@
 ## 🧠 OpenViking Context Protocol
 
 This repository contains a 3-tier OpenViking knowledge base in `.agents/knowledge/` and rules in `.agents/rules/project_context.md`.
-- **L0 (Mental Map):** Inspect `.agents/knowledge/L0_index.json` (or use `project_knowledge(level="L0")`).
-- **L1 (Subsystems):** Inspect `.agents/knowledge/subsystems/<subsystem_id>.md` before modifying module files.
-- **L2 (ADR & CLI):** Check `.agents/knowledge/adr/` and `.agents/knowledge/cli/commands.md`.
-- **Sync Knowledge:** Run `sync-knowledge .` to update subsystem documentation.
+- **L0 (Mental Map):** Call `context_get_subsystems` via `call_mcp_tool`.
+- **L1 (Subsystems):** Call `context_get_subsystem` via `call_mcp_tool` before modifying module files.
+- **L2 (Code Reference & Drift):** Call `context_pack` and `context_check` via `call_mcp_tool`.
+- **Direct File Access:** Strictly prohibited for `.agents/knowledge/**`. Use native `context-init` MCP tools.
 
 ## 🗺 Архитектурная карта и навигация (OpenViking L0-L2)
 
-Проект `obsidian-orbit` использует трехуровневую базу знаний в `.agents/knowledge/`:
+Проект `obsidian-orbit` управляется трехуровневой базой знаний OpenViking (L0-L2).
+Категорически запрещено читать файлы `.agents/knowledge/**` напрямую через инструменты чтения файлов (`view_file`, `cat` и др.). Вся навигация и исследование архитектуры выполняются исключительно через MCP-сервер `context-init` (MCP-First Protocol).
 
-- **L0 Индекс (Mental Map):** [`.agents/knowledge/L0_index.md`](.agents/knowledge/L0_index.md) | [JSON](.agents/knowledge/L0_index.json)
-- **Справочник команд (L2):** [`.agents/knowledge/cli/commands.md`](.agents/knowledge/cli/commands.md)
-- **Архитектурные решения (ADR):** [`.agents/knowledge/adr/0001_initial_architecture.md`](.agents/knowledge/adr/0001_initial_architecture.md)
+### ⚡ MCP-First Protocol (context-init)
 
-### Подсистемы (L1):
-- [.changeset](.agents/knowledge/subsystems/changeset.md) — Конфигурация для управления изменениями в проекте.
-- [.vault](.agents/knowledge/subsystems/vault.md) — Содержит исходные файлы плагинов и их конфигурации.
-- [dev-vault](.agents/knowledge/subsystems/dev-vault.md) — Разработка и тестирование плагинов.
-- [adapters](.agents/knowledge/subsystems/adapters.md) — Адаптеры для взаимодействия с Obsidian API.
-- [core](.agents/knowledge/subsystems/core.md) — Ядро системы, включающее структуру и геометрию тайлов.
-- [obsidian-utils](.agents/knowledge/subsystems/obsidian-utils.md) — Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.
-- [ports](.agents/knowledge/subsystems/ports.md) — Интерфейсы для взаимодействия с внешними системами.
-- [tsconfig](.agents/knowledge/subsystems/tsconfig.md) — Конфигурации TypeScript для проекта.
-- [types](.agents/knowledge/subsystems/types.md) — Типы для обработки результатов и ошибок.
-- [ui](.agents/knowledge/subsystems/ui.md) — Интерфейс пользователя для редактирования и взаимодействия.
-- [reference](.agents/knowledge/subsystems/reference.md) — Справочная информация и примеры использования плагинов.
-- [scripts](.agents/knowledge/subsystems/scripts.md) — Скрипты для автоматизации процессов сборки и развертывания.
-- [.changeset](.agents/knowledge/subsystems/.changeset.md) — Модуль и компоненты директории `.changeset` (1 файлов)
-- [.vault](.agents/knowledge/subsystems/.vault.md) — Подсистема `.vault` с ключевыми точками входа: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts
-- [Adapters](.agents/knowledge/subsystems/packages_adapters.md) — Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts
-- [Core](.agents/knowledge/subsystems/packages_core.md) — Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts
-- [Obsidian Utils](.agents/knowledge/subsystems/packages_obsidian-utils.md) — Подсистема `packages/obsidian-utils` с ключевыми точками входа: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json
-- [Ports](.agents/knowledge/subsystems/packages_ports.md) — Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json
-- [Tsconfig](.agents/knowledge/subsystems/packages_tsconfig.md) — Подсистема `packages/tsconfig` с ключевыми точками входа: packages/tsconfig/package.json
-- [Types](.agents/knowledge/subsystems/packages_types.md) — Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json
-- [Ui](.agents/knowledge/subsystems/packages_ui.md) — Подсистема `packages/ui` с ключевыми точками входа: packages/ui/package.json, packages/ui/src/index.ts
+1. **Обзор всех подсистем и структуры проекта (L0):**
+   Вызовите `context_get_subsystems`:
+   ```json
+   {"ServerName": "context-init", "ToolName": "context_get_subsystems", "Arguments": {}}
+   ```
+2. **Получение компактной L1-карточки конкретной подсистемы:**
+   Вызовите `context_get_subsystem` (передайте `subsystem_id`):
+   ```json
+   {"ServerName": "context-init", "ToolName": "context_get_subsystem", "Arguments": {"subsystem_id": "<subsystem_id>"}}
+   ```
+3. **AST-сжатый контекст кода подсистемы (без раздувания контекста):**
+   Вызовите `context_pack`:
+   ```json
+   {"ServerName": "context-init", "ToolName": "context_pack", "Arguments": {"subsystem_id": "<subsystem_id>", "compress": true}}
+   ```
+4. **Проверка архитектурного дрейфа перед сдачей задачи:**
+   Вызовите `context_check`:
+   ```json
+   {"ServerName": "context-init", "ToolName": "context_check", "Arguments": {}}
+   ```
+
+### 📦 Доступные подсистемы:
+- `changeset` (.changeset) — Конфигурация для управления изменениями в проекте.
+- `vault` (.vault) — Содержит исходные файлы плагинов и их конфигурации.
+- `dev-vault` (dev-vault) — Разработка и тестирование плагинов.
+- `adapters` (adapters) — Адаптеры для взаимодействия с Obsidian API.
+- `core` (core) — Ядро системы, включающее структуру и геометрию тайлов.
+- `obsidian-utils` (obsidian-utils) — Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.
+- `ports` (ports) — Интерфейсы для взаимодействия с внешними системами.
+- `tsconfig` (tsconfig) — Конфигурации TypeScript для проекта.
+- `types` (types) — Типы для обработки результатов и ошибок.
+- `ui` (ui) — Интерфейс пользователя для редактирования и взаимодействия.
+- `reference` (reference) — Справочная информация и примеры использования плагинов.
+- `scripts` (scripts) — Скрипты для автоматизации процессов сборки и развертывания.
+- `.changeset` (.changeset) — Модуль и компоненты директории `.changeset` (1 файлов)
+- `.vault` (.vault) — Подсистема `.vault` с ключевыми точками входа: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts
+- `packages_adapters` (Adapters) — Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts
+- `packages_core` (Core) — Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts
+- `packages_obsidian-utils` (Obsidian Utils) — Подсистема `packages/obsidian-utils` с ключевыми точками входа: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json
+- `packages_ports` (Ports) — Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json
+- `packages_tsconfig` (Tsconfig) — Подсистема `packages/tsconfig` с ключевыми точками входа: packages/tsconfig/package.json
+- `packages_types` (Types) — Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json
+- `packages_ui` (Ui) — Подсистема `packages/ui` с ключевыми точками входа: packages/ui/package.json, packages/ui/src/index.ts
+- `plugins_html-renderer` (Html Renderer) — Подсистема `plugins/html-renderer` с ключевыми точками входа: plugins/html-renderer/src/main.ts, plugins/html-renderer/package.json
+- `plugins_snippet-renderer` (Snippet Renderer) — Подсистема `plugins/snippet-renderer` с ключевыми точками входа: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts
+- `plugins_tabs-renderer` (Tabs Renderer) — Подсистема `plugins/tabs-renderer` с ключевыми точками входа: plugins/tabs-renderer/src/main.ts, plugins/tabs-renderer/package.json
+- `plugins_tiling-renderer` (Tiling Renderer) — Подсистема `plugins/tiling-renderer` с ключевыми точками входа: plugins/tiling-renderer/src/main.ts, plugins/tiling-renderer/package.json

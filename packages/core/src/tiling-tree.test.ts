@@ -8,6 +8,7 @@ import {
   removeLeaf,
   splitLeaf,
   swapLeavesById,
+  type TileNode,
   updateBranchWeights,
 } from './tiling-tree'
 
@@ -51,6 +52,24 @@ describe('tiling-tree', () => {
     const leaves = getAllLeaves(swapped)
     expect(leaves[0]?.sectionIndex).toBe(1)
     expect(leaves[1]?.sectionIndex).toBe(0)
+  })
+
+  it('swaps weights when swapping leaves with different weights', () => {
+    const tree: TileNode = {
+      type: 'branch',
+      id: 'root-branch',
+      direction: 'column',
+      weight: 1,
+      children: [
+        { type: 'leaf', id: 'leaf-0', sectionIndex: 0, weight: 2 },
+        { type: 'leaf', id: 'leaf-1', sectionIndex: 1, weight: 0.5 },
+      ],
+    }
+    const swapped = swapLeavesById(tree, 'leaf-0', 'leaf-1', true)
+    const leaves = getAllLeaves(swapped)
+    // leaf-0 gets weight 0.5 (from leaf-1), leaf-1 gets weight 2 (from leaf-0)
+    expect(leaves[0]?.weight).toBe(0.5)
+    expect(leaves[1]?.weight).toBe(2)
   })
 
   it('splits leaf into column or row branch', () => {

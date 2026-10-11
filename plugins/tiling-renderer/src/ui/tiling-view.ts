@@ -231,7 +231,13 @@ export class TilingView extends ItemView implements TilingPanelHost {
   ): Promise<void> {
     if (!this.currentTree || !this.currentFile) return
     this.currentTree = moveLeafToPosition(this.currentTree, fromId, toId, position)
+    if (position === 'center') {
+      this.activeLeafId = toId
+    } else {
+      this.activeLeafId = fromId
+    }
     await this.saveAndRerender()
+    this.setActiveLeaf(this.activeLeafId, true)
   }
 
   async persistGeometry(): Promise<void> {
@@ -285,7 +291,9 @@ export class TilingView extends ItemView implements TilingPanelHost {
     if (!neighborId) return
 
     this.currentTree = swapLeavesById(this.currentTree, this.activeLeafId, neighborId)
+    this.activeLeafId = neighborId
     await this.saveAndRerender()
+    this.setActiveLeaf(neighborId, true)
   }
 
   async resizeInDirection(direction: Direction, delta = 0.1): Promise<void> {

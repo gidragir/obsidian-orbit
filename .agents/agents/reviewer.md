@@ -4,6 +4,7 @@ description: Deep architectural and code quality auditor. Enforces monorepo inva
 subagent: true
 model: pro
 tools:
+  - call_mcp_tool
   - view_file
   - grep_search
   - list_dir

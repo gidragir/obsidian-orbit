@@ -4,6 +4,7 @@ description: Fast read-only discovery agent. Scans Repomix snapshots (reference/
 subagent: true
 model: flash
 tools:
+  - call_mcp_tool
   - view_file
   - grep_search
   - list_dir
