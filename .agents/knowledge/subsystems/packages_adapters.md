@@ -1,28 +1,28 @@
-# Подсистема: Adapters (L1)
+# Subsystem: Adapters (L1)
 
-> **Идентификатор:** `packages_adapters`
-> **Теги:** packages_adapters, TypeScript / JavaScript (Node/Bun/Deno) | **Объем:** ~3137 токенов BPE
+> **Identifier:** `packages_adapters`
+> **Tags:** packages_adapters, TypeScript / JavaScript (Node/Bun/Deno) | **Size:** ~3137 BPE tokens
 
-## 🎯 Назначение и роль
-Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts
+## 🎯 Purpose and role
+Subsystem `packages/adapters` with key entry points: packages/adapters/package.json, packages/adapters/src/index.ts
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/adapters/package.json` | 30 | ⭐ Точка входа |
-| `packages/adapters/src/index.ts` | 12 | ⭐ Точка входа |
-| `packages/adapters/src/editor.ts` | 108 | Исходный код |
-| `packages/adapters/src/vault.ts` | 97 | Исходный код |
-| `packages/adapters/src/debounced-file-sync.ts` | 79 | Исходный код |
-| `packages/adapters/src/settings.ts` | 38 | Исходный код |
-| `packages/adapters/src/command.ts` | 35 | Исходный код |
-| `packages/adapters/src/declarative-setting-tab.ts` | 32 | Исходный код |
-| `packages/adapters/src/clipboard.ts` | 20 | Исходный код |
-| `packages/adapters/src/notice.ts` | 8 | Исходный код |
-| `packages/adapters/tsconfig.json` | 4 | Исходный код |
+| `packages/adapters/package.json` | 30 | ⭐ Entry point |
+| `packages/adapters/src/index.ts` | 12 | ⭐ Entry point |
+| `packages/adapters/src/editor.ts` | 108 | Source code |
+| `packages/adapters/src/vault.ts` | 97 | Source code |
+| `packages/adapters/src/debounced-file-sync.ts` | 79 | Source code |
+| `packages/adapters/src/settings.ts` | 38 | Source code |
+| `packages/adapters/src/command.ts` | 35 | Source code |
+| `packages/adapters/src/declarative-setting-tab.ts` | 32 | Source code |
+| `packages/adapters/src/clipboard.ts` | 20 | Source code |
+| `packages/adapters/src/notice.ts` | 8 | Source code |
+| `packages/adapters/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export function replaceCodeBlock( editor: Editor, sectionInfo: MarkdownSectionInformation, newBlockContent: string, expectedFencePrefix?: string ): boolean
 export class ObsidianVaultAdapter implements IVaultPort
@@ -30,7 +30,7 @@ export interface DebouncedWorkspaceFileAdapterOptions
 export class DebouncedWorkspaceFileAdapter
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter adapters test
 ```

@@ -6,29 +6,38 @@ description: "Standards for Obsidian plugins lifecycle, DOM event registration, 
 
 # 20: Obsidian Plugins Standards & Lifecycle
 
-1. **Точка входа:** Экспорт по умолчанию `export default class MyPlugin extends Plugin`.
-2. **Безопасность памяти:** Слушатели событий — только через `this.registerDomEvent`, `this.registerEvent`, таймеры через `this.registerInterval`.
-3. **Стилизация:** Никакого хардкода цветов в `src/styles.css`. Только нативные переменные темы (`var(--text-normal)`, `var(--background-primary)`).
-4. **Манифест:** `id` строго совпадает с папкой, `minAppVersion >= 1.7.0`, `isDesktopOnly: false`.
-5. **Изоляция Drag-and-Drop:** В HTML5 DND запрещено передавать служебные токены/ID в формате `'text/plain'` во избежание авто-вставки браузером и CodeMirror в текстовый буфер под курсором. Использовать только кастомные MIME-типы (`application/x-<plugin>-<entity>`) с вызовом `e.stopPropagation()`.
-6. **Отображение заметок:** Кастомные UI-представления секций заметок обязаны использовать нативный `MarkdownRenderer.render` (класс `.markdown-rendered.markdown-preview-view`), поддерживая раздельный режим предпросмотра и редактирования.
-7. **Изоляция геометрии отображения и AST заметки (Dual State Isolation):**
-   * Визуальное расположение панелей/табов (`FileLayoutState`, `TileNode`, геометрия) и физическое содержимое Markdown-заметки на диске (`vault.modify`) являются независимыми слоями состояния.
-   * Изменение расположения панелей (Drag & Drop, сплиты, ресайз) по умолчанию НЕ должно мутировать порядок текста/секций в файле заметки без явной настройки пользователя (`syncTextOrder` со значением по умолчанию `true` или `false`).
-   * При синхронизации порядка текста сервис обязан атомарно синхронизировать оба представления: и секции документа в памяти (`document.sections`), и индексы в дереве узлов (`reindexTreeLeaves`), предотвращая реверсивный своп при перезагрузке файла.
-8. **Динамическое согласование персистентной геометрии (Dynamic Section Reconciliation):**
-   * Плагины с разбиением заметок на секции (тайлы, табы, сплиттеры) обязаны реализовывать чистую функцию согласования (`reconcileTreeWithSections` / `reconcileLayoutWithItems`).
-   * При открытии представления (`setFile`), смене файла или внешнем изменении (`vault.on('modify')`) сохраненная геометрия обязана сверяться с актуальным количеством секций:
-     - При добавлении разделителей/секций новые контейнеры обязаны создаваться автоматически рядом с предыдущими, сохраняя существующие пропорции и веса.
-     - При удалении разделителей/секций лишние контейнеры обязаны удаляться с коллапсом пустых веток.
-   * При инлайн-редактировании секции ввод разделителей обязан вызывать пересчет документа и создание новых панелей при завершении редактирования.
-   * Слушатель `vault.on('modify')` во вьюхе обязан дедуплицировать собственные автосохранения (`diskContent === inMemorySerialized`), чтобы предотвратить сброс фокуса активного редактора.
-9. **Пространственная навигация в плиточных интерфейсах (Two-Tier Directional Navigation):**
-   * При реализации переключения фокуса или перемещения панелей по 4 направлениям (`up`, `down`, `left`, `right`) запрещено использовать чистое евклидово расстояние между центрами панелей.
-   * Алгоритм поиска соседа обязан реализовывать двухуровневую эвристику (Two-Tier Overlap):
-     - **Tier 1 (Прямой сплит/колонка):** При наличии физического перекрытия на поперечной оси (`crossOverlap > 0`) дистанция измеряется строго между смежными ребрами (edge-to-edge gap). Такие кандидаты имеют абсолютный приоритет над панелями в соседних ветках.
-     - **Tier 2 (Диагональные/соседние сплиты):** Кандидаты без физического проекционного перекрытия получают заградительный штраф, предотвращающий диагональный перескок фокуса при неравных ширинах или высотах колонок.
-10. **Запрет коммита runtime-данных (`data.json`):** Настройки по умолчанию задаются в `DEFAULT_SETTINGS` в `src/settings/types.ts`. Файлы `data.json` создаются Obsidian исключительно в рантайме пользователя и исключаются из контроля версий через `.gitignore`.
-11. **Обязательное подключение общих стилей монорепозитория:** Плагин обязан первой строкой в `src/styles.css` импортировать `@import '../../../packages/ui/src/styles.css';` и использовать общие CSS-токены и компоненты (`Badge`, кнопки, состояния фокуса).
-12. **Принцип "Shared Packages First":** Запрет на создание локальных инлайн-редакторов CodeMirror, обработчиков перетаскивания сплиттеров или самописных парсеров frontmatter, если они уже существуют в `@packages/*`.
-13. **Изоляция автосохранения и I/O (Debounced File Sync):** Доменные сервисы документов не имеют права напрямую работать с `Vault` и `setTimeout`. Сохранение делегируется адаптеру `@packages/adapters` (`DebouncedWorkspaceFileAdapter`).
+1. **Entry point:** Default export `export default class MyPlugin extends Plugin`.
+2. **Memory safety:** Event listeners only via `this.registerDomEvent`, `this.registerEvent`; timers via `this.registerInterval`.
+3. **Styling:** No hardcoded colors in `src/styles.css`. Only native theme variables (`var(--text-normal)`, `var(--background-primary)`).
+4. **Manifest:** `id` strictly matches the folder name, `minAppVersion >= 1.7.0`, `isDesktopOnly: false`.
+5. **Drag-and-Drop isolation:** In HTML5 DND, do not pass service tokens/IDs as `'text/plain'`, to avoid the browser and CodeMirror auto-inserting them into the text buffer under the cursor. Use only custom MIME types (`application/x-<plugin>-<entity>`) with a call to `e.stopPropagation()`.
+6. **Note rendering:** Custom UI views of note sections must use the native `MarkdownRenderer.render` (class `.markdown-rendered.markdown-preview-view`), supporting separate preview and edit modes.
+7. **Isolation of display geometry and note AST (Dual State Isolation):**
+   * The visual layout of panes/tabs (`FileLayoutState`, `TileNode`, geometry) and the physical Markdown content of the note on disk (`vault.modify`) are independent state layers.
+   * Changing the pane layout (Drag & Drop, splits, resize) must NOT mutate the order of text/sections in the note file by default, without an explicit user setting (`syncTextOrder` with a default of `true` or `false`).
+   * When synchronizing text order, the service must atomically synchronize both representations: the in-memory document sections (`document.sections`) and the indices in the node tree (`reindexTreeLeaves`), preventing a reverse swap on file reload.
+8. **Dynamic reconciliation of persistent geometry (Dynamic Section Reconciliation):**
+   * Plugins that split notes into sections (tiles, tabs, splitters) must implement a pure reconciliation function (`reconcileTreeWithSections` / `reconcileLayoutWithItems`).
+   * When a view is opened (`setFile`), the file changes, or an external change occurs (`vault.on('modify')`), the stored geometry must be reconciled with the actual number of sections:
+     - When separators/sections are added, new containers must be created automatically next to the previous ones, preserving existing proportions and weights.
+     - When separators/sections are removed, redundant containers must be removed, collapsing empty branches.
+   * During inline section editing, entering separators must trigger a document recalculation and the creation of new panes when editing finishes.
+   * The `vault.on('modify')` listener in a view must deduplicate its own autosaves (`diskContent === inMemorySerialized`) to prevent the active editor from losing focus.
+9. **Spatial navigation in tiling interfaces (Two-Tier Directional Navigation):**
+   * When implementing focus switching or pane movement in 4 directions (`up`, `down`, `left`, `right`), pure Euclidean distance between pane centers must not be used.
+   * The neighbor search algorithm must implement a two-tier heuristic (Two-Tier Overlap):
+     - **Tier 1 (Direct split/column):** When there is physical overlap on the cross axis (`crossOverlap > 0`), distance is measured strictly between adjacent edges (edge-to-edge gap). Such candidates have absolute priority over panes in neighboring branches.
+     - **Tier 2 (Diagonal/neighboring splits):** Candidates without physical projection overlap receive a blocking penalty that prevents diagonal focus jumps when column widths or heights are unequal.
+10. **No committing runtime data (`data.json`):** Default settings are defined in `DEFAULT_SETTINGS` in `src/settings/types.ts`. `data.json` files are created by Obsidian solely at runtime on the user's machine and are excluded from version control via `.gitignore`.
+11. **Mandatory import of shared monorepo styles & UI reuse:**
+    * Every standalone plugin must declare `"@packages/ui": "workspace:*"` in `dependencies` of `package.json`.
+    * Every plugin must declare `@import '../../../packages/ui/src/styles.css';` strictly on line 1 of its `src/styles.css`.
+    * Reusing shared CSS tokens and components from `@packages/ui` (`.orbit-badge`, `.orbit-badge--pill`, `.orbit-card`, `.orbit-stats-grid`, `.orbit-stat-card`, `.orbit-filter-tabs`, `.orbit-filter-tab`, `.orbit-empty-state`, `.orbit-control-label`, split editor layouts, buttons) and native Obsidian CSS variables is strictly mandatory.
+    * Duplicating base card borders, stat card grids, pill badges, segmented tab buttons, or default font colors (`--text-normal`) in plugin-specific stylesheets is prohibited. Plugin `src/styles.css` files must only contain domain-specific layout, grid dimensions, and unique component styling.
+12. **"Shared Packages First" principle:** Do not create local inline CodeMirror editors, splitter drag handlers, or hand-written frontmatter parsers if they already exist in `@packages/*`.
+13. **Autosave and I/O isolation (Debounced File Sync):** Domain document services must not work with `Vault` and `setTimeout` directly. Saving is delegated to the `@packages/adapters` adapter (`DebouncedWorkspaceFileAdapter`).
+14. **Hygiene of settings panels and plugin orchestrators (Settings Hygiene & Sync Preservation):**
+    * **Filtering disabled plugins by default:** Lists of managed plugins/modules in settings panels must hide inactive and disabled entities by default ("Active only" mode by default) with category counters (`Active` / `All` / `Disabled`).
+    * **Respecting the Obsidian system status:** On first initialization, orchestrators must reconcile state with `app.plugins.enabledPlugins`. Forcing `enabled: true` on plugins that the user disabled in the main Obsidian interface is strictly prohibited.
+    * **Protecting cross-platform configurations:** Settings normalization on one host (e.g. Desktop) must take the current platform into account and preserve the `enabled: true` state for mobile plugins (`mobile-only`) and remote modules absent on the current device.
+    * **Blocking incompatible runtime launch:** Before calling `enablePlugin`, the adapter must strictly validate platform compatibility (`isPluginAllowedOnPlatform`), preventing mobile plugins from launching on desktop when settings are toggled.

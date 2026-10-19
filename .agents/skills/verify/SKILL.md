@@ -5,12 +5,12 @@ description: "Autonomous self-healing verification cycle. Runs Biome, TypeScript
 
 # Verify Skill (/verify)
 
-1. Выполнить `pnpm biome check .` (при ошибках запустить `pnpm lint && pnpm format`).
-2. Запустить проверку типов: `pnpm turbo run typecheck`.
-3. Запустить unit-тесты Vitest: `pnpm turbo run test`.
-4. Выполнить тестовую сборку: `pnpm turbo run build`.
-5. Сформировать краткий статус-отчет об успешности проверок.
+1. Run `pnpm biome check .` (on errors, run `pnpm lint && pnpm format`).
+2. Run the type check: `pnpm turbo run typecheck`.
+3. Run the Vitest unit tests: `pnpm turbo run test`.
+4. Run a test build: `pnpm turbo run build`.
+5. Produce a short status report on the success of the checks.
 
-## ⚠️ Guard Clause (Предохранитель зацикливания)
-- Максимальное количество попыток самоисправления (Max Retries) = 3.
-- Если после 3-й попытки `pnpm check` продолжает возвращать ошибку, агент **обязан** прервать цикл и вернуть управление Оркестратору с описанием нерешаемой проблемы.
+## ⚠️ Guard Clause (Loop Breaker)
+- Maximum number of self-fix attempts (Max Retries) = 3.
+- If `pnpm check` still returns an error after the 3rd attempt, the agent **must** break the loop and return control to the Orchestrator with a description of the unresolved problem.

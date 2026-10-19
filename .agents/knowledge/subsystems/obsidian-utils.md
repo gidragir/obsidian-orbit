@@ -1,21 +1,21 @@
-# Подсистема: obsidian-utils (L1)
+# Subsystem: obsidian-utils (L1)
 
-> **Идентификатор:** `obsidian-utils`
-> **Теги:** utils, parsing | **Объем:** ~1738 токенов BPE
+> **Identifier:** `obsidian-utils`
+> **Tags:** utils, parsing | **Size:** ~1738 BPE tokens
 
-## 🎯 Назначение и роль
-Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.
+## 🎯 Purpose and role
+Utilities for working with Obsidian, such as link parsing and formatting.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/obsidian-utils/src/index.ts` | 109 | ⭐ Точка входа |
-| `packages/obsidian-utils/package.json` | 27 | ⭐ Точка входа |
-| `packages/obsidian-utils/src/index.test.ts` | 96 | Исходный код |
-| `packages/obsidian-utils/tsconfig.json` | 4 | Исходный код |
+| `packages/obsidian-utils/src/index.ts` | 109 | ⭐ Entry point |
+| `packages/obsidian-utils/package.json` | 27 | ⭐ Entry point |
+| `packages/obsidian-utils/src/index.test.ts` | 96 | Source code |
+| `packages/obsidian-utils/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export interface ParsedWikiLink
 export function formatWikiLink(target: string, alias?: string): string
@@ -25,7 +25,7 @@ export function parseKeyValueFrontmatter(raw: string): Record<string, string>
 export function formatCodeBlock( tag: string, content: string, fenceChar: '`' | '~' = '`', minFenceLength = 3 ): string
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter obsidian-utils test
 ```

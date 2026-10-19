@@ -1,32 +1,32 @@
-# Подсистема: Core (L1)
+# Subsystem: Core (L1)
 
-> **Идентификатор:** `packages_core`
-> **Теги:** packages_core, TypeScript / JavaScript (Node/Bun/Deno) | **Объем:** ~12469 токенов BPE
+> **Identifier:** `packages_core`
+> **Tags:** packages_core, TypeScript / JavaScript (Node/Bun/Deno) | **Size:** ~12469 BPE tokens
 
-## 🎯 Назначение и роль
-Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts
+## 🎯 Purpose and role
+Subsystem `packages/core` with key entry points: packages/core/package.json, packages/core/src/index.ts
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/core/package.json` | 22 | ⭐ Точка входа |
-| `packages/core/src/index.ts` | 12 | ⭐ Точка входа |
-| `packages/core/src/tiling-tree.ts` | 452 | Исходный код |
-| `packages/core/src/tiling-geometry.ts` | 191 | Исходный код |
-| `packages/core/src/tiling-navigation.test.ts` | 164 | Исходный код |
-| `packages/core/src/tiling-tree.test.ts` | 129 | Исходный код |
-| `packages/core/src/markdown.ts` | 110 | Исходный код |
-| `packages/core/src/markdown.test.ts` | 101 | Исходный код |
-| `packages/core/src/path.ts` | 89 | Исходный код |
-| `packages/core/src/path.test.ts` | 84 | Исходный код |
-| `packages/core/src/settings.test.ts` | 81 | Исходный код |
-| `packages/core/src/tiling-splitter.test.ts` | 77 | Исходный код |
-| `packages/core/src/tiling-splitter.ts` | 68 | Исходный код |
-| `packages/core/src/settings.ts` | 56 | Исходный код |
-| `packages/core/src/array.test.ts` | 49 | Исходный код |
+| `packages/core/package.json` | 22 | ⭐ Entry point |
+| `packages/core/src/index.ts` | 12 | ⭐ Entry point |
+| `packages/core/src/tiling-tree.ts` | 452 | Source code |
+| `packages/core/src/tiling-geometry.ts` | 191 | Source code |
+| `packages/core/src/tiling-navigation.test.ts` | 164 | Source code |
+| `packages/core/src/tiling-tree.test.ts` | 129 | Source code |
+| `packages/core/src/markdown.ts` | 110 | Source code |
+| `packages/core/src/markdown.test.ts` | 101 | Source code |
+| `packages/core/src/path.ts` | 89 | Source code |
+| `packages/core/src/path.test.ts` | 84 | Source code |
+| `packages/core/src/settings.test.ts` | 81 | Source code |
+| `packages/core/src/tiling-splitter.test.ts` | 77 | Source code |
+| `packages/core/src/tiling-splitter.ts` | 68 | Source code |
+| `packages/core/src/settings.ts` | 56 | Source code |
+| `packages/core/src/array.test.ts` | 49 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export type SplitDirection = 'row' | 'column' export interface TileLeafNode
 export interface TileBranchNode
@@ -40,7 +40,7 @@ export function clampRatio(ratio: number, minRatio = 0.15, maxRatio = 0.85): num
 export function calculateHorizontalSplitRatio( pointerX: number, container: RectBounds, minRatio = 0.15, maxRatio = 0.85 ): number
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter core test
 ```

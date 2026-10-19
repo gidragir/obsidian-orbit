@@ -1,32 +1,32 @@
-# Подсистема: dev-vault (L1)
+# Subsystem: dev-vault (L1)
 
-> **Идентификатор:** `dev-vault`
-> **Теги:** development, testing | **Объем:** ~123944 токенов BPE
+> **Identifier:** `dev-vault`
+> **Tags:** development, testing | **Size:** ~123944 BPE tokens
 
-## 🎯 Назначение и роль
-Разработка и тестирование плагинов.
+## 🎯 Purpose and role
+Plugin development and testing.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts` | 314 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts` | 70 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/html-renderer/src/main.ts` | 48 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/tabs-renderer/package.json` | 37 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/tiling-renderer/package.json` | 37 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/html-renderer/package.json` | 32 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/snippet-renderer/package.json` | 31 | ⭐ Точка входа |
-| `dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts` | 19 | ⭐ Точка входа |
-| `dev-vault/.obsidian/workspace.json` | 215 | Исходный код |
-| `dev-vault/Test tiling renderer.md` | 208 | Исходный код |
-| `dev-vault/.obsidian/plugins/tiling-renderer/data.json` | 163 | Исходный код |
-| `dev-vault/.obsidian/hotkeys.json` | 126 | Исходный код |
-| `dev-vault/.obsidian/plugins/html-renderer/main.js` | 91 | Исходный код |
-| `dev-vault/.obsidian/plugins/html-renderer/README.md` | 62 | Исходный код |
-| `dev-vault/.obsidian/plugins/snippet-renderer/README.md` | 44 | Исходный код |
+| `dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts` | 314 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts` | 70 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/html-renderer/src/main.ts` | 48 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/tabs-renderer/package.json` | 37 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/tiling-renderer/package.json` | 37 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/html-renderer/package.json` | 32 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/snippet-renderer/package.json` | 31 | ⭐ Entry point |
+| `dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts` | 19 | ⭐ Entry point |
+| `dev-vault/.obsidian/workspace.json` | 215 | Source code |
+| `dev-vault/Test tiling renderer.md` | 208 | Source code |
+| `dev-vault/.obsidian/plugins/tiling-renderer/data.json` | 163 | Source code |
+| `dev-vault/.obsidian/hotkeys.json` | 126 | Source code |
+| `dev-vault/.obsidian/plugins/html-renderer/main.js` | 91 | Source code |
+| `dev-vault/.obsidian/plugins/html-renderer/README.md` | 62 | Source code |
+| `dev-vault/.obsidian/plugins/snippet-renderer/README.md` | 44 | Source code |
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm test
 ```

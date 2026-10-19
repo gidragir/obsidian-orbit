@@ -1,30 +1,30 @@
-# Подсистема: Snippet Renderer (L1)
+# Subsystem: Snippet Renderer (L1)
 
-> **Идентификатор:** `plugins_snippet-renderer`
-> **Теги:** plugins_snippet-renderer, TypeScript / JavaScript (Node/Bun/Deno) | **Объем:** ~113361 токенов BPE
+> **Identifier:** `plugins_snippet-renderer`
+> **Tags:** plugins_snippet-renderer, TypeScript / JavaScript (Node/Bun/Deno) | **Size:** ~113361 BPE tokens
 
-## 🎯 Назначение и роль
-Подсистема `plugins/snippet-renderer` с ключевыми точками входа: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts
+## 🎯 Purpose and role
+Subsystem `plugins/snippet-renderer` with key entry points: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `plugins/snippet-renderer/package.json` | 31 | ⭐ Точка входа |
-| `plugins/snippet-renderer/src/main.ts` | 19 | ⭐ Точка входа |
-| `plugins/snippet-renderer/src/ui/snippet-render-child.ts` | 231 | Исходный код |
-| `plugins/snippet-renderer/src/utils/parser.test.ts` | 112 | Исходный код |
-| `plugins/snippet-renderer/src/utils/parser.ts` | 74 | Исходный код |
-| `plugins/snippet-renderer/README.md` | 44 | Исходный код |
-| `plugins/snippet-renderer/main.js` | 38 | Исходный код |
-| `plugins/snippet-renderer/src/utils/fence.test.ts` | 15 | Исходный код |
-| `plugins/snippet-renderer/tsconfig.json` | 10 | Исходный код |
-| `plugins/snippet-renderer/CHANGELOG.md` | 10 | Исходный код |
-| `plugins/snippet-renderer/manifest.json` | 9 | Исходный код |
-| `plugins/snippet-renderer/src/utils/fence.ts` | 7 | Исходный код |
-| `plugins/snippet-renderer/versions.json` | 3 | Исходный код |
+| `plugins/snippet-renderer/package.json` | 31 | ⭐ Entry point |
+| `plugins/snippet-renderer/src/main.ts` | 19 | ⭐ Entry point |
+| `plugins/snippet-renderer/src/ui/snippet-render-child.ts` | 231 | Source code |
+| `plugins/snippet-renderer/src/utils/parser.test.ts` | 112 | Source code |
+| `plugins/snippet-renderer/src/utils/parser.ts` | 74 | Source code |
+| `plugins/snippet-renderer/README.md` | 44 | Source code |
+| `plugins/snippet-renderer/main.js` | 38 | Source code |
+| `plugins/snippet-renderer/src/utils/fence.test.ts` | 15 | Source code |
+| `plugins/snippet-renderer/tsconfig.json` | 10 | Source code |
+| `plugins/snippet-renderer/CHANGELOG.md` | 10 | Source code |
+| `plugins/snippet-renderer/manifest.json` | 9 | Source code |
+| `plugins/snippet-renderer/src/utils/fence.ts` | 7 | Source code |
+| `plugins/snippet-renderer/versions.json` | 3 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export class SnippetRenderChild extends MarkdownRenderChild
 export interface ParsedTemplate
@@ -33,7 +33,7 @@ export function extractVariables(source: string): readonly string[]
 export function substituteVariables( source: string, values: Readonly<Record<string, string>> ): string
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter snippet-renderer test
 ```

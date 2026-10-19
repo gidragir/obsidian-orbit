@@ -1,20 +1,20 @@
-# Подсистема: types (L1)
+# Subsystem: types (L1)
 
-> **Идентификатор:** `types`
-> **Теги:** types, result-handling | **Объем:** ~449 токенов BPE
+> **Identifier:** `types`
+> **Tags:** types, result-handling | **Size:** ~449 BPE tokens
 
-## 🎯 Назначение и роль
-Типы для обработки результатов и ошибок.
+## 🎯 Purpose and role
+Types for handling results and errors.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/types/src/index.ts` | 54 | ⭐ Точка входа |
-| `packages/types/package.json` | 17 | ⭐ Точка входа |
-| `packages/types/tsconfig.json` | 4 | Исходный код |
+| `packages/types/src/index.ts` | 54 | ⭐ Entry point |
+| `packages/types/package.json` | 17 | ⭐ Entry point |
+| `packages/types/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export type Result<T, E = Error> = |
 export function ok<T>(value: T): Result<T, never>
@@ -27,7 +27,7 @@ export interface CommandDefinition
 export interface NoticeOptions
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter types test
 ```

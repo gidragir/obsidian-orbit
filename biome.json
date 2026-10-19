@@ -51,7 +51,8 @@
       "!**/styles.css",
       "!**/.vault",
       "!**/reference",
-      "!**/.turbo"
+      "!**/.turbo",
+      "!**/data.json"
     ]
   }
 }

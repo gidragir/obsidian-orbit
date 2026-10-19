@@ -1,28 +1,28 @@
-# Подсистема: adapters (L1)
+# Subsystem: adapters (L1)
 
-> **Идентификатор:** `adapters`
-> **Теги:** adapters, api | **Объем:** ~2299 токенов BPE
+> **Identifier:** `adapters`
+> **Tags:** adapters, api | **Size:** ~2299 BPE tokens
 
-## 🎯 Назначение и роль
-Адаптеры для взаимодействия с Obsidian API.
+## 🎯 Purpose and role
+Adapters for interacting with the Obsidian API.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/adapters/package.json` | 30 | ⭐ Точка входа |
-| `packages/adapters/src/index.ts` | 14 | ⭐ Точка входа |
-| `packages/adapters/src/editor.ts` | 108 | Исходный код |
-| `packages/adapters/src/vault.ts` | 97 | Исходный код |
-| `packages/adapters/src/settings.ts` | 38 | Исходный код |
-| `packages/adapters/src/command.ts` | 35 | Исходный код |
-| `packages/adapters/src/clipboard.ts` | 20 | Исходный код |
-| `packages/adapters/src/notice.ts` | 8 | Исходный код |
-| `packages/adapters/src/debounced-file-sync.ts` | 50 | Исходный код |
-| `packages/adapters/src/declarative-setting-tab.ts` | 75 | Исходный код |
-| `packages/adapters/tsconfig.json` | 4 | Исходный код |
+| `packages/adapters/package.json` | 30 | ⭐ Entry point |
+| `packages/adapters/src/index.ts` | 14 | ⭐ Entry point |
+| `packages/adapters/src/editor.ts` | 108 | Source code |
+| `packages/adapters/src/vault.ts` | 97 | Source code |
+| `packages/adapters/src/settings.ts` | 38 | Source code |
+| `packages/adapters/src/command.ts` | 35 | Source code |
+| `packages/adapters/src/clipboard.ts` | 20 | Source code |
+| `packages/adapters/src/notice.ts` | 8 | Source code |
+| `packages/adapters/src/debounced-file-sync.ts` | 50 | Source code |
+| `packages/adapters/src/declarative-setting-tab.ts` | 75 | Source code |
+| `packages/adapters/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export function replaceCodeBlock( editor: Editor, sectionInfo: MarkdownSectionInformation, newBlockContent: string, expectedFencePrefix?: string ): boolean
 export class ObsidianVaultAdapter implements IVaultPort
@@ -35,7 +35,7 @@ export class DebouncedFileSyncAdapter implements IFileSyncPort
 export class DeclarativeSettingTabAdapter implements ISettingTabPort
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter adapters test
 ```

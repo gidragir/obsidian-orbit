@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch"],
       "env": {},
-      "description": "Загрузка актуальной документации Obsidian API, спецификаций CodeMirror 6 и changelog Obsidian в формате чистый Markdown."
+      "description": "Fetches current Obsidian API documentation, CodeMirror 6 specifications and the Obsidian changelog as clean Markdown."
     }
   }
 }

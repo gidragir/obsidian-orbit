@@ -1,23 +1,23 @@
-# Подсистема: scripts (L1)
+# Subsystem: scripts (L1)
 
-> **Идентификатор:** `scripts`
-> **Теги:** scripts, automation | **Объем:** ~4780 токенов BPE
+> **Identifier:** `scripts`
+> **Tags:** scripts, automation | **Size:** ~4780 BPE tokens
 
-## 🎯 Назначение и роль
-Скрипты для автоматизации процессов сборки и развертывания.
+## 🎯 Purpose and role
+Scripts for automating build and deployment processes.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `scripts/deploy-downstream.ts` | 188 | Исходный код |
-| `scripts/generate-ai-context.ts` | 115 | Исходный код |
-| `scripts/build.ts` | 107 | Исходный код |
-| `scripts/merge-release-pr.ts` | 78 | Исходный код |
-| `scripts/link-vault.ts` | 73 | Исходный код |
-| `scripts/sync-versions.ts` | 67 | Исходный код |
+| `scripts/deploy-downstream.ts` | 188 | Source code |
+| `scripts/generate-ai-context.ts` | 115 | Source code |
+| `scripts/build.ts` | 107 | Source code |
+| `scripts/merge-release-pr.ts` | 78 | Source code |
+| `scripts/link-vault.ts` | 73 | Source code |
+| `scripts/sync-versions.ts` | 67 | Source code |
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm test
 ```

@@ -6,10 +6,10 @@ description: "Strict TypeScript compilation rules, Biome linter invariants, and 
 
 # 10: Strict TypeScript & Biome Standards
 
-1. **Форматирование:** Одинарные кавычки `'`, без точек с запятой, 2 пробела, строка до 100 символов.
-2. **Табу Biome:**
-   * Запрет `any` (`noExplicitAny`): замена на `unknown` с Type Guards или Generics.
-   * Запрет `enum` (`noEnum`): замена на const object + union type.
-   * Запрет `!` (`noNonNullAssertion`): замена на Guard Clauses или `??`.
-   * Запрет `noParameterProperties`: объявлять свойства явно в теле класса.
-   * Системные модули Node.js строго с префиксом `node:`.
+1. **Formatting:** Single quotes `'`, no semicolons, 2 spaces, lines up to 100 characters.
+2. **Biome taboos:**
+   * No `any` (`noExplicitAny`): replace with `unknown` plus Type Guards or Generics.
+   * No `enum` (`noEnum`): replace with a const object + union type.
+   * No `!` (`noNonNullAssertion`): replace with Guard Clauses or `??`.
+   * No `noParameterProperties`: declare properties explicitly in the class body.
+   * Node.js system modules strictly with the `node:` prefix.

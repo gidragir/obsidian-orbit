@@ -1,32 +1,32 @@
-# ADR 0001: Начальная архитектура и топология obsidian-orbit
+# ADR 0001: Initial architecture and topology of obsidian-orbit
 
-- **Статус:** Принято
-- **Дата:** 2026-10-10
-- **Стек:** TypeScript / JavaScript (Node/Bun/Deno)
+- **Status:** Accepted
+- **Date:** 2026-10-10
+- **Stack:** TypeScript / JavaScript (Node/Bun/Deno)
 
-## Контекст
-Инициализация кодовой базы `obsidian-orbit`. Для обеспечения надежной автономной навигации ИИ-ассистентов зафиксирована трехуровневая модель контекста (OpenViking L0-L2).
+## Context
+Initialization of the `obsidian-orbit` codebase. To enable reliable autonomous navigation for AI assistants, a three-tier context model (OpenViking L0-L2) was adopted.
 
-## Архитектурные границы подсистем
-- **.changeset** (`changeset`): Конфигурация для управления изменениями в проекте.
-- **.vault** (`vault`): Содержит исходные файлы плагинов и их конфигурации.
-- **dev-vault** (`dev-vault`): Разработка и тестирование плагинов.
-- **adapters** (`adapters`): Адаптеры для взаимодействия с Obsidian API.
-- **core** (`core`): Ядро системы, включающее структуру и геометрию тайлов.
-- **obsidian-utils** (`obsidian-utils`): Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.
-- **ports** (`ports`): Интерфейсы для взаимодействия с внешними системами.
-- **tsconfig** (`tsconfig`): Конфигурации TypeScript для проекта.
-- **types** (`types`): Типы для обработки результатов и ошибок.
-- **ui** (`ui`): Интерфейс пользователя для редактирования и взаимодействия.
-- **reference** (`reference`): Справочная информация и примеры использования плагинов.
-- **scripts** (`scripts`): Скрипты для автоматизации процессов сборки и развертывания.
+## Architectural subsystem boundaries
+- **.changeset** (`changeset`): Configuration for managing changes in the project.
+- **.vault** (`vault`): Contains plugin source files and their configurations.
+- **dev-vault** (`dev-vault`): Plugin development and testing.
+- **adapters** (`adapters`): Adapters for interacting with the Obsidian API.
+- **core** (`core`): The system core, including tile structure and geometry.
+- **obsidian-utils** (`obsidian-utils`): Utilities for working with Obsidian, such as link parsing and formatting.
+- **ports** (`ports`): Interfaces for interacting with external systems.
+- **tsconfig** (`tsconfig`): TypeScript configurations for the project.
+- **types** (`types`): Types for handling results and errors.
+- **ui** (`ui`): User interface for editing and interaction.
+- **reference** (`reference`): Reference information and plugin usage examples.
+- **scripts** (`scripts`): Scripts for automating build and deployment processes.
 
 
-## Решение
-1. `L0_index.json` и `L0_index.md` служат единой точкой входа (Mental Map) с минимальным потреблением токенов.
-2. Каждая подсистема изолирована в карточке L1 (`subsystems/*.md`) с перечислением точек входа и сигнатур.
-3. Справочник команд L2 (`cli/commands.md`) фиксирует фактические команды сборки и верификации.
+## Decision
+1. `L0_index.json` and `L0_index.md` serve as the single entry point (Mental Map) with minimal token consumption.
+2. Each subsystem is isolated in an L1 card (`subsystems/*.md`) listing entry points and signatures.
+3. The L2 command reference (`cli/commands.md`) records the actual build and verification commands.
 
-## Последствия
-- Устраняется необходимость рекурсивного сканирования всего репозитория при каждом промпте.
-- Агенты обращаются к точечным карточкам L1 по мере необходимости.
+## Consequences
+- Eliminates the need to recursively scan the entire repository on every prompt.
+- Agents consult individual L1 cards as needed.

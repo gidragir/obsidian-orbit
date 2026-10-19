@@ -1,38 +1,38 @@
-# 🛠 Справочник команд: obsidian-orbit (L2)
+# 🛠 Command reference: obsidian-orbit (L2)
 
-> Автоматически извлечено из конфигурации проекта (TypeScript / JavaScript (Node/Bun/Deno))
+> Automatically extracted from the project configuration (TypeScript / JavaScript (Node/Bun/Deno))
 
-## Стандартные команды жизненного цикла
+## Standard lifecycle commands
 
-| Задача | Команда |
+| Task | Command |
 | :--- | :--- |
-| **Сборка** | `rtk pnpm run build` |
-| **Тестирование** | `rtk pnpm test` |
-| **Линтинг** | `rtk pnpm run lint` |
-| **Форматирование** | `rtk pnpm run format` |
-| **Запуск** | `rtk pnpm run dev` |
+| **Build** | `rtk pnpm run build` |
+| **Testing** | `rtk pnpm test` |
+| **Linting** | `rtk pnpm run lint` |
+| **Formatting** | `rtk pnpm run format` |
+| **Run** | `rtk pnpm run dev` |
 
-## Пользовательские скрипты и задачи
+## Custom scripts and tasks
 
-| Скрипт | Выполняемая команда |
+| Script | Command executed |
 | :--- | :--- |
-| `test` | `rtk vitest run` |
-| `release:merge` | `rtk tsx scripts/merge-release-pr.ts` |
-| `change` | `rtk changeset` |
-| `runner` | `mise (task runner)` |
-| `ai:context` | `rtk tsx scripts/generate-ai-context.ts` |
-| `dev` | `rtk tsx scripts/link-vault.ts && turbo run dev` |
-| `version:bump` | `rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile` |
-| `format` | `rtk biome format --write .` |
-| `build` | `rtk turbo run build` |
-| `check` | `rtk biome check . && turbo run typecheck test build` |
-| `typecheck` | `rtk turbo run typecheck` |
-| `lint` | `rtk biome check --write .` |
-| `release` | `rtk turbo run build && tsx scripts/deploy-downstream.ts` |
-| `ai:context:all` | `rtk tsx scripts/generate-ai-context.ts --all` |
 | `vault:link` | `rtk tsx scripts/link-vault.ts` |
+| `release:merge` | `rtk tsx scripts/merge-release-pr.ts` |
+| `format` | `rtk biome format --write .` |
+| `change` | `rtk changeset` |
+| `ai:context:all` | `rtk tsx scripts/generate-ai-context.ts --all` |
+| `lint` | `rtk biome check --write .` |
+| `typecheck` | `rtk turbo run typecheck` |
+| `ai:context` | `rtk tsx scripts/generate-ai-context.ts` |
+| `runner` | `mise (task runner)` |
+| `release` | `rtk turbo run build && tsx scripts/deploy-downstream.ts` |
+| `build` | `rtk turbo run build` |
+| `version:bump` | `rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile` |
+| `dev` | `rtk tsx scripts/link-vault.ts && turbo run dev` |
+| `test` | `rtk vitest run` |
+| `check` | `rtk biome check . && turbo run typecheck test build` |
 
-## Быстрый запуск
+## Quick start
 ```bash
 rtk pnpm run build
 rtk pnpm test

@@ -1,33 +1,33 @@
-# Подсистема: core (L1)
+# Subsystem: core (L1)
 
-> **Идентификатор:** `core`
-> **Теги:** core, geometry | **Объем:** ~12450 токенов BPE
+> **Identifier:** `core`
+> **Tags:** core, geometry | **Size:** ~12450 BPE tokens
 
-## 🎯 Назначение и роль
-Ядро системы, включающее структуру и геометрию тайлов.
+## 🎯 Purpose and role
+The system core, including tile structure and geometry.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/core/package.json` | 22 | ⭐ Точка входа |
-| `packages/core/src/index.ts` | 13 | ⭐ Точка входа |
-| `packages/core/src/array.ts` | 0 | ⭐ Новый файл |
-| `packages/core/src/tiling-tree.ts` | 653 | Исходный код |
-| `packages/core/src/tiling-geometry.ts` | 441 | Исходный код |
-| `packages/core/src/tiling-navigation.test.ts` | 164 | Исходный код |
-| `packages/core/src/tiling-tree.test.ts` | 129 | Исходный код |
-| `packages/core/src/markdown.ts` | 110 | Исходный код |
-| `packages/core/src/markdown.test.ts` | 101 | Исходный код |
-| `packages/core/src/path.ts` | 89 | Исходный код |
-| `packages/core/src/path.test.ts` | 84 | Исходный код |
-| `packages/core/src/settings.test.ts` | 81 | Исходный код |
-| `packages/core/src/tiling-splitter.test.ts` | 77 | Исходный код |
-| `packages/core/src/tiling-splitter.ts` | 68 | Исходный код |
-| `packages/core/src/settings.ts` | 56 | Исходный код |
-| `packages/core/src/tiling-geometry.test.ts` | 45 | Исходный код |
+| `packages/core/package.json` | 22 | ⭐ Entry point |
+| `packages/core/src/index.ts` | 13 | ⭐ Entry point |
+| `packages/core/src/array.ts` | 0 | ⭐ New file |
+| `packages/core/src/tiling-tree.ts` | 653 | Source code |
+| `packages/core/src/tiling-geometry.ts` | 441 | Source code |
+| `packages/core/src/tiling-navigation.test.ts` | 164 | Source code |
+| `packages/core/src/tiling-tree.test.ts` | 129 | Source code |
+| `packages/core/src/markdown.ts` | 110 | Source code |
+| `packages/core/src/markdown.test.ts` | 101 | Source code |
+| `packages/core/src/path.ts` | 89 | Source code |
+| `packages/core/src/path.test.ts` | 84 | Source code |
+| `packages/core/src/settings.test.ts` | 81 | Source code |
+| `packages/core/src/tiling-splitter.test.ts` | 77 | Source code |
+| `packages/core/src/tiling-splitter.ts` | 68 | Source code |
+| `packages/core/src/settings.ts` | 56 | Source code |
+| `packages/core/src/tiling-geometry.test.ts` | 45 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export type SplitDirection = 'row' | 'column'
 export interface TileLeafNode
@@ -111,7 +111,7 @@ export function normalizePath(rawPath: string): string
 export function joinPaths(...segments: ReadonlyArray<string>): string
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter core test
 ```

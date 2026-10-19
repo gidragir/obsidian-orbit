@@ -1,5 +1,6 @@
 {
   "name": "@packages/obsidian-utils",
+  "author": "gidragir",
   "version": "1.0.0",
   "private": true,
   "type": "module",

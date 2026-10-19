@@ -32,6 +32,6 @@ When working in this project, AI agents MUST follow this progressive disclosure 
 - **Action:** Run before finalizing any task. If `has_drift: true`, call `context_update`.
 
 ## ⚙️ Core Project Rules
-- Строгая типизация (TypeScript strict mode) обязательна.
-- Все зависимости управляются через `pnpm-workspace.yaml` / `package.json` (pnpm).
-- Код должен форматироваться через Biome (`pnpm lint && pnpm format`).
+- Strict typing (TypeScript strict mode) is mandatory.
+- All dependencies are managed via `pnpm-workspace.yaml` / `package.json` (pnpm).
+- Code must be formatted with Biome (`pnpm lint && pnpm format`).

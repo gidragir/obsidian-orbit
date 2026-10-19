@@ -1,21 +1,21 @@
-# Подсистема: tsconfig (L1)
+# Subsystem: tsconfig (L1)
 
-> **Идентификатор:** `tsconfig`
-> **Теги:** typescript, configuration | **Объем:** ~263 токенов BPE
+> **Identifier:** `tsconfig`
+> **Tags:** typescript, configuration | **Size:** ~263 BPE tokens
 
-## 🎯 Назначение и роль
-Конфигурации TypeScript для проекта.
+## 🎯 Purpose and role
+TypeScript configurations for the project.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/tsconfig/package.json` | 10 | ⭐ Точка входа |
-| `packages/tsconfig/tsconfig.base.json` | 16 | Исходный код |
-| `packages/tsconfig/tsconfig.library.json` | 8 | Исходный код |
-| `packages/tsconfig/tsconfig.plugin.json` | 7 | Исходный код |
+| `packages/tsconfig/package.json` | 10 | ⭐ Entry point |
+| `packages/tsconfig/tsconfig.base.json` | 16 | Source code |
+| `packages/tsconfig/tsconfig.library.json` | 8 | Source code |
+| `packages/tsconfig/tsconfig.plugin.json` | 7 | Source code |
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter tsconfig test
 ```

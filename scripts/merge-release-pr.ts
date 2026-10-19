@@ -59,7 +59,7 @@ function main(): void {
 
   const prNumber = findReleasePrNumber()
   if (prNumber === null) {
-    console.log('[merge-release-pr] Релиз не требуется (No open release PR found).')
+    console.log('[merge-release-pr] No release required (no open release PR found).')
     process.exit(0)
   }
 

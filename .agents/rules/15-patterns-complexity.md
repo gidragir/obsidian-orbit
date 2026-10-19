@@ -6,11 +6,11 @@ description: "Design patterns and architectural limits on code complexity. Enfor
 
 # 15: Design Patterns & Complexity Control
 
-1. **Архитектурный шаблон:** Порты и Адаптеры. Доменное ядро (`src/utils/`, `@packages/obsidian-utils`) — 0% зависимостей от DOM и Obsidian API, 100% тесты Vitest.
-2. **Запрет God-класса:** `main.ts` — тонкий адаптер, `onload()` не более 20–30 строк.
-3. **Лимиты сложности:**
-   * Когнитивная сложность: <= 15 на функцию.
-   * Цикломатическая сложность: <= 10 на функцию (до 15 для маппингов).
-   * Глубина вложенности блоков: <= 3.
-   * Размер функции: <= 40 строк.
-4. **Эвристики:** Guard Clauses, Strategy Lookup Maps, Expressive Predicates.
+1. **Architectural pattern:** Ports and Adapters. The domain core (`src/utils/`, `@packages/obsidian-utils`) has 0% dependencies on the DOM and Obsidian API and 100% Vitest test coverage.
+2. **No God classes:** `main.ts` is a thin adapter; `onload()` is at most 20–30 lines.
+3. **Complexity limits:**
+   * Cognitive complexity: <= 15 per function.
+   * Cyclomatic complexity: <= 10 per function (up to 15 for mappings).
+   * Block nesting depth: <= 3.
+   * Function size: <= 40 lines.
+4. **Heuristics:** Guard Clauses, Strategy Lookup Maps, Expressive Predicates.

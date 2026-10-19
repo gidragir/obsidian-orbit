@@ -5,8 +5,8 @@ description: "Determines accurate Semantic Versioning bumps (patch, minor, major
 
 # SemVer & Changeset Skill
 
-1. **Матрица версий:**
-   * `major`: Смена схемы `data.json`, удаление команд.
-   * `minor`: Добавление команд, настроек или UI-панелей.
-   * `patch`: Баг-фиксы парсеров, верстки CSS, тестов.
-2. **Оформление ченджсета:** Понятное для конечного пользователя резюме изменений в файле `.changeset/<hash>.md`.
+1. **Version matrix:**
+   * `major`: `data.json` schema change, command removal.
+   * `minor`: Adding commands, settings, or UI panels.
+   * `patch`: Bug fixes in parsers, CSS layout, tests.
+2. **Changeset formatting:** An end-user-friendly summary of changes in the file `.changeset/<hash>.md`.

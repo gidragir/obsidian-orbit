@@ -1,20 +1,20 @@
-# Подсистема: Types (L1)
+# Subsystem: Types (L1)
 
-> **Идентификатор:** `packages_types`
-> **Теги:** packages_types, TypeScript / JavaScript (Node/Bun/Deno) | **Объем:** ~449 токенов BPE
+> **Identifier:** `packages_types`
+> **Tags:** packages_types, TypeScript / JavaScript (Node/Bun/Deno) | **Size:** ~449 BPE tokens
 
-## 🎯 Назначение и роль
-Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json
+## 🎯 Purpose and role
+Subsystem `packages/types` with key entry points: packages/types/src/index.ts, packages/types/package.json
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/types/src/index.ts` | 54 | ⭐ Точка входа |
-| `packages/types/package.json` | 17 | ⭐ Точка входа |
-| `packages/types/tsconfig.json` | 4 | Исходный код |
+| `packages/types/src/index.ts` | 54 | ⭐ Entry point |
+| `packages/types/package.json` | 17 | ⭐ Entry point |
+| `packages/types/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export type Result<T, E = Error> = |
 export function ok<T>(value: T): Result<T, never>
@@ -27,7 +27,7 @@ export interface CommandDefinition
 export interface NoticeOptions
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter types test
 ```

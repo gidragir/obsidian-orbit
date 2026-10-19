@@ -1,141 +1,146 @@
-# Генеральный регламент ИИ-агентов (AGENTS.md)
+# General AI Agent Regulations (AGENTS.md)
 
-Настоящий документ является главным системным контрактом и единым источником правды (Single Source of Truth, SSOT) для автономных агентов платформы **Google Antigravity IDE** и среды **Antigravity 2.0**. Документ автоматически загружается при инициализации сессии и обладает наивысшим приоритетом при принятии любых архитектурных, инженерных и процедурных решений.
+This document is the main system contract and Single Source of Truth (SSOT) for the autonomous agents of the **Google Antigravity IDE** platform and the **Antigravity 2.0** environment. The document is loaded automatically at session initialization and has the highest priority in any architectural, engineering and procedural decision.
 
-## 1. Среда исполнения и тандем моделей Gemini
+Author: **gidragir**.
 
-Разработка ведется в среде нативного **Linux (CachyOS / Arch Linux)** с использованием распределенного тандема моделей:
+## 1. Runtime environment and the Gemini model tandem
+
+Development takes place in a native **Linux (CachyOS / Arch Linux)** environment using a distributed model tandem:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         ОРКЕСТРАТОР (Gemini Pro)                            │
-│  • Анализ архитектурных инвариантов и контрактов монорепозитория            │
-│  • Глубокий аудит сторонних плагинов-референсов из reference/               │
-│  • Декомпозиция задач, контроль паттернов («Порты и Адаптеры», Facade)      │
-│  • Аудит метрик сложности кода (когнитивная <= 15, цикломатическая <= 10)   │
-│  • Формирование артефактов Implementation Plan и архитектурных планов       │
+│                         ORCHESTRATOR (Gemini Pro)                           │
+│  • Analysis of architectural invariants and monorepo contracts              │
+│  • Deep audit of third-party reference plugins from reference/              │
+│  • Task decomposition, pattern control (Ports & Adapters, Facade)           │
+│  • Code complexity metrics audit (cognitive <= 15, cyclomatic <= 10)        │
+│  • Producing Implementation Plan artifacts and architectural plans          │
 └──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │ Делегирование задач и контроль качества
+                                       │ Task delegation and quality control
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                     СУБАГЕНТ ИСПОЛНЕНИЯ (Gemini Flash)                      │
-│  • Субсекундная генерация чистых доменных функций и unit-тестов Vitest     │
-│  • Реализация тонких адаптеров Obsidian API (src/main.ts, src/ui/)          │
-│  • Выполнение автономных верификационных циклов в терминале (pnpm check)    │
-│  • Автоматическое устранение дефектов Biome (pnpm lint && pnpm format)      │
-│  • Исправление типовых несовпадений TypeScript без использования any и !    │
+│                     EXECUTION SUBAGENT (Gemini Flash)                       │
+│  • Sub-second generation of pure domain functions and Vitest unit tests     │
+│  • Implementation of thin Obsidian API adapters (src/main.ts, src/ui/)      │
+│  • Autonomous verification cycles in the terminal (pnpm check)              │
+│  • Automatic fixing of Biome defects (pnpm lint && pnpm format)             │
+│  • Fixing typical TypeScript mismatches without using any and !             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## 2. Иерархия системы контекста Antigravity 2.0
+## 2. Antigravity 2.0 context system hierarchy
 > [!IMPORTANT]
-> Каталог `.agents/` (с буквой 's' на конце) является единым хранилищем всех правил, навыков и воркфлоу. Использование каталога `.agent/` запрещено во избежание коллизий и пустых контекстов.
+> The `.agents/` directory (with a trailing 's') is the single store for all rules, skills and workflows. Using the `.agent/` directory is prohibited to avoid collisions and empty contexts.
 
-Для предотвращения деградации внимания моделей контекст монорепозитория структурирован по пятиуровневой схеме с механизмом прогрессивного раскрытия (Progressive Disclosure):
+To prevent degradation of model attention, the monorepo context is structured in a five-level scheme with a Progressive Disclosure mechanism:
 
-1. **Генеральный контекст (`AGENTS.md`):** Базовые архитектурные табу, роли моделей, метрики сложности и тулчейн (всегда в контексте).
-2. **Гранулярные правила (`.agents/rules/*.md`):** Загружаются по декларативным триггерам:
-   * `00-architecture.md` — Always On (инварианты монорепозитория, SSOT, пути).
-   * `10-biome-typescript.md` — Glob: `**/*.{ts,tsx,json,css}` (стандарты типизации и Biome).
-   * `15-patterns-complexity.md` — Glob: `**/*.{ts,tsx}` (паттерны и лимиты сложности).
-   * `20-obsidian-plugins.md` — Glob: `plugins/**` (жизненный цикл плагинов, стили тем).
-   * `30-packages-source.md` — Glob: `packages/**` (модель Direct TS Source).
-   * `40-pure-testing.md` — Glob: `**/*.test.ts` (чистые тесты Vitest в Node.js).
-   * `50-changesets.md` — Model Decision (релизные операции и SemVer).
-3. **Специализированные навыки (`.agents/skills/*/SKILL.md`):** Подгружаются динамически по семантическому триггеру в поле `description`:
-   * `obsidian-architect` — Архитектура плагинов, предотвращение утечек памяти, порты и адаптеры.
-   * `complexity-guard` — Снижение когнитивной и цикломатической сложности, рефакторинг ветвлений.
-   * `biome-refactor` — Ликвидация `any`, `enum`, non-null assertion `!`, parameter properties.
-   * `reference-migrator` — Разбор Markdown-снимков Repomix и адаптация сторонних референсов.
-   * `semver-changeset` — Расчет инкремента SemVer для Obsidian и оформление ченджсетов.
-   * `subagent-driven-development` — Исполнение планов реализации через изолированные роли субагентов.
-4. **Каталог ролевых субагентов (`.agents/agents/*.md`):** Спецификации субагентов Antigravity 2.0:
-   * `executor.md` — Субагент исполнения (Flash): субсекундный кодинг ядра и Vitest-тестов.
-   * `verifier.md` — Субагент верификации (Flash): цикл Biome -> TS -> Vitest -> Turbo.
-   * `researcher.md` — Субагент аудита (Flash): поиск символов и разбор Repomix-снимков.
-   * `reviewer.md` — Субагент ревью (Pro): проверка инвариантов, лимитов сложности и памяти.
-5. **Рабочие процессы (`.agents/workflows/*.md`):** Регламентированные пошаговые сценарии для вызова через Slash-команды (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
-6. **Протокол контекста MCP (`.agents/mcp.json`):** Внешний сервер `fetch` для выгрузки актуальной документации Obsidian API и CodeMirror 6.
+1. **General context (`AGENTS.md`):** Basic architectural taboos, model roles, complexity metrics and toolchain (always in context).
+2. **Granular rules (`.agents/rules/*.md`):** Loaded by declarative triggers:
+   * `00-architecture.md` — Always On (monorepo invariants, SSOT, paths).
+   * `10-biome-typescript.md` — Glob: `**/*.{ts,tsx,json,css}` (typing and Biome standards).
+   * `15-patterns-complexity.md` — Glob: `**/*.{ts,tsx}` (patterns and complexity limits).
+   * `20-obsidian-plugins.md` — Glob: `plugins/**` (plugin lifecycle, theme styles).
+   * `30-packages-source.md` — Glob: `packages/**` (Direct TS Source model).
+   * `40-pure-testing.md` — Glob: `**/*.test.ts` (pure Vitest tests in Node.js).
+   * `50-changesets.md` — Model Decision (release operations and SemVer).
+3. **Specialized skills (`.agents/skills/*/SKILL.md`):** Loaded dynamically by the semantic trigger in the `description` field:
+   * `obsidian-architect` — Plugin architecture, memory leak prevention, ports and adapters.
+   * `complexity-guard` — Reducing cognitive and cyclomatic complexity, refactoring branching.
+   * `biome-refactor` — Eliminating `any`, `enum`, non-null assertion `!`, parameter properties.
+   * `reference-migrator` — Analyzing Repomix Markdown snapshots and adapting third-party references.
+   * `semver-changeset` — Calculating the SemVer increment for Obsidian and formatting changesets.
+   * `subagent-driven-development` — Executing implementation plans via isolated subagent roles.
+4. **Role-based subagent catalog (`.agents/agents/*.md`):** Antigravity 2.0 subagent specifications:
+   * `executor.md` — Execution subagent (Flash): sub-second coding of the core and Vitest tests.
+   * `verifier.md` — Verification subagent (Flash): Biome -> TS -> Vitest -> Turbo cycle.
+   * `researcher.md` — Audit subagent (Flash): symbol search and Repomix snapshot analysis.
+   * `reviewer.md` — Review subagent (Pro): checking invariants, complexity limits and memory.
+5. **Workflows (`.agents/workflows/*.md`):** Regulated step-by-step scenarios invoked via Slash commands (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
+6. **MCP context protocol (`.agents/mcp.json`):** An external `fetch` server for retrieving current Obsidian API and CodeMirror 6 documentation.
 
-## 3. Фундаментальные архитектурные инварианты (Жесткие табу)
+## 3. Fundamental architectural invariants (Hard taboos)
 
-Любое действие агента обязано строго соблюдать следующие ограничения:
+Every agent action must strictly observe the following constraints:
 
-1. **Запрет восходящих относительных импортов (`../../`):**
-   * Внутри плагинов (`plugins/<id>/src/**`) запрещены пути выхода вверх за пределы модуля.
-   * Обязательно использование алиасов `tsconfig.json`: `@ui/*`, `@settings/*`, `@services/*`.
-   * Для общих библиотек используется только скоуп `@packages/*`.
-2. **Модель прямого импорта исходников (Direct TS Source):**
-   * Разделяемые пакеты (`@packages/obsidian-utils`, `@packages/ui`) **не имеют фазы сборки** и каталогов `dist/`.
-   * Бандлер каждого плагина (`esbuild`) производит инлайн-компиляцию чистого TypeScript в конечный `main.js`.
-3. **Pinpoint-версионирование и Pnpm Catalogs:**
-   * В манифестах `package.json` запрещены плавающие диапазоны (`^`, `~`).
-   * Внутренние связи фиксируются через `workspace:*`.
-   * Сторонние библиотеки объявляются в `catalog:` файла `pnpm-workspace.yaml` и подключаются как `"catalog:"`.
-4. **Чистые Unit-тесты (Строгий запрет DOM и моков Obsidian):**
-   * Запрещено подключение эмуляторов браузера (`happy-dom`, `jsdom`, `@testing-library`).
-   * Запрещено создавать моки классов `App`, `Vault`, `Workspace`, `TFile` или `Plugin`.
-   * Тестированию в Vitest (`node:test` среда) подлежит только чистая доменная логика (`src/utils/`, `@packages/obsidian-utils`).
-5. **Неприкосновенность тестового хранилища `.vault/`:**
-   * Запрещено напрямую модифицировать файлы в `.vault/.obsidian/plugins/`.
-   * Доступ плагинов в хранилище настраивается исключительно через симлинки скриптом `pnpm vault:link`.
-6. **Контракт релизного цикла Changesets:**
-   * Запрещено вручную менять версии в `manifest.json`, `package.json` и `versions.json`.
-   * Версионирование выполняется через ченджсеты (`pnpm change`) и скрипт `scripts/sync-versions.ts`.
+1. **No upward relative imports (`../../`):**
+   * Inside plugins (`plugins/<id>/src/**`), paths that climb out of the module are prohibited.
+   * Using `tsconfig.json` aliases is mandatory: `@ui/*`, `@settings/*`, `@services/*`.
+   * For shared libraries only the `@packages/*` scope is used.
+2. **Direct source import model (Direct TS Source):**
+   * Shared packages (`@packages/obsidian-utils`, `@packages/ui`) **have no build phase** and no `dist/` directories.
+   * Each plugin's bundler (`esbuild`) inline-compiles pure TypeScript into the final `main.js`.
+3. **Pinpoint versioning and Pnpm Catalogs:**
+   * Floating ranges (`^`, `~`) are prohibited in `package.json` manifests.
+   * Internal links are pinned via `workspace:*`.
+   * Third-party libraries are declared in the `catalog:` of `pnpm-workspace.yaml` and consumed as `"catalog:"`.
+4. **Pure unit tests (strict ban on DOM and Obsidian mocks):**
+   * Connecting browser emulators (`happy-dom`, `jsdom`, `@testing-library`) is prohibited.
+   * Creating mocks of the `App`, `Vault`, `Workspace`, `TFile` or `Plugin` classes is prohibited.
+   * Only pure domain logic (`src/utils/`, `@packages/obsidian-utils`) is subject to testing in Vitest (`node:test` environment).
+5. **Inviolability of the test vault `.vault/`:**
+   * Directly modifying files in `.vault/.obsidian/plugins/` is prohibited.
+   * Plugin access to the vault is configured exclusively via symlinks with the `pnpm vault:link` script.
+6. **Changesets release cycle contract:**
+   * Manually changing versions in `manifest.json`, `package.json` and `versions.json` is prohibited.
+   * Versioning is done via changesets (`pnpm change`) and the `scripts/sync-versions.ts` script.
+7. **Mandatory shared styles and UI reuse (`@packages/ui`):**
+   * All plugins (`plugins/*`) must declare `"@packages/ui": "workspace:*"` in `package.json` dependencies and import shared styles via `@import '../../../packages/ui/src/styles.css';` on line 1 of `src/styles.css`.
+   * Reusing shared classes (`.orbit-badge`, `.orbit-card`, `.orbit-stat-card`, `.orbit-filter-tabs`, `.orbit-empty-state`, `.orbit-control-label`) and native Obsidian theme variables is strictly mandatory to eliminate boilerplate and prevent styling fragmentation across plugins.
 
-## 4. Паттерны проектирования и лимиты сложности кода
+## 4. Design patterns and code complexity limits
 
-Кодовая база проекта проектируется по стандартам Clean Architecture / Hexagonal Architecture.
+The project codebase is designed according to Clean Architecture / Hexagonal Architecture standards.
 
-### 4.1 Архитектурный стиль «Порты и Адаптеры»
-* **Доменное ядро (`src/utils/`, `@packages/obsidian-utils`):**
-  * Содержит парсеры Markdown, математику, стейт-машины и бизнес-правила.
-  * 0% зависимостей от `obsidian`, `electron` или DOM. 100% покрытие unit-тестами Vitest.
-* **Слой адаптеров (`src/services/`, `src/ui/`, `src/main.ts`):**
-  * Реализует интерфейсы взаимодействия с хранилищем (`app.vault`), кэшем (`app.metadataCache`) и интерфейсом (`ItemView`, `Modal`).
-  * Не содержит алгоритмической логики, требующей unit-тестов.
+### 4.1 «Ports and Adapters» architectural style
+* **Domain core (`src/utils/`, `@packages/obsidian-utils`):**
+  * Contains Markdown parsers, math, state machines and business rules.
+  * 0% dependencies on `obsidian`, `electron` or the DOM. 100% Vitest unit test coverage.
+* **Adapter layer (`src/services/`, `src/ui/`, `src/main.ts`):**
+  * Implements interfaces for interacting with the vault (`app.vault`), cache (`app.metadataCache`) and UI (`ItemView`, `Modal`).
+  * Contains no algorithmic logic requiring unit tests.
 
-### 4.2 Запрет God-класса
-* Класс `main.ts` является тонким фасадным адаптером жизненного цикла.
-* Метод `onload()` не должен превышать **20–30 строк**. Инициализация выносится в подметоды: `registerCommands()`, `registerViews()`, `registerEvents()`.
-* Все операции с заметками делегируются классам сервисов (`@services/*`).
+### 4.2 No God classes
+* The `main.ts` class is a thin facade adapter for the lifecycle.
+* The `onload()` method must not exceed **20–30 lines**. Initialization is extracted into sub-methods: `registerCommands()`, `registerViews()`, `registerEvents()`.
+* All note operations are delegated to service classes (`@services/*`).
 
-### 4.3 Нормативные пороги сложности кода и эвристики
-* См. гранулярное правило `.agents/rules/15-patterns-complexity.md`. Включает лимиты когнитивной (<= 15) и цикломатической (<= 10) сложности.
+### 4.3 Normative code complexity thresholds and heuristics
+* See the granular rule `.agents/rules/15-patterns-complexity.md`. It includes the cognitive (<= 15) and cyclomatic (<= 10) complexity limits.
 
-## 5. Стандарты качества Biome и строгой типизации TypeScript
-* Кодовая база форматируется и проверяется через Biome.
-* **Строгие табу:** Полный запрет на `any`, `enum`, `!` и Parameter Properties.
-* Детали замены, Type Guards и префиксы `node:` описаны в `.agents/rules/10-biome-typescript.md`.
+## 5. Biome and strict TypeScript typing quality standards
+* The codebase is formatted and checked via Biome.
+* **Strict taboos:** Complete ban on `any`, `enum`, `!` and Parameter Properties.
+* Replacement details, Type Guards and `node:` prefixes are described in `.agents/rules/10-biome-typescript.md`.
 
-## 6. Взаимодействие с внешними инструментами через MCP
+## 6. Interaction with external tools via MCP
 
-В файле `.agents/mcp.json` настроен сервер **`fetch`**:
-* **Назначение:** Чтение актуальной документации Obsidian API (`docs.obsidian.md`), спецификаций CodeMirror 6 и журналов изменений.
-* **Правило экономии контекста:** Агент вызывает `fetch` только при исследовании новых, ранее неизвестных API-методов или для сверки сигнатур типов. Инструмент не вызывается для тривиальных методов (`addCommand`, `registerView`).
+The **`fetch`** server is configured in `.agents/mcp.json`:
+* **Purpose:** Reading current Obsidian API documentation (`docs.obsidian.md`), CodeMirror 6 specifications and changelogs.
+* **Context-saving rule:** The agent calls `fetch` only when researching new, previously unknown API methods or to verify type signatures. The tool is not called for trivial methods (`addCommand`, `registerView`).
 
-## 7. Каталог исполняемых рабочих процессов (Workflows)
+## 7. Catalog of executable workflows
 
-Воркфлоу запускаются разработчиком через Slash-команды в чате Antigravity:
-* **`/new-plugin` (`.agents/workflows/new-plugin.md`):** Скаффолдинг плагина, манифестов, tsconfig-алиасов и чистых тестов.
-* **`/refactor-reference` (`.agents/workflows/refactor-reference.md`):** Аудит снимков сторонних референсов Repomix и декомпозиция.
-* **`/verify` (`.agents/workflows/verify.md`):** Автономный цикл Gemini Flash: `biome check` -> `typecheck` -> `test` -> `build`. Защищен от бесконечного цикла (Max Retries = 3).
-* **`/prepare-release` (`.agents/workflows/prepare-release.md`):** Расчет инкремента SemVer и генерация ченджсета.
+Workflows are launched by the developer via Slash commands in the Antigravity chat:
+* **`/new-plugin` (`.agents/workflows/new-plugin.md`):** Scaffolding a plugin, manifests, tsconfig aliases and pure tests.
+* **`/refactor-reference` (`.agents/workflows/refactor-reference.md`):** Auditing third-party Repomix reference snapshots and decomposition.
+* **`/verify` (`.agents/workflows/verify.md`):** Autonomous Gemini Flash cycle: `biome check` -> `typecheck` -> `test` -> `build`. Protected against infinite loops (Max Retries = 3).
+* **`/prepare-release` (`.agents/workflows/prepare-release.md`):** SemVer increment calculation and changeset generation.
 
-## 8. Справочник консольных команд тулчейна
+## 8. Toolchain console command reference
 
-| Команда | Назначение | Обязательность агентом |
+| Command | Purpose | Agent obligation |
 |---|---|---|
-| `pnpm check` | Комплексный запуск: Biome + Typecheck + Unit Tests + Turbo Build. | **Строго обязательно** перед завершением любой задачи. |
-| `pnpm biome check .` | Проверка линтером и форматтером Biome. | Для быстрого аудита синтаксиса и сложности. |
-| `pnpm lint && pnpm format` | Автоматическое исправление стиля Biome. | При обнаружении стилистических замечаний. |
-| `pnpm turbo run typecheck` | Строгая проверка типов через компилятор TypeScript. | При модификации интерфейсов и типов. |
-| `pnpm turbo run test` | Запуск unit-тестов Vitest в Node.js рантайме. | После любых правок в `src/utils/` или `@packages/*`. |
-| `pnpm turbo run build` | Тестовая сборка всех плагинов через esbuild. | Для подтверждения целостности бандлов `main.js`. |
-| `pnpm vault:link` | Пересоздание символических ссылок в `.vault/`. | При создании или переименовании плагина. |
-| `pnpm change` | Генерация файла ченджсета Changesets. | При подготовке функциональных изменений к релизу. |
-| `pnpm release:merge` | Автослияние релизного PR через GitHub CLI и `git pull`. | При выполнении релиза из консоли. |
-| `pnpm ai:context <name>` | Упаковка референс-плагина из `reference/` через Repomix. | Перед началом портирования стороннего плагина. |
+| `pnpm check` | Combined run: Biome + Typecheck + Unit Tests + Turbo Build. | **Strictly mandatory** before completing any task. |
+| `pnpm biome check .` | Biome linter and formatter check. | For a quick syntax and complexity audit. |
+| `pnpm lint && pnpm format` | Automatic Biome style fixes. | When style issues are detected. |
+| `pnpm turbo run typecheck` | Strict type checking via the TypeScript compiler. | When modifying interfaces and types. |
+| `pnpm turbo run test` | Run Vitest unit tests in the Node.js runtime. | After any edits in `src/utils/` or `@packages/*`. |
+| `pnpm turbo run build` | Test build of all plugins via esbuild. | To confirm the integrity of the `main.js` bundles. |
+| `pnpm vault:link` | Recreate symbolic links in `.vault/`. | When creating or renaming a plugin. |
+| `pnpm change` | Generate a Changesets changeset file. | When preparing functional changes for release. |
+| `pnpm release:merge` | Auto-merge the release PR via GitHub CLI and `git pull`. | When performing a release from the console. |
+| `pnpm ai:context <name>` | Pack a reference plugin from `reference/` via Repomix. | Before starting to port a third-party plugin. |
 
 
 ---
@@ -148,57 +153,58 @@ This repository contains a 3-tier OpenViking knowledge base in `.agents/knowledg
 - **L2 (Code Reference & Drift):** Call `context_pack` and `context_check` via `call_mcp_tool`.
 - **Direct File Access:** Strictly prohibited for `.agents/knowledge/**`. Use native `context-init` MCP tools.
 
-## 🗺 Архитектурная карта и навигация (OpenViking L0-L2)
+## 🗺 Architectural map and navigation (OpenViking L0-L2)
 
-Проект `obsidian-orbit` управляется трехуровневой базой знаний OpenViking (L0-L2).
-Категорически запрещено читать файлы `.agents/knowledge/**` напрямую через инструменты чтения файлов (`view_file`, `cat` и др.). Вся навигация и исследование архитектуры выполняются исключительно через MCP-сервер `context-init` (MCP-First Protocol).
+The `obsidian-orbit` project is managed by a three-tier OpenViking knowledge base (L0-L2).
+Reading `.agents/knowledge/**` files directly via file-reading tools (`view_file`, `cat`, etc.) is strictly prohibited. All navigation and architecture exploration is performed exclusively through the `context-init` MCP server (MCP-First Protocol).
 
 ### ⚡ MCP-First Protocol (context-init)
 
-1. **Обзор всех подсистем и структуры проекта (L0):**
-   Вызовите `context_get_subsystems`:
+1. **Overview of all subsystems and project structure (L0):**
+   Call `context_get_subsystems`:
    ```json
    {"ServerName": "context-init", "ToolName": "context_get_subsystems", "Arguments": {}}
    ```
-2. **Получение компактной L1-карточки конкретной подсистемы:**
-   Вызовите `context_get_subsystem` (передайте `subsystem_id`):
+2. **Getting a compact L1 card of a specific subsystem:**
+   Call `context_get_subsystem` (pass `subsystem_id`):
    ```json
    {"ServerName": "context-init", "ToolName": "context_get_subsystem", "Arguments": {"subsystem_id": "<subsystem_id>"}}
    ```
-3. **AST-сжатый контекст кода подсистемы (без раздувания контекста):**
-   Вызовите `context_pack`:
+3. **AST-compressed subsystem code context (without context bloat):**
+   Call `context_pack`:
    ```json
    {"ServerName": "context-init", "ToolName": "context_pack", "Arguments": {"subsystem_id": "<subsystem_id>", "compress": true}}
    ```
-4. **Проверка архитектурного дрейфа перед сдачей задачи:**
-   Вызовите `context_check`:
+4. **Architectural drift check before handing in a task:**
+   Call `context_check`:
    ```json
    {"ServerName": "context-init", "ToolName": "context_check", "Arguments": {}}
    ```
 
-### 📦 Доступные подсистемы:
-- `changeset` (.changeset) — Конфигурация для управления изменениями в проекте.
-- `vault` (.vault) — Содержит исходные файлы плагинов и их конфигурации.
-- `dev-vault` (dev-vault) — Разработка и тестирование плагинов.
-- `adapters` (adapters) — Адаптеры для взаимодействия с Obsidian API.
-- `core` (core) — Ядро системы, включающее структуру и геометрию тайлов.
-- `obsidian-utils` (obsidian-utils) — Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.
-- `ports` (ports) — Интерфейсы для взаимодействия с внешними системами.
-- `tsconfig` (tsconfig) — Конфигурации TypeScript для проекта.
-- `types` (types) — Типы для обработки результатов и ошибок.
-- `ui` (ui) — Интерфейс пользователя для редактирования и взаимодействия.
-- `reference` (reference) — Справочная информация и примеры использования плагинов.
-- `scripts` (scripts) — Скрипты для автоматизации процессов сборки и развертывания.
-- `.changeset` (.changeset) — Модуль и компоненты директории `.changeset` (1 файлов)
-- `.vault` (.vault) — Подсистема `.vault` с ключевыми точками входа: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts
-- `packages_adapters` (Adapters) — Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts
-- `packages_core` (Core) — Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts
-- `packages_obsidian-utils` (Obsidian Utils) — Подсистема `packages/obsidian-utils` с ключевыми точками входа: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json
-- `packages_ports` (Ports) — Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json
-- `packages_tsconfig` (Tsconfig) — Подсистема `packages/tsconfig` с ключевыми точками входа: packages/tsconfig/package.json
-- `packages_types` (Types) — Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json
-- `packages_ui` (Ui) — Подсистема `packages/ui` с ключевыми точками входа: packages/ui/package.json, packages/ui/src/index.ts
-- `plugins_html-renderer` (Html Renderer) — Подсистема `plugins/html-renderer` с ключевыми точками входа: plugins/html-renderer/src/main.ts, plugins/html-renderer/package.json
-- `plugins_snippet-renderer` (Snippet Renderer) — Подсистема `plugins/snippet-renderer` с ключевыми точками входа: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts
-- `plugins_tabs-renderer` (Tabs Renderer) — Подсистема `plugins/tabs-renderer` с ключевыми точками входа: plugins/tabs-renderer/src/main.ts, plugins/tabs-renderer/package.json
-- `plugins_tiling-renderer` (Tiling Renderer) — Подсистема `plugins/tiling-renderer` с ключевыми точками входа: plugins/tiling-renderer/src/main.ts, plugins/tiling-renderer/package.json
+### 📦 Available subsystems:
+- `changeset` (.changeset) — Configuration for managing changes in the project.
+- `vault` (.vault) — Contains plugin source files and their configurations.
+- `dev-vault` (dev-vault) — Plugin development and testing.
+- `adapters` (adapters) — Adapters for interacting with the Obsidian API.
+- `core` (core) — The system core, including tile structure and geometry.
+- `obsidian-utils` (obsidian-utils) — Utilities for working with Obsidian, such as link parsing and formatting.
+- `ports` (ports) — Interfaces for interacting with external systems.
+- `tsconfig` (tsconfig) — TypeScript configurations for the project.
+- `types` (types) — Types for handling results and errors.
+- `ui` (ui) — User interface for editing and interaction.
+- `reference` (reference) — Reference information and plugin usage examples.
+- `scripts` (scripts) — Scripts for automating build and deployment processes.
+- `.changeset` (.changeset) — Module and components of the `.changeset` directory (1 file)
+- `.vault` (.vault) — Subsystem `.vault` with key entry points: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts
+- `packages_adapters` (Adapters) — Subsystem `packages/adapters` with key entry points: packages/adapters/package.json, packages/adapters/src/index.ts
+- `packages_core` (Core) — Subsystem `packages/core` with key entry points: packages/core/package.json, packages/core/src/index.ts
+- `packages_obsidian-utils` (Obsidian Utils) — Subsystem `packages/obsidian-utils` with key entry points: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json
+- `packages_ports` (Ports) — Subsystem `packages/ports` with key entry points: packages/ports/src/index.ts, packages/ports/package.json
+- `packages_tsconfig` (Tsconfig) — Subsystem `packages/tsconfig` with key entry points: packages/tsconfig/package.json
+- `packages_types` (Types) — Subsystem `packages/types` with key entry points: packages/types/src/index.ts, packages/types/package.json
+- `packages_ui` (Ui) — Subsystem `packages/ui` with key entry points: packages/ui/package.json, packages/ui/src/index.ts
+- `plugins_html-renderer` (Html Renderer) — Subsystem `plugins/html-renderer` with key entry points: plugins/html-renderer/src/main.ts, plugins/html-renderer/package.json
+- `plugins_snippet-renderer` (Snippet Renderer) — Subsystem `plugins/snippet-renderer` with key entry points: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts
+- `plugins_tabs-renderer` (Tabs Renderer) — Subsystem `plugins/tabs-renderer` with key entry points: plugins/tabs-renderer/src/main.ts, plugins/tabs-renderer/package.json
+- `plugins_tiling-renderer` (Tiling Renderer) — Subsystem `plugins/tiling-renderer` with key entry points: plugins/tiling-renderer/src/main.ts, plugins/tiling-renderer/package.json
+- `plugins_vault-renderer` (Vault Renderer) — Subsystem `plugins/vault-renderer` with key entry points: plugins/vault-renderer/src/main.ts, plugins/vault-renderer/package.json

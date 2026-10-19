@@ -6,6 +6,6 @@ description: "Guidelines for shared internal packages using the Direct TS Source
 
 # 30: Shared Packages Architecture (Direct TS Source)
 
-1. **Модель:** Без каталогов `dist/` и фазы сборки. Экспорт напрямую `"exports": { ".": "./src/index.ts" }`.
-2. **Типы Obsidian:** Объявляются одновременно в `peerDependencies: { "obsidian": "catalog:" }` и `devDependencies: { "obsidian": "catalog:" }`.
-3. **Разделение:** Чистая логика — в `@packages/obsidian-utils`, общие UI-элементы — в `@packages/ui`.
+1. **Model:** No `dist/` directories and no build phase. Export directly: `"exports": { ".": "./src/index.ts" }`.
+2. **Obsidian types:** Declared in both `peerDependencies: { "obsidian": "catalog:" }` and `devDependencies: { "obsidian": "catalog:" }`.
+3. **Separation:** Pure logic goes in `@packages/obsidian-utils`, shared UI elements in `@packages/ui`.

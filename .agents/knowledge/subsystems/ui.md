@@ -1,32 +1,32 @@
-# Подсистема: ui (L1)
+# Subsystem: ui (L1)
 
-> **Идентификатор:** `ui`
-> **Теги:** ui, editor | **Объем:** ~5326 токенов BPE
+> **Identifier:** `ui`
+> **Tags:** ui, editor | **Size:** ~5326 BPE tokens
 
-## 🎯 Назначение и роль
-Интерфейс пользователя для редактирования и взаимодействия.
+## 🎯 Purpose and role
+User interface for editing and interaction.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/ui/package.json` | 39 | ⭐ Точка входа |
-| `packages/ui/src/index.ts` | 16 | ⭐ Точка входа |
-| `packages/ui/src/editor/split-editor-modal.ts` | 230 | Исходный код |
-| `packages/ui/src/editor/editor-keymaps.ts` | 122 | Исходный код |
-| `packages/ui/src/editor/editor-toolbar.ts` | 111 | Исходный код |
-| `packages/ui/src/editor/code-editor.ts` | 87 | Исходный код |
-| `packages/ui/src/editor/table-menu.ts` | 63 | Исходный код |
-| `packages/ui/src/editor/editor-theme.ts` | 39 | Исходный код |
-| `packages/ui/src/modal.ts` | 28 | Исходный код |
-| `packages/ui/src/badge.ts` | 25 | Исходный код |
-| `packages/ui/src/setting.ts` | 17 | Исходный код |
-| `packages/ui/src/dnd/drop-zone.ts` | 20 | Исходный код |
-| `packages/ui/src/preview/link-handler.ts` | 22 | Исходный код |
-| `packages/ui/src/splitter/splitter-controller.ts` | 30 | Исходный код |
-| `packages/ui/tsconfig.json` | 4 | Исходный код |
+| `packages/ui/package.json` | 39 | ⭐ Entry point |
+| `packages/ui/src/index.ts` | 16 | ⭐ Entry point |
+| `packages/ui/src/editor/split-editor-modal.ts` | 230 | Source code |
+| `packages/ui/src/editor/editor-keymaps.ts` | 122 | Source code |
+| `packages/ui/src/editor/editor-toolbar.ts` | 111 | Source code |
+| `packages/ui/src/editor/code-editor.ts` | 87 | Source code |
+| `packages/ui/src/editor/table-menu.ts` | 63 | Source code |
+| `packages/ui/src/editor/editor-theme.ts` | 39 | Source code |
+| `packages/ui/src/modal.ts` | 28 | Source code |
+| `packages/ui/src/badge.ts` | 25 | Source code |
+| `packages/ui/src/setting.ts` | 17 | Source code |
+| `packages/ui/src/dnd/drop-zone.ts` | 20 | Source code |
+| `packages/ui/src/preview/link-handler.ts` | 22 | Source code |
+| `packages/ui/src/splitter/splitter-controller.ts` | 30 | Source code |
+| `packages/ui/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export type SplitViewMode = 'source' | 'preview' | 'split' export interface SplitEditorModalOptions
 export class SplitEditorModal extends Modal
@@ -50,7 +50,7 @@ export class LinkHandler
 export class SplitterController
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter ui test
 ```

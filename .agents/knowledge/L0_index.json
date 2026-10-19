@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "project": "obsidian-orbit",
-  "description": "Централизованный монорепозиторий (Single Source of Truth, SSOT) для проектирования, разработки, тестирования, сборки и независимого распространения плагинов экосистемы Obsidian.md, а также сопутствующих разделяемых библи",
+  "description": "Centralized monorepo (Single Source of Truth, SSOT) for designing, developing, testing, building and independently distributing plugins of the Obsidian.md ecosystem, along with accompanying shared libraries.",
   "root_path": "/data/projects/obsidian-orbit",
-  "updated_at": "2026-10-10",
+  "updated_at": "2026-10-19",
   "project_type": "TypeScript / JavaScript (Node/Bun/Deno)",
   "entrypoints": ["package.json", "mise.toml"],
   "commands": {
@@ -13,28 +13,28 @@
     "fmt": "rtk pnpm run format",
     "run": "rtk pnpm run dev",
     "custom": {
-      "test": "rtk vitest run",
+      "vault:link": "rtk tsx scripts/link-vault.ts",
       "release:merge": "rtk tsx scripts/merge-release-pr.ts",
-      "change": "rtk changeset",
-      "runner": "mise (task runner)",
-      "ai:context": "rtk tsx scripts/generate-ai-context.ts",
-      "dev": "rtk tsx scripts/link-vault.ts && turbo run dev",
-      "version:bump": "rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
       "format": "rtk biome format --write .",
-      "build": "rtk turbo run build",
-      "check": "rtk biome check . && turbo run typecheck test build",
-      "typecheck": "rtk turbo run typecheck",
-      "lint": "rtk biome check --write .",
-      "release": "rtk turbo run build && tsx scripts/deploy-downstream.ts",
+      "change": "rtk changeset",
       "ai:context:all": "rtk tsx scripts/generate-ai-context.ts --all",
-      "vault:link": "rtk tsx scripts/link-vault.ts"
+      "lint": "rtk biome check --write .",
+      "typecheck": "rtk turbo run typecheck",
+      "ai:context": "rtk tsx scripts/generate-ai-context.ts",
+      "runner": "mise (task runner)",
+      "release": "rtk turbo run build && tsx scripts/deploy-downstream.ts",
+      "build": "rtk turbo run build",
+      "version:bump": "rtk changeset version && tsx scripts/sync-versions.ts && pnpm install --no-frozen-lockfile",
+      "dev": "rtk tsx scripts/link-vault.ts && turbo run dev",
+      "test": "rtk vitest run",
+      "check": "rtk biome check . && turbo run typecheck test build"
     }
   },
   "subsystems": [
     {
       "id": "changeset",
       "name": ".changeset",
-      "summary": "Конфигурация для управления изменениями в проекте.",
+      "summary": "Configuration for managing changes in the project.",
       "l1_path": "subsystems/changeset.md",
       "tags": ["configuration", "changeset"],
       "key_files": [".changeset/config.json"],
@@ -50,7 +50,7 @@
     {
       "id": "vault",
       "name": ".vault",
-      "summary": "Содержит исходные файлы плагинов и их конфигурации.",
+      "summary": "Contains plugin source files and their configurations.",
       "l1_path": "subsystems/vault.md",
       "tags": ["plugins", "source-code"],
       "entrypoints": [
@@ -162,41 +162,48 @@
     {
       "id": "dev-vault",
       "name": "dev-vault",
-      "summary": "Разработка и тестирование плагинов.",
+      "summary": "Plugin development and testing.",
       "l1_path": "subsystems/dev-vault.md",
       "tags": ["development", "testing"],
       "entrypoints": [
         "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/vault-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/html-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/tabs-renderer/package.json",
         "dev-vault/.obsidian/plugins/html-renderer/package.json",
         "dev-vault/.obsidian/plugins/snippet-renderer/package.json",
         "dev-vault/.obsidian/plugins/tiling-renderer/package.json",
+        "dev-vault/.obsidian/plugins/vault-renderer/package.json",
         "dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts"
       ],
       "key_files": [
         "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
+        "dev-vault/.obsidian/plugins/vault-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/html-renderer/src/main.ts",
         "dev-vault/.obsidian/plugins/tabs-renderer/package.json",
         "dev-vault/.obsidian/plugins/html-renderer/package.json",
         "dev-vault/.obsidian/plugins/snippet-renderer/package.json",
         "dev-vault/.obsidian/plugins/tiling-renderer/package.json",
+        "dev-vault/.obsidian/plugins/vault-renderer/package.json",
         "dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts",
         "dev-vault/.obsidian/workspace.json",
         "dev-vault/Test tiling renderer.md",
         "dev-vault/.obsidian/hotkeys.json",
         "dev-vault/.obsidian/plugins/html-renderer/main.js",
-        "dev-vault/.obsidian/plugins/html-renderer/README.md",
-        "dev-vault/.obsidian/plugins/snippet-renderer/README.md",
-        "dev-vault/.obsidian/plugins/tabs-renderer/README.md"
+        "dev-vault/.obsidian/plugins/html-renderer/README.md"
       ],
       "files": [
         {
           "path": "dev-vault/.obsidian/plugins/tiling-renderer/src/main.ts",
           "is_entrypoint": true,
           "lines": 312
+        },
+        {
+          "path": "dev-vault/.obsidian/plugins/vault-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 137
         },
         {
           "path": "dev-vault/.obsidian/plugins/tabs-renderer/src/main.ts",
@@ -229,6 +236,11 @@
           "lines": 30
         },
         {
+          "path": "dev-vault/.obsidian/plugins/vault-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 25
+        },
+        {
           "path": "dev-vault/.obsidian/plugins/snippet-renderer/src/main.ts",
           "is_entrypoint": true,
           "lines": 19
@@ -257,24 +269,14 @@
           "path": "dev-vault/.obsidian/plugins/html-renderer/README.md",
           "is_entrypoint": false,
           "lines": 62
-        },
-        {
-          "path": "dev-vault/.obsidian/plugins/snippet-renderer/README.md",
-          "is_entrypoint": false,
-          "lines": 44
-        },
-        {
-          "path": "dev-vault/.obsidian/plugins/tabs-renderer/README.md",
-          "is_entrypoint": false,
-          "lines": 44
         }
       ],
-      "tokens": 122382
+      "tokens": 122776
     },
     {
       "id": "adapters",
       "name": "adapters",
-      "summary": "Адаптеры для взаимодействия с Obsidian API.",
+      "summary": "Adapters for interacting with the Obsidian API.",
       "l1_path": "subsystems/adapters.md",
       "tags": ["adapters", "api"],
       "entrypoints": ["packages/adapters/package.json", "packages/adapters/src/index.ts"],
@@ -351,7 +353,7 @@
     {
       "id": "core",
       "name": "core",
-      "summary": "Ядро системы, включающее структуру и геометрию тайлов.",
+      "summary": "The system core, including tile structure and geometry.",
       "l1_path": "subsystems/core.md",
       "tags": ["core", "geometry"],
       "entrypoints": ["packages/core/package.json", "packages/core/src/index.ts"],
@@ -487,7 +489,7 @@
     {
       "id": "obsidian-utils",
       "name": "obsidian-utils",
-      "summary": "Утилиты для работы с Obsidian, такие как парсинг ссылок и форматирование.",
+      "summary": "Utilities for working with Obsidian, such as link parsing and formatting.",
       "l1_path": "subsystems/obsidian-utils.md",
       "tags": ["utils", "parsing"],
       "entrypoints": [
@@ -536,7 +538,7 @@
     {
       "id": "ports",
       "name": "ports",
-      "summary": "Интерфейсы для взаимодействия с внешними системами.",
+      "summary": "Interfaces for interacting with external systems.",
       "l1_path": "subsystems/ports.md",
       "tags": ["interfaces", "ports"],
       "entrypoints": ["packages/ports/src/index.ts", "packages/ports/package.json"],
@@ -575,7 +577,7 @@
     {
       "id": "tsconfig",
       "name": "tsconfig",
-      "summary": "Конфигурации TypeScript для проекта.",
+      "summary": "TypeScript configurations for the project.",
       "l1_path": "subsystems/tsconfig.md",
       "tags": ["typescript", "configuration"],
       "entrypoints": ["packages/tsconfig/package.json"],
@@ -613,7 +615,7 @@
     {
       "id": "types",
       "name": "types",
-      "summary": "Типы для обработки результатов и ошибок.",
+      "summary": "Types for handling results and errors.",
       "l1_path": "subsystems/types.md",
       "tags": ["types", "result-handling"],
       "entrypoints": ["packages/types/src/index.ts", "packages/types/package.json"],
@@ -656,7 +658,7 @@
     {
       "id": "ui",
       "name": "ui",
-      "summary": "Интерфейс пользователя для редактирования и взаимодействия.",
+      "summary": "User interface for editing and interaction.",
       "l1_path": "subsystems/ui.md",
       "tags": ["ui", "editor"],
       "entrypoints": ["packages/ui/package.json", "packages/ui/src/index.ts"],
@@ -761,7 +763,7 @@
     {
       "id": "reference",
       "name": "reference",
-      "summary": "Справочная информация и примеры использования плагинов.",
+      "summary": "Reference information and plugin usage examples.",
       "l1_path": "subsystems/reference.md",
       "tags": ["reference", "examples"],
       "entrypoints": [
@@ -872,7 +874,7 @@
     {
       "id": "scripts",
       "name": "scripts",
-      "summary": "Скрипты для автоматизации процессов сборки и развертывания.",
+      "summary": "Scripts for automating build and deployment processes.",
       "l1_path": "subsystems/scripts.md",
       "tags": ["scripts", "automation"],
       "key_files": [
@@ -920,7 +922,7 @@
     {
       "id": ".changeset",
       "name": ".changeset",
-      "summary": "Модуль и компоненты директории `.changeset` (1 файлов)",
+      "summary": "Module and components of the `.changeset` directory (1 files)",
       "l1_path": "subsystems/.changeset.md",
       "tags": [".changeset", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "key_files": [".changeset/config.json"],
@@ -936,7 +938,7 @@
     {
       "id": ".vault",
       "name": ".vault",
-      "summary": "Подсистема `.vault` с ключевыми точками входа: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts",
+      "summary": "Subsystem `.vault` with key entry points: .vault/.obsidian/plugins/tiling-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/src/main.ts, .vault/.obsidian/plugins/html-renderer/src/main.ts, .vault/.obsidian/plugins/tabs-renderer/package.json, .vault/.obsidian/plugins/html-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/package.json, .vault/.obsidian/plugins/tiling-renderer/package.json, .vault/.obsidian/plugins/snippet-renderer/src/main.ts",
       "l1_path": "subsystems/.vault.md",
       "tags": [".vault", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": [
@@ -1048,7 +1050,7 @@
     {
       "id": "packages_adapters",
       "name": "Adapters",
-      "summary": "Подсистема `packages/adapters` с ключевыми точками входа: packages/adapters/package.json, packages/adapters/src/index.ts",
+      "summary": "Subsystem `packages/adapters` with key entry points: packages/adapters/package.json, packages/adapters/src/index.ts",
       "l1_path": "subsystems/packages_adapters.md",
       "tags": ["packages_adapters", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["packages/adapters/package.json", "packages/adapters/src/index.ts"],
@@ -1134,7 +1136,7 @@
     {
       "id": "packages_core",
       "name": "Core",
-      "summary": "Подсистема `packages/core` с ключевыми точками входа: packages/core/package.json, packages/core/src/index.ts",
+      "summary": "Subsystem `packages/core` with key entry points: packages/core/package.json, packages/core/src/index.ts",
       "l1_path": "subsystems/packages_core.md",
       "tags": ["packages_core", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["packages/core/package.json", "packages/core/src/index.ts"],
@@ -1250,7 +1252,7 @@
     {
       "id": "packages_obsidian-utils",
       "name": "Obsidian Utils",
-      "summary": "Подсистема `packages/obsidian-utils` с ключевыми точками входа: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json",
+      "summary": "Subsystem `packages/obsidian-utils` with key entry points: packages/obsidian-utils/src/index.ts, packages/obsidian-utils/package.json",
       "l1_path": "subsystems/packages_obsidian-utils.md",
       "tags": ["packages_obsidian-utils", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": [
@@ -1299,7 +1301,7 @@
     {
       "id": "packages_ports",
       "name": "Ports",
-      "summary": "Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json",
+      "summary": "Subsystem `packages/ports` with key entry points: packages/ports/src/index.ts, packages/ports/package.json",
       "l1_path": "subsystems/packages_ports.md",
       "tags": ["packages_ports", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["packages/ports/src/index.ts", "packages/ports/package.json"],
@@ -1338,7 +1340,7 @@
     {
       "id": "packages_tsconfig",
       "name": "Tsconfig",
-      "summary": "Подсистема `packages/tsconfig` с ключевыми точками входа: packages/tsconfig/package.json",
+      "summary": "Subsystem `packages/tsconfig` with key entry points: packages/tsconfig/package.json",
       "l1_path": "subsystems/packages_tsconfig.md",
       "tags": ["packages_tsconfig", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["packages/tsconfig/package.json"],
@@ -1376,7 +1378,7 @@
     {
       "id": "packages_types",
       "name": "Types",
-      "summary": "Подсистема `packages/types` с ключевыми точками входа: packages/types/src/index.ts, packages/types/package.json",
+      "summary": "Subsystem `packages/types` with key entry points: packages/types/src/index.ts, packages/types/package.json",
       "l1_path": "subsystems/packages_types.md",
       "tags": ["packages_types", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["packages/types/src/index.ts", "packages/types/package.json"],
@@ -1419,7 +1421,7 @@
     {
       "id": "packages_ui",
       "name": "Ui",
-      "summary": "Подсистема `packages/ui` с ключевыми точками входа: packages/ui/package.json, packages/ui/src/index.ts",
+      "summary": "Subsystem `packages/ui` with key entry points: packages/ui/package.json, packages/ui/src/index.ts",
       "l1_path": "subsystems/packages_ui.md",
       "tags": ["packages_ui", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["packages/ui/package.json", "packages/ui/src/index.ts"],
@@ -1530,7 +1532,7 @@
     {
       "id": "plugins_html-renderer",
       "name": "Html Renderer",
-      "summary": "Подсистема `plugins/html-renderer` с ключевыми точками входа: plugins/html-renderer/src/main.ts, plugins/html-renderer/package.json",
+      "summary": "Subsystem `plugins/html-renderer` with key entry points: plugins/html-renderer/src/main.ts, plugins/html-renderer/package.json",
       "l1_path": "subsystems/plugins_html-renderer.md",
       "tags": ["plugins_html-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["plugins/html-renderer/src/main.ts", "plugins/html-renderer/package.json"],
@@ -1640,7 +1642,7 @@
     {
       "id": "plugins_snippet-renderer",
       "name": "Snippet Renderer",
-      "summary": "Подсистема `plugins/snippet-renderer` с ключевыми точками входа: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts",
+      "summary": "Subsystem `plugins/snippet-renderer` with key entry points: plugins/snippet-renderer/package.json, plugins/snippet-renderer/src/main.ts",
       "l1_path": "subsystems/plugins_snippet-renderer.md",
       "tags": ["plugins_snippet-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": [
@@ -1742,7 +1744,7 @@
     {
       "id": "plugins_tabs-renderer",
       "name": "Tabs Renderer",
-      "summary": "Подсистема `plugins/tabs-renderer` с ключевыми точками входа: plugins/tabs-renderer/src/main.ts, plugins/tabs-renderer/package.json",
+      "summary": "Subsystem `plugins/tabs-renderer` with key entry points: plugins/tabs-renderer/src/main.ts, plugins/tabs-renderer/package.json",
       "l1_path": "subsystems/plugins_tabs-renderer.md",
       "tags": ["plugins_tabs-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": ["plugins/tabs-renderer/src/main.ts", "plugins/tabs-renderer/package.json"],
@@ -1852,7 +1854,7 @@
     {
       "id": "plugins_tiling-renderer",
       "name": "Tiling Renderer",
-      "summary": "Подсистема `plugins/tiling-renderer` с ключевыми точками входа: plugins/tiling-renderer/src/main.ts, plugins/tiling-renderer/package.json",
+      "summary": "Subsystem `plugins/tiling-renderer` with key entry points: plugins/tiling-renderer/src/main.ts, plugins/tiling-renderer/package.json",
       "l1_path": "subsystems/plugins_tiling-renderer.md",
       "tags": ["plugins_tiling-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
       "entrypoints": [
@@ -1868,13 +1870,13 @@
         "plugins/tiling-renderer/src/services/tiling-sync-service.ts",
         "plugins/tiling-renderer/src/settings/settings-tab.ts",
         "plugins/tiling-renderer/src/ui/panel-dnd-controller.ts",
-        "plugins/tiling-renderer/data.json",
         "plugins/tiling-renderer/README.md",
         "plugins/tiling-renderer/main.js",
         "plugins/tiling-renderer/src/settings/settings.ts",
         "plugins/tiling-renderer/CHANGELOG.md",
         "plugins/tiling-renderer/tsconfig.json",
-        "plugins/tiling-renderer/manifest.json"
+        "plugins/tiling-renderer/manifest.json",
+        "plugins/tiling-renderer/versions.json"
       ],
       "files": [
         {
@@ -1918,11 +1920,6 @@
           "lines": 101
         },
         {
-          "path": "plugins/tiling-renderer/data.json",
-          "is_entrypoint": false,
-          "lines": 31
-        },
-        {
           "path": "plugins/tiling-renderer/README.md",
           "is_entrypoint": false,
           "lines": 29
@@ -1951,6 +1948,11 @@
           "path": "plugins/tiling-renderer/manifest.json",
           "is_entrypoint": false,
           "lines": 9
+        },
+        {
+          "path": "plugins/tiling-renderer/versions.json",
+          "is_entrypoint": false,
+          "lines": 3
         }
       ],
       "key_symbols": [
@@ -1960,12 +1962,127 @@
         "export class TilingView extends ItemView implements TilingPanelHost"
       ],
       "test_command": "rtk pnpm --filter tiling-renderer test",
-      "tokens": 128073
+      "tokens": 127895
+    },
+    {
+      "id": "plugins_vault-renderer",
+      "name": "Vault Renderer",
+      "summary": "Subsystem `plugins/vault-renderer` with key entry points: plugins/vault-renderer/src/main.ts, plugins/vault-renderer/package.json",
+      "l1_path": "subsystems/plugins_vault-renderer.md",
+      "tags": ["plugins_vault-renderer", "TypeScript / JavaScript (Node/Bun/Deno)"],
+      "entrypoints": ["plugins/vault-renderer/src/main.ts", "plugins/vault-renderer/package.json"],
+      "key_files": [
+        "plugins/vault-renderer/src/main.ts",
+        "plugins/vault-renderer/package.json",
+        "plugins/vault-renderer/src/settings/settings-tab.ts",
+        "plugins/vault-renderer/src/core/dag-scheduler.ts",
+        "plugins/vault-renderer/src/services/scheduler-service.ts",
+        "plugins/vault-renderer/src/core/telemetry.ts",
+        "plugins/vault-renderer/src/core/telemetry.test.ts",
+        "plugins/vault-renderer/src/core/shadow-storage.ts",
+        "plugins/vault-renderer/src/adapters/obsidian-plugin-adapter.ts",
+        "plugins/vault-renderer/src/core/dag-scheduler.test.ts",
+        "plugins/vault-renderer/src/services/telemetry-service.ts",
+        "plugins/vault-renderer/src/core/platform-matrix.test.ts",
+        "plugins/vault-renderer/src/core/shadow-storage.test.ts",
+        "plugins/vault-renderer/src/settings/settings.ts",
+        "plugins/vault-renderer/src/core/interaction-guard.ts"
+      ],
+      "files": [
+        {
+          "path": "plugins/vault-renderer/src/main.ts",
+          "is_entrypoint": true,
+          "lines": 137
+        },
+        {
+          "path": "plugins/vault-renderer/package.json",
+          "is_entrypoint": true,
+          "lines": 25
+        },
+        {
+          "path": "plugins/vault-renderer/src/settings/settings-tab.ts",
+          "is_entrypoint": false,
+          "lines": 276
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/dag-scheduler.ts",
+          "is_entrypoint": false,
+          "lines": 215
+        },
+        {
+          "path": "plugins/vault-renderer/src/services/scheduler-service.ts",
+          "is_entrypoint": false,
+          "lines": 205
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/telemetry.ts",
+          "is_entrypoint": false,
+          "lines": 153
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/telemetry.test.ts",
+          "is_entrypoint": false,
+          "lines": 107
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/shadow-storage.ts",
+          "is_entrypoint": false,
+          "lines": 105
+        },
+        {
+          "path": "plugins/vault-renderer/src/adapters/obsidian-plugin-adapter.ts",
+          "is_entrypoint": false,
+          "lines": 105
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/dag-scheduler.test.ts",
+          "is_entrypoint": false,
+          "lines": 104
+        },
+        {
+          "path": "plugins/vault-renderer/src/services/telemetry-service.ts",
+          "is_entrypoint": false,
+          "lines": 101
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/platform-matrix.test.ts",
+          "is_entrypoint": false,
+          "lines": 96
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/shadow-storage.test.ts",
+          "is_entrypoint": false,
+          "lines": 92
+        },
+        {
+          "path": "plugins/vault-renderer/src/settings/settings.ts",
+          "is_entrypoint": false,
+          "lines": 78
+        },
+        {
+          "path": "plugins/vault-renderer/src/core/interaction-guard.ts",
+          "is_entrypoint": false,
+          "lines": 75
+        }
+      ],
+      "key_symbols": [
+        "export interface VaultRendererHost",
+        "export class VaultRendererSettingTab extends PluginSettingTab",
+        "export const PHASE_ORDER: readonly StartupPhase[] = ['instant', 'interactive', 'deferred', 'idle'] export const PHASE_RANK: Readonly<Record<StartupPhase, number>> =",
+        "export interface PhaseQueueItem",
+        "export interface StartupPlan",
+        "export function topologicalSort( targetIds: readonly string[], adj: Map<string, string[]> ):",
+        "export function hoistPhases( targetIds: readonly string[], configs: Record<string, PluginProfileConfig> ):",
+        "export function planStartupQueue( configs: Record<string, PluginProfileConfig>, targetIds: readonly string[] ): StartupPlan",
+        "export class SchedulerService"
+      ],
+      "test_command": "rtk pnpm --filter vault-renderer test",
+      "tokens": 13535
     }
   ],
   "core_rules": [
-    "Строгая типизация (`TypeScript strict: true`) обязательна, запрещен `any`.",
-    "Все зависимости фиксируются строго в lockfile (`pnpm-lock.yaml` / `bun.lock`).",
-    "Форматирование и линтинг через `rtk biome / rtk prettier` без отключения проверок."
+    "Strict typing (`TypeScript strict: true`) is mandatory, `any` is prohibited.",
+    "All dependencies are pinned strictly in the lockfile (`pnpm-lock.yaml` / `bun.lock`).",
+    "Formatting and linting via `rtk biome / rtk prettier` without disabling checks."
   ]
 }

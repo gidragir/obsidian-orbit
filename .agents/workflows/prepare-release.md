@@ -4,7 +4,7 @@ description: "Prepare an Obsidian plugin release. Calculates SemVer increment, g
 
 # Workflow: /prepare-release
 
-1. Проверить статус репозитория: `git status --porcelain`.
-2. Рассчитать инкремент SemVer и вызвать `pnpm change` (или создать `.changeset/<hash>.md`).
-3. Запустить верификацию: `pnpm check`.
-4. Создать Conventional Commit: `feat(<plugin>): ...` или `fix(<plugin>): ...`.
+1. Check the repository status: `git status --porcelain`.
+2. Calculate the SemVer increment and run `pnpm change` (or create `.changeset/<hash>.md`).
+3. Run verification: `pnpm check`.
+4. Create a Conventional Commit: `feat(<plugin>): ...` or `fix(<plugin>): ...`.

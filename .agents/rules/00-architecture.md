@@ -5,9 +5,12 @@ description: "Core architectural invariants of the Obsidian plugins monorepo. En
 
 # 00: Core Monorepo Architecture Invariants
 
-1. **Единый источник правды (SSOT):** Вся разработка ведется в данном монорепозитории. Сателлиты — только downstream mirrors.
-2. **Direct TS Source:** Пакеты `@packages/*` не имеют фазы сборки `dist/`. Импортируются чистые TS-исходники.
-3. **Pinpoint-версионирование:** Запрет `^` и `~`. Пакеты линкуются через `workspace:*`, зависимости через `catalog:`.
-4. **Запрет относительных импортов вверх:** Запрещено `../../` внутри плагинов. Используются `@ui/*`, `@settings/*`, `@services/*` и `@packages/*`.
-5. **Неприкосновенность `.vault/`:** Прямые правки запрещены. Доступ только через `pnpm vault:link`.
-6. **Строгая точность зависимостей манифестов `package.json`:** Манифест каждого плагина и пакета обязан объявлять в `dependencies` и `devDependencies` только фактически импортируемые пакеты. Запрещены фиктивные или неиспользуемые зависимости («мертвый груз»).
+1. **Single Source of Truth (SSOT):** All development happens in this monorepo. Satellites are downstream mirrors only.
+2. **Direct TS Source:** `@packages/*` packages have no `dist/` build phase. Pure TS sources are imported.
+3. **Pinpoint versioning:** `^` and `~` are prohibited. Packages are linked via `workspace:*`, dependencies via `catalog:`.
+4. **No upward relative imports:** `../../` is prohibited inside plugins. Use `@ui/*`, `@settings/*`, `@services/*` and `@packages/*`.
+5. **Inviolability of `.vault/`:** Direct edits are prohibited. Access only via `pnpm vault:link`.
+6. **Strict accuracy of `package.json` manifest dependencies:** The manifest of every plugin and package must declare in `dependencies` and `devDependencies` only packages that are actually imported. Fake or unused dependencies ("dead weight") are prohibited.
+7. **Isolation of names and branding of standalone plugins:** In standalone plugins (`plugins/*`), their manifests, code, styles, tests and documentation, mentioning internal monorepo identifiers (`obsidian-orbit`, `orbit`) is strictly prohibited. Each plugin must be fully self-contained for independent publication.
+8. **Authorship:** The author of all packages, plugins, manifests and licenses is `gidragir`.
+9. **Shared UI & Styles Invariant:** All standalone plugins (`plugins/*`) must declare `"@packages/ui": "workspace:*"` in their `package.json` dependencies and import shared styles via `@import '../../../packages/ui/src/styles.css';` on line 1 of `src/styles.css`. Writing redundant CSS rules for components already provided by `@packages/ui` (cards, badges, segmented tabs, stat cards, empty states, labels) is strictly prohibited — reuse shared tokens and classes across all plugins.

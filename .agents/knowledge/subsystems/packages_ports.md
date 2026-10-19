@@ -1,20 +1,20 @@
-# Подсистема: Ports (L1)
+# Subsystem: Ports (L1)
 
-> **Идентификатор:** `packages_ports`
-> **Теги:** packages_ports, TypeScript / JavaScript (Node/Bun/Deno) | **Объем:** ~388 токенов BPE
+> **Identifier:** `packages_ports`
+> **Tags:** packages_ports, TypeScript / JavaScript (Node/Bun/Deno) | **Size:** ~388 BPE tokens
 
-## 🎯 Назначение и роль
-Подсистема `packages/ports` с ключевыми точками входа: packages/ports/src/index.ts, packages/ports/package.json
+## 🎯 Purpose and role
+Subsystem `packages/ports` with key entry points: packages/ports/src/index.ts, packages/ports/package.json
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `packages/ports/src/index.ts` | 36 | ⭐ Точка входа |
-| `packages/ports/package.json` | 20 | ⭐ Точка входа |
-| `packages/ports/tsconfig.json` | 4 | Исходный код |
+| `packages/ports/src/index.ts` | 36 | ⭐ Entry point |
+| `packages/ports/package.json` | 20 | ⭐ Entry point |
+| `packages/ports/tsconfig.json` | 4 | Source code |
 
-## 🔑 Ключевой контракт и экспорты
+## 🔑 Key contract and exports
 ```text
 export interface IVaultPort
 export interface ICommandPort
@@ -23,7 +23,7 @@ export interface INoticePort
 export interface IClipboardPort
 ```
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm --filter ports test
 ```

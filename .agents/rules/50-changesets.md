@@ -5,20 +5,20 @@ description: "Semantic versioning bump rules, Changeset artifact generation, and
 
 # 50: Changesets & Release Automation
 
-1. **Запрет ручной правки:** Версии в `manifest.json`, `package.json`, `versions.json` вручную не редактируются.
-2. **Классификация SemVer:**
-   * `major`: Изменение схемы `data.json`, удаление команд.
-   * `minor`: Новые команды, новая вкладка настроек, расширение API.
-   * `patch`: Баг-фиксы, стили CSS, внутренний рефакторинг.
-3. **Хук синхронизации:** `pnpm version:bump` вызывает `scripts/sync-versions.ts`.
-4. **Инвариант privatePackages:** Плагины монорепозитория (`plugins/*`) имеют `"private": true`. В `.changeset/config.json` обязателен блок:
+1. **No manual edits:** Versions in `manifest.json`, `package.json`, `versions.json` are never edited by hand.
+2. **SemVer classification:**
+   * `major`: `data.json` schema change, command removal.
+   * `minor`: New commands, a new settings tab, API extension.
+   * `patch`: Bug fixes, CSS styles, internal refactoring.
+3. **Sync hook:** `pnpm version:bump` invokes `scripts/sync-versions.ts`.
+4. **privatePackages invariant:** Monorepo plugins (`plugins/*`) have `"private": true`. `.changeset/config.json` must contain the block:
    `"privatePackages": { "version": true, "tag": false }`.
-5. **CI Permissions & PAT:** 
-   * Репозиторий требует `default_workflow_permissions="write"` и `can_approve_pull_request_reviews=true` для создания PR экшеном `@changesets/action`.
-   * Секрет `RELEASE_PAT` с правами `repo` должен экспортироваться как `RELEASE_PAT` и `GH_TOKEN` для доставки релизов в сателлиты через `scripts/deploy-downstream.ts`.
-6. **Сквозной контракт команды «Релиз» (End-to-End Release):**
-   * Запрос на «релиз / выпуск версии» означает полный цикл: инкремент SemVer + обновление `CHANGELOG.md` -> верификация `pnpm check` -> Conventional Commit -> `git push origin main` -> верификация запуска релизных workflows (`Release & Downstream Deploy`) в GitHub Actions. Не допускается оставлять релизные изменения незапушенными.
-7. **Протокол первичного релиза нового плагина (v1.0.0 Initial Release):**
-   * Для нового плагина, версия которого изначально равна `1.0.0`, генерация ченджсета через `pnpm change` запрещена во избежание ложного бампа до `1.1.0`/`2.0.0`.
-   * Первичный релиз оформляется созданием `plugins/<id>/CHANGELOG.md` с заголовком `## 1.0.0` и списком ключевых возможностей.
-   * `repository.url` в `package.json` обязан указывать на целевой сателлит (`https://github.com/gidragir/obsidian-<id>.git`). Если сателлит еще не создан на GitHub, деплой-скрипт корректно пропускает релиз до момента создания репозитория.
+5. **CI Permissions & PAT:**
+   * The repository requires `default_workflow_permissions="write"` and `can_approve_pull_request_reviews=true` for the `@changesets/action` action to create PRs.
+   * The `RELEASE_PAT` secret with `repo` scope must be exported as `RELEASE_PAT` and `GH_TOKEN` to deliver releases to satellites via `scripts/deploy-downstream.ts`.
+6. **End-to-End Release contract:**
+   * A request for a "release / version publication" means the full cycle: SemVer bump + `CHANGELOG.md` update -> `pnpm check` verification -> Conventional Commit -> `git push origin main` -> verifying that the release workflows (`Release & Downstream Deploy`) start in GitHub Actions. Leaving release changes unpushed is not allowed.
+7. **Initial release protocol for a new plugin (v1.0.0 Initial Release):**
+   * For a new plugin whose initial version is `1.0.0`, generating a changeset via `pnpm change` is prohibited, to avoid a false bump to `1.1.0`/`2.0.0`.
+   * The initial release is formalized by creating `plugins/<id>/CHANGELOG.md` with a `## 1.0.0` heading and a list of key features.
+   * `repository.url` in `package.json` must point to the target satellite (`https://github.com/gidragir/obsidian-<id>.git`). If the satellite has not yet been created on GitHub, the deploy script correctly skips the release until the repository is created.

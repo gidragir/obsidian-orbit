@@ -1,49 +1,49 @@
-# Подсистема: .vault (L1)
+# Subsystem: .vault (L1)
 
-> **Идентификатор:** `vault`
-> **Теги:** plugins, source-code | **Объем:** ~123944 токенов BPE
+> **Identifier:** `vault`
+> **Tags:** plugins, source-code | **Size:** ~123944 BPE tokens
 
-## 🎯 Назначение и роль
-Содержит исходные файлы плагинов и их конфигурации.
+## 🎯 Purpose and role
+Contains plugin source files and their configurations.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `.vault/.obsidian/plugins/tiling-renderer/src/main.ts` | 314 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/tabs-renderer/src/main.ts` | 70 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/html-renderer/src/main.ts` | 48 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/tabs-renderer/package.json` | 37 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/tiling-renderer/package.json` | 37 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/html-renderer/package.json` | 32 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/snippet-renderer/package.json` | 31 | ⭐ Точка входа |
-| `.vault/.obsidian/plugins/snippet-renderer/src/main.ts` | 19 | ⭐ Точка входа |
-| `.vault/.obsidian/workspace.json` | 215 | Исходный код |
-| `.vault/Test tiling renderer.md` | 208 | Исходный код |
-| `.vault/.obsidian/plugins/tiling-renderer/data.json` | 0 | Удален |
-| `.vault/.obsidian/hotkeys.json` | 126 | Исходный код |
-| `.vault/.obsidian/plugins/html-renderer/main.js` | 91 | Исходный код |
-| `.vault/.obsidian/plugins/html-renderer/README.md` | 62 | Исходный код |
-| `.vault/.obsidian/plugins/snippet-renderer/README.md` | 44 | Исходный код |
+| `.vault/.obsidian/plugins/tiling-renderer/src/main.ts` | 314 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/tabs-renderer/src/main.ts` | 70 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/html-renderer/src/main.ts` | 48 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/tabs-renderer/package.json` | 37 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/tiling-renderer/package.json` | 37 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/html-renderer/package.json` | 32 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/snippet-renderer/package.json` | 31 | ⭐ Entry point |
+| `.vault/.obsidian/plugins/snippet-renderer/src/main.ts` | 19 | ⭐ Entry point |
+| `.vault/.obsidian/workspace.json` | 215 | Source code |
+| `.vault/Test tiling renderer.md` | 208 | Source code |
+| `.vault/.obsidian/plugins/tiling-renderer/data.json` | 0 | Deleted |
+| `.vault/.obsidian/hotkeys.json` | 126 | Source code |
+| `.vault/.obsidian/plugins/html-renderer/main.js` | 91 | Source code |
+| `.vault/.obsidian/plugins/html-renderer/README.md` | 62 | Source code |
+| `.vault/.obsidian/plugins/snippet-renderer/README.md` | 44 | Source code |
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm test
 ```
 
-## 🛠️ Обновления и изменения
+## 🛠️ Updates and changes
 
-### Плагин `tiling-renderer`
-- **Удален файл:** `plugins/tiling-renderer/data.json`
-- **Обновлен `package.json`:** Удалены зависимости `@codemirror/commands`, `@codemirror/lang-markdown`, `@codemirror/language`, `@codemirror/state`, `@codemirror/view`, `@packages/obsidian-utils`, `@packages/types`.
-- **Обновлен `src/main.ts`:** Добавлены методы для регистрации команд навигации, перемещения и изменения размеров окон (`registerHyprlandNavigationCommands`, `registerHyprlandMoveCommands`, `registerHyprlandResizeCommands`, `registerHyprlandWindowCommands`). Метод `onunload` теперь пустой.
-- **Обновлен `src/services/tiling-sync-service.ts`:** Метод конструктора теперь принимает либо число, либо булево значение для настройки синхронизации текста.
-- **Обновлен `src/settings/settings-tab.ts`:** Класс наследуется от `DeclarativePluginSettingTab` из `@packages/adapters`.
+### Plugin `tiling-renderer`
+- **File deleted:** `plugins/tiling-renderer/data.json`
+- **Updated `package.json`:** Removed dependencies `@codemirror/commands`, `@codemirror/lang-markdown`, `@codemirror/language`, `@codemirror/state`, `@codemirror/view`, `@packages/obsidian-utils`, `@packages/types`.
+- **Updated `src/main.ts`:** Added methods for registering window navigation, move and resize commands (`registerHyprlandNavigationCommands`, `registerHyprlandMoveCommands`, `registerHyprlandResizeCommands`, `registerHyprlandWindowCommands`). The `onunload` method is now empty.
+- **Updated `src/services/tiling-sync-service.ts`:** The constructor now accepts either a number or a boolean value to configure text synchronization.
+- **Updated `src/settings/settings-tab.ts`:** The class extends `DeclarativePluginSettingTab` from `@packages/adapters`.
 
-### Дополнительные изменения
-- **Добавлены методы в `src/main.ts`:** Методы `registerBasicCommands`, `registerHyprlandNavigationCommands`, `registerHyprlandMoveCommands`, `registerHyprlandResizeCommands`, `registerHyprlandWindowCommands`.
-- **Обновлен `src/services/tiling-sync-service.ts`:** Добавлены комментарии и изменен конструктор для поддержки булевого значения.
-- **Обновлен `src/settings/settings-tab.ts`:** Использование `DeclarativePluginSettingTab` для настройки табов настроек.
+### Additional changes
+- **Added methods in `src/main.ts`:** Methods `registerBasicCommands`, `registerHyprlandNavigationCommands`, `registerHyprlandMoveCommands`, `registerHyprlandResizeCommands`, `registerHyprlandWindowCommands`.
+- **Updated `src/services/tiling-sync-service.ts`:** Added comments and changed the constructor to support a boolean value.
+- **Updated `src/settings/settings-tab.ts`:** Uses `DeclarativePluginSettingTab` to configure settings tabs.
 
 # Recent Git Changes:
 
@@ -61,7 +61,7 @@ index 7c4eec1..0000000
 -  "panelGap": 2,
 -  "syncTextOrder": false,
 -  "fileLayouts": {
--    "Тест.md": {
+-    "Test.md": {
 -      "tree": {
 -        "type": "branch",
 -        "id": "branch-1791549264308-628",

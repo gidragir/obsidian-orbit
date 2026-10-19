@@ -5,12 +5,12 @@ description: "Provides architectural patterns, lifecycle safety contracts, event
 
 # Obsidian Architect Skill
 
-1. **Порты и Адаптеры:** Доменные интерфейсы выносятся в `src/utils/`, адаптеры `app.vault` — в `src/services/`.
-2. **Жизненный цикл:** Регистрация всех подписок строго через `this.registerEvent`, `this.registerDomEvent`, `this.registerInterval`.
-3. **Тонкий `main.ts`:** Метод `onload()` разгружается в приватные методы `registerCommands()`, `registerViews()`.
-4. **Безопасные стили:** Использование нативных CSS-переменных темы Obsidian.
-5. **Безопасный DND:** Контроллеры перетаскивания элементов UI используют изолированные MIME-типы (`application/x-*`) и блокируют всплытие событий в текстовые редакторы.
-6. **Паттерн Preview / Edit:** При создании тайловых/блочных представлений заметок интерфейс проектируется по двухрежимной модели: чтение через `MarkdownRenderer.render` и редактирование по требованию через CM6 с `syntaxHighlighting`.
-7. **Пространственная навигация тайлов:** Навигация фокуса (`focusInDirection`) и перемещение панелей (`moveInDirection`) обязаны изолироваться в чистые математические функции доменного ядра (`@packages/core`) с двухъярусной оценкой перекрытия (проекции ребер вместо центров), гарантируя детерминированное поведение при любых пропорциях сплитов.
-8. **Изоляция I/O и Debounced File Sync:** Доменная модель заметки (секции, AST, геометрия) изолируется от объектов Obsidian (`TFile`, `Vault`). Все операции автосохранения на диск и синхронизации открытых `MarkdownView` делегируются адаптеру `DebouncedWorkspaceFileAdapter` из `@packages/adapters`.
-9. **Унифицированные интерактивные контроллеры:** Интерактивные компоненты UI (изменение размеров панелей через сплиттеры, перехват внутренних вики-ссылок, 2D DND drop zones) реализуются через готовые контроллеры `@packages/ui`: `attachSplitterDrag`, `attachInternalLinkHandler`, `computeDropZone2D` с обязательным возвратом функции отписки `cleanup()`.
+1. **Ports and Adapters:** Domain interfaces live in `src/utils/`, `app.vault` adapters in `src/services/`.
+2. **Lifecycle:** Register all subscriptions strictly via `this.registerEvent`, `this.registerDomEvent`, `this.registerInterval`.
+3. **Thin `main.ts`:** The `onload()` method is offloaded into private methods `registerCommands()`, `registerViews()`.
+4. **Safe styles & UI reuse:** Declare `"@packages/ui": "workspace:*"` in `dependencies`, import `@import '../../../packages/ui/src/styles.css';` on line 1 of `src/styles.css`, and reuse shared classes (`.orbit-badge`, `.orbit-card`, `.orbit-stats-grid`, `.orbit-stat-card`, `.orbit-filter-tabs`, `.orbit-empty-state`, `.orbit-control-label`) and native Obsidian theme CSS variables to eliminate duplicate boilerplate.
+5. **Safe DND:** UI drag controllers use isolated MIME types (`application/x-*`) and stop event propagation into text editors.
+6. **Preview / Edit pattern:** When building tile/block views of notes, design the interface as a two-mode model: reading via `MarkdownRenderer.render` and on-demand editing via CM6 with `syntaxHighlighting`.
+7. **Spatial tile navigation:** Focus navigation (`focusInDirection`) and pane movement (`moveInDirection`) must be isolated in pure math functions of the domain core (`@packages/core`) with two-tier overlap scoring (edge projections instead of centers), guaranteeing deterministic behavior for any split proportions.
+8. **I/O isolation and Debounced File Sync:** The note domain model (sections, AST, geometry) is isolated from Obsidian objects (`TFile`, `Vault`). All autosave-to-disk operations and synchronization of open `MarkdownView`s are delegated to the `DebouncedWorkspaceFileAdapter` adapter from `@packages/adapters`.
+9. **Unified interactive controllers:** Interactive UI components (pane resizing via splitters, internal wiki-link interception, 2D DND drop zones) are implemented via the ready-made `@packages/ui` controllers: `attachSplitterDrag`, `attachInternalLinkHandler`, `computeDropZone2D`, which must return a `cleanup()` unsubscribe function.

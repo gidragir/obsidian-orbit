@@ -5,7 +5,7 @@ description: "Specialized methodology for ingesting, dissecting, and migrating l
 
 # Reference Migrator Skill
 
-1. **Аудит снимка:** Анализ `reference/*-context.md` силами Gemini Pro.
-2. **Замена легаси:** Замена `moment.js` и `lodash` на нативные JS API.
-3. **Декомпозиция:** Перенос чистых функций в `src/utils/` с обязательными тестами Vitest, универсальной логики — в `@packages/*`.
-4. **Контроль:** Запуск навыков `complexity-guard` и `biome-refactor` перед финальным `pnpm check`.
+1. **Snapshot audit:** Analyze `reference/*-context.md` with Gemini Pro.
+2. **Legacy replacement:** Replace `moment.js` and `lodash` with native JS APIs.
+3. **Decomposition:** Move pure functions into `src/utils/` with mandatory Vitest tests, and universal logic into `@packages/*`.
+4. **Control:** Run the `complexity-guard` and `biome-refactor` skills before the final `pnpm check`.

@@ -5,7 +5,7 @@ description: "Audits and refactors complex TypeScript functions exceeding cognit
 
 # Complexity Guard Skill
 
-1. **Пороги:** Когнитивная сложность <= 15, цикломатическая <= 10, вложенность <= 3, строки <= 40.
-2. **Guard Clauses:** Ранние инвертированные возвраты `if (!file) return;` вместо каскадных вложений.
-3. **Strategy Lookup Map:** Типизированные словари `Record<Key, Handler>` вместо громоздких `switch`.
-4. **Expressive Predicates:** Вынос составных булевых выражений в чистые функции-предикаты (`isMarkdownTable()`).
+1. **Thresholds:** Cognitive complexity <= 15, cyclomatic <= 10, nesting <= 3, lines <= 40.
+2. **Guard Clauses:** Early inverted returns `if (!file) return;` instead of cascading nesting.
+3. **Strategy Lookup Map:** Typed dictionaries `Record<Key, Handler>` instead of bulky `switch` statements.
+4. **Expressive Predicates:** Extract compound boolean expressions into pure predicate functions (`isMarkdownTable()`).

@@ -1,18 +1,18 @@
-# Подсистема: .changeset (L1)
+# Subsystem: .changeset (L1)
 
-> **Идентификатор:** `changeset`
-> **Теги:** configuration, changeset | **Объем:** ~106 токенов BPE
+> **Identifier:** `changeset`
+> **Tags:** configuration, changeset | **Size:** ~106 BPE tokens
 
-## 🎯 Назначение и роль
-Конфигурация для управления изменениями в проекте.
+## 🎯 Purpose and role
+Configuration for managing changes in the project.
 
-## 📁 Точки входа и структура файлов
+## 📁 Entry points and file structure
 
-| Файл | Строк | Статус |
+| File | Lines | Status |
 | :--- | :--- | :--- |
-| `.changeset/config.json` | 15 | Исходный код |
+| `.changeset/config.json` | 15 | Source code |
 
-## 🧪 Запуск и тестирование
+## 🧪 Running and testing
 ```bash
 rtk pnpm test
 ```

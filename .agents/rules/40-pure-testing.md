@@ -6,7 +6,7 @@ description: "Enforces pure unit testing standards in Node.js runtime using Vite
 
 # 40: Pure Unit Testing Standards (Vitest)
 
-1. **Рантайм:** Чистый Node.js (`environment: 'node'`).
-2. **Запреты:** Никаких эмуляторов (`happy-dom`, `jsdom`) и моков `App`, `Vault`, `Plugin`.
-3. **Область:** Тестируются парсеры Markdown, валидаторы, стейт-машины, хелперы данных.
-4. **Размещение:** Рядом с чистыми функциями в `src/utils/*.test.ts`.
+1. **Runtime:** Pure Node.js (`environment: 'node'`).
+2. **Prohibitions:** No emulators (`happy-dom`, `jsdom`) and no mocks of `App`, `Vault`, `Plugin`.
+3. **Scope:** Test Markdown parsers, validators, state machines, data helpers.
+4. **Placement:** Next to the pure functions in `src/utils/*.test.ts`.
