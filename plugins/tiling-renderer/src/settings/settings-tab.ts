@@ -12,7 +12,7 @@ export class TilingSettingTab extends DeclarativePluginSettingTab<TilingSettings
       {
         name: 'Panel gap',
         desc: 'Spacing between tiled panels and splitters in pixels (0 - 32px).',
-        aliases: ['gap', 'spacing', 'padding', 'splitter', 'margins', 'отступ', 'зазор'],
+        aliases: ['gap', 'spacing', 'padding', 'splitter', 'margins'],
         control: {
           type: 'slider',
           key: 'panelGap',
@@ -26,7 +26,7 @@ export class TilingSettingTab extends DeclarativePluginSettingTab<TilingSettings
       {
         name: 'Auto-save debounce (ms)',
         desc: 'Delay in milliseconds before saving note edits to disk (minimum 100ms).',
-        aliases: ['debounce', 'delay', 'save', 'timeout', 'задержка', 'сохранение'],
+        aliases: ['debounce', 'delay', 'save', 'timeout'],
         control: {
           type: 'number',
           key: 'debounceMs',
@@ -40,15 +40,7 @@ export class TilingSettingTab extends DeclarativePluginSettingTab<TilingSettings
       {
         name: 'Sync note text order',
         desc: 'When enabled, moving panels in tiling view will reorder sections in the note text. When disabled, note text order remains unchanged.',
-        aliases: [
-          'sync',
-          'order',
-          'reorder',
-          'document order',
-          'sections',
-          'порядок',
-          'синхронизация',
-        ],
+        aliases: ['sync', 'order', 'reorder', 'document order', 'sections'],
         control: {
           type: 'toggle',
           key: 'syncTextOrder',

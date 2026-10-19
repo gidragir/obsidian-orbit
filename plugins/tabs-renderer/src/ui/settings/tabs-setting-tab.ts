@@ -36,7 +36,7 @@ export class TabsSettingsTab extends PluginSettingTab {
       {
         name: 'Tab separator',
         desc: 'Prefix used to distinguish tab titles in markdown.',
-        aliases: ['separator', 'split', 'prefix', 'разделитель', 'префикс'],
+        aliases: ['separator', 'split', 'prefix'],
         control: {
           type: 'text',
           key: 'split',
@@ -47,7 +47,7 @@ export class TabsSettingsTab extends PluginSettingTab {
       {
         name: 'Default tab name',
         desc: 'Default title for newly created tabs.',
-        aliases: ['tab name', 'title', 'new tab', 'имя вкладки', 'заголовок'],
+        aliases: ['tab name', 'title', 'new tab'],
         control: {
           type: 'text',
           key: 'defaultTabNavItem',
@@ -58,7 +58,7 @@ export class TabsSettingsTab extends PluginSettingTab {
       {
         name: 'Default tab content',
         desc: 'Default markdown content for newly created tabs.',
-        aliases: ['content', 'body', 'tab content', 'содержимое', 'текст вкладки'],
+        aliases: ['content', 'body', 'tab content'],
         control: {
           type: 'text',
           key: 'defaultTabContent',
@@ -69,7 +69,7 @@ export class TabsSettingsTab extends PluginSettingTab {
       {
         name: 'Enable drag and drop',
         desc: 'Allow reordering tabs by dragging tab headers.',
-        aliases: ['drag', 'drop', 'dnd', 'reorder', 'перетаскивание'],
+        aliases: ['drag', 'drop', 'dnd', 'reorder'],
         control: {
           type: 'toggle',
           key: 'dragAndDrop',
@@ -83,7 +83,7 @@ export class TabsSettingsTab extends PluginSettingTab {
           {
             name: 'Double click to edit',
             desc: 'Open tab editor modal on double clicking tab content.',
-            aliases: ['double click', 'edit modal', 'editor', 'двойной клик', 'редактор'],
+            aliases: ['double click', 'edit modal', 'editor'],
             control: {
               type: 'toggle',
               key: 'doubleClickToEdit',
@@ -93,7 +93,7 @@ export class TabsSettingsTab extends PluginSettingTab {
           {
             name: 'Show editor toolbar',
             desc: 'Display formatting toolbar in tab editor modal.',
-            aliases: ['toolbar', 'formatting', 'editor toolbar', 'панель инструментов'],
+            aliases: ['toolbar', 'formatting', 'editor toolbar'],
             control: {
               type: 'toggle',
               key: 'showToolbar',
@@ -103,7 +103,7 @@ export class TabsSettingsTab extends PluginSettingTab {
           {
             name: 'Editor tab size',
             desc: 'Number of spaces for tab indentation in editor.',
-            aliases: ['tab size', 'indent', 'indentation', 'отступ', 'табуляция'],
+            aliases: ['tab size', 'indent', 'indentation'],
             control: {
               type: 'number',
               key: 'tabSize',
@@ -116,7 +116,7 @@ export class TabsSettingsTab extends PluginSettingTab {
           {
             name: 'Auto-save interval (ms)',
             desc: 'Interval in milliseconds to auto-save tab edits (0 to disable).',
-            aliases: ['auto-save', 'save interval', 'debounce', 'автосохранение'],
+            aliases: ['auto-save', 'save interval', 'debounce'],
             control: {
               type: 'number',
               key: 'editorAutoSaveInterval',
@@ -135,7 +135,7 @@ export class TabsSettingsTab extends PluginSettingTab {
           {
             name: 'Default tab border',
             desc: 'Border style around tabs container.',
-            aliases: ['border', 'style', 'outline', 'граница', 'рамка'],
+            aliases: ['border', 'style', 'outline'],
             control: {
               type: 'dropdown',
               key: 'defaultTabsBorder',
@@ -150,7 +150,7 @@ export class TabsSettingsTab extends PluginSettingTab {
           {
             name: 'Tab title position',
             desc: 'Position of the tab navigation headers.',
-            aliases: ['position', 'headers', 'tabs placement', 'layout', 'расположение', 'позиция'],
+            aliases: ['position', 'headers', 'tabs placement', 'layout'],
             control: {
               type: 'dropdown',
               key: 'defaultTitlePosition',
