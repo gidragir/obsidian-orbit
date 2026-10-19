@@ -1,0 +1,28 @@
+{
+  "name": "vault-renderer",
+  "author": "gidragir",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gidragir/obsidian-vault-renderer.git"
+  },
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "build": "tsx ../../scripts/build.ts",
+    "dev": "tsx ../../scripts/build.ts --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@packages/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@packages/tsconfig": "workspace:*",
+    "esbuild": "catalog:",
+    "obsidian": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

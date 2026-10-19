@@ -1,0 +1,9 @@
+{
+  "id": "vault-renderer",
+  "name": "Vault Renderer",
+  "version": "1.0.0",
+  "minAppVersion": "1.7.0",
+  "description": "Cross-platform plugin lifecycle orchestrator, delayed loading queue, and directional settings sync.",
+  "author": "gidragir",
+  "isDesktopOnly": false
+}

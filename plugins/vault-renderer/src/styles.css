@@ -1,0 +1,298 @@
+@import '../../../packages/ui/src/styles.css';
+
+/* -------------------------------------------------------------
+ * Vault Renderer - Settings Tab Styles
+ * Domain-specific layout, telemetry, and platform matrix rules.
+ * Base cards, stats, badges, and tabs are inherited from @packages/ui.
+ * ------------------------------------------------------------- */
+
+.vault-renderer-settings {
+  padding-bottom: 2rem;
+}
+
+/* Header & Environment Platform Badge */
+.vault-renderer-settings .vault-renderer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: 0.75rem;
+}
+
+.vault-renderer-header .header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vault-renderer-header h2 {
+  margin: 0;
+  font-size: var(--font-ui-large, 18px);
+  font-weight: var(--font-semibold, 600);
+}
+
+.vault-renderer-header .header-subtitle {
+  font-size: var(--font-ui-smaller, 12px);
+  color: var(--text-muted);
+}
+
+.vault-renderer-platform-badge {
+  gap: 6px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  background-color: var(--background-secondary-alt, var(--background-secondary));
+}
+
+.vault-renderer-platform-badge.desktop .platform-dot {
+  background-color: var(--color-blue, #3b82f6);
+  box-shadow: 0 0 6px var(--color-blue, #3b82f6);
+}
+
+.vault-renderer-platform-badge.mobile .platform-dot {
+  background-color: var(--color-purple, #a855f7);
+  box-shadow: 0 0 6px var(--color-purple, #a855f7);
+}
+
+/* Telemetry Summary Panel */
+.vault-renderer-telemetry-panel {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.vault-renderer-telemetry-panel .panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.vault-renderer-telemetry-panel h3 {
+  margin: 0;
+  font-size: var(--font-ui-medium, 14px);
+  font-weight: var(--font-semibold, 600);
+}
+
+.vault-renderer-telemetry-panel .telemetry-reset-btn {
+  height: auto;
+  line-height: 1.4;
+}
+
+/* Slowest Plugins Section */
+.vault-renderer-slowest-list {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--background-modifier-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vault-renderer-slowest-list .slowest-list-title {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.vault-renderer-slowest-list .slowest-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.slowest-plugin-pill {
+  gap: 6px;
+}
+
+.slowest-plugin-pill .plugin-name {
+  font-family: var(--font-monospace);
+  font-weight: 500;
+}
+
+.slowest-plugin-pill .plugin-duration {
+  font-weight: 600;
+  color: var(--text-accent, var(--interactive-accent));
+}
+
+.slowest-plugin-pill .phase-tag {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+.slowest-plugin-pill .phase-tag.phase-instant {
+  background-color: var(--background-modifier-success, rgba(34, 197, 94, 0.15));
+  color: var(--text-success, var(--color-green, #22c55e));
+}
+
+.slowest-plugin-pill .phase-tag.phase-interactive {
+  background-color: var(--background-modifier-accent, rgba(59, 130, 246, 0.15));
+  color: var(--text-accent, var(--color-blue, #3b82f6));
+}
+
+.slowest-plugin-pill .phase-tag.phase-deferred {
+  background-color: var(--background-modifier-error-hover, rgba(245, 158, 11, 0.15));
+  color: var(--text-warning, var(--color-orange, #f59e0b));
+}
+
+.slowest-plugin-pill .phase-tag.phase-idle {
+  background-color: var(--background-modifier-border, rgba(168, 85, 247, 0.15));
+  color: var(--color-purple, #a855f7);
+}
+
+/* Toolbar */
+.vault-renderer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.vault-renderer-search-box {
+  flex: 1;
+  min-width: 200px;
+}
+
+.vault-renderer-search-box input[type='text'] {
+  width: 100%;
+}
+
+/* Plugin List & Plugin Cards */
+.vault-renderer-plugin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vault-renderer-plugin-card {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vault-renderer-plugin-card.is-inactive {
+  opacity: 0.72;
+}
+
+.plugin-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.plugin-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.plugin-card-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.plugin-card-name {
+  font-size: var(--font-ui-medium, 14px);
+  font-weight: var(--font-semibold, 600);
+  word-break: break-word;
+}
+
+.plugin-card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: var(--font-ui-smaller, 12px);
+  color: var(--text-muted);
+}
+
+.plugin-meta-version {
+  color: var(--text-faint);
+}
+
+.plugin-meta-deps {
+  color: var(--text-accent, var(--interactive-accent));
+  font-size: 11px;
+}
+
+.plugin-card-toggle {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+/* Controls Grid within Plugin Card */
+.plugin-card-controls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px 14px;
+  padding-top: 8px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.plugin-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.plugin-control-item select.dropdown {
+  width: 100%;
+  height: 32px;
+  text-overflow: ellipsis;
+}
+
+.delay-input-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.delay-input-group input[type='text'] {
+  width: 100%;
+  height: 32px;
+}
+
+.delay-unit {
+  font-size: 12px;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+/* -------------------------------------------------------------
+ * Responsive Layout Adaptations (Mobile & Narrow Windows)
+ * ------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .vault-renderer-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .plugin-card-controls {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+  }
+}
+
+.mod-mobile .vault-renderer-settings .vault-renderer-header {
+  margin-top: 0.5rem;
+}
+
+.mod-mobile .plugin-card-controls {
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
