@@ -1,5 +1,11 @@
 # tabs-renderer
 
+## 1.1.1
+
+### Patch Changes
+
+- Standardize settings search aliases and author metadata to gidragir
+
 ## 1.1.0
 
 ### Minor Changes

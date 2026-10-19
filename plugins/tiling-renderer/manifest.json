@@ -1,9 +1,9 @@
 {
   "id": "tiling-renderer",
   "name": "Tiling Renderer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "1.7.0",
   "description": "Hyprland and Niri style tiled layout for large notes split by ***.",
-  "author": "Obsidian Orbit",
+  "author": "gidragir",
   "isDesktopOnly": false
 }

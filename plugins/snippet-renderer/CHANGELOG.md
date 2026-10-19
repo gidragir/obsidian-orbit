@@ -1,5 +1,11 @@
 # snippet-renderer
 
+## 1.0.1
+
+### Patch Changes
+
+- Standardize settings search aliases and author metadata to gidragir
+
 ## 1.0.0
 
 ### Major Changes

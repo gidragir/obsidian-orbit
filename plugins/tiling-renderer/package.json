@@ -1,6 +1,7 @@
 {
   "name": "tiling-renderer",
-  "version": "1.0.0",
+  "author": "gidragir",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/gidragir/obsidian-tiling-renderer.git"
