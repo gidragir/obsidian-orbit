@@ -30,6 +30,161 @@
   background-color: var(--background-modifier-error, rgba(220, 38, 38, 0.15));
 }
 
+.orbit-badge--pill {
+  border-radius: var(--radius-round, 12px);
+  padding: 3px 10px;
+}
+
+.orbit-badge--muted {
+  color: var(--text-muted);
+  background-color: var(--background-modifier-border);
+}
+
+.orbit-badge--outline {
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+}
+
+.orbit-badge--code {
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller, 11px);
+  color: var(--text-faint);
+  background-color: var(--background-primary);
+  padding: 1px 5px;
+  border-radius: var(--radius-s, 3px);
+  border: 1px solid var(--background-modifier-border);
+}
+
+.orbit-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* -------------------------------------------------------------
+ * Shared Cards, Stats & Control Containers
+ * ------------------------------------------------------------- */
+.orbit-card {
+  background-color: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m, 8px);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.orbit-card:hover {
+  border-color: var(--background-modifier-border-hover);
+}
+
+.orbit-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.orbit-stat-card {
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s, 6px);
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.orbit-stat-card .stat-label,
+.orbit-control-label {
+  font-size: var(--font-ui-smaller, 11px);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.orbit-stat-card .stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-normal);
+}
+
+.orbit-stat-card .stat-subtitle {
+  font-size: var(--font-ui-smaller, 11px);
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+/* -------------------------------------------------------------
+ * Filter Tabs / Segmented Controls
+ * ------------------------------------------------------------- */
+.orbit-filter-tabs {
+  display: inline-flex;
+  background-color: var(--background-modifier-form-field);
+  border-radius: var(--radius-m, 6px);
+  padding: 3px;
+  gap: 3px;
+}
+
+.orbit-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--radius-s, 4px);
+  padding: 4px 10px;
+  font-size: var(--font-ui-smaller, 12px);
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.orbit-filter-tab:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+.orbit-filter-tab.is-active {
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.orbit-filter-tab.is-active .orbit-badge {
+  background-color: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+@media (max-width: 768px) {
+  .orbit-filter-tabs {
+    display: flex;
+    width: 100%;
+  }
+
+  .orbit-filter-tabs .orbit-filter-tab {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* -------------------------------------------------------------
+ * Shared Empty State
+ * ------------------------------------------------------------- */
+.orbit-empty-state {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+  background-color: var(--background-secondary);
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: var(--radius-m, 8px);
+}
+
+.orbit-empty-state p {
+  margin: 0;
+  font-size: var(--font-ui-medium, 14px);
+}
+
 /* -------------------------------------------------------------
  * Orbit Split Editor Modal & CodeMirror Controls
  * ------------------------------------------------------------- */
