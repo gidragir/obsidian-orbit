@@ -1,5 +1,11 @@
 # vault-renderer
 
+## 1.0.1
+
+### Patch Changes
+
+- Implement native bootstrap synchronization, failsafe lifecycle automation, and crash canary recovery.
+
 ## 1.0.0
 
 ### Major Changes
