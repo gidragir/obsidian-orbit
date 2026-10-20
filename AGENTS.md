@@ -31,7 +31,7 @@ Development takes place in a native **Linux (CachyOS / Arch Linux)** environment
 
 ## 2. Antigravity 2.0 context system hierarchy
 > [!IMPORTANT]
-> The `.agents/` directory (with a trailing 's') is the single store for all rules, skills and workflows. Using the `.agent/` directory is prohibited to avoid collisions and empty contexts.
+> The `.agents/` directory (with a trailing 's') is the single store for all rules, skills, agents and configurations. Using the `.agent/` directory is prohibited to avoid collisions and empty contexts.
 
 To prevent degradation of model attention, the monorepo context is structured in a five-level scheme with a Progressive Disclosure mechanism:
 
@@ -44,20 +44,23 @@ To prevent degradation of model attention, the monorepo context is structured in
    * `30-packages-source.md` — Glob: `packages/**` (Direct TS Source model).
    * `40-pure-testing.md` — Glob: `**/*.test.ts` (pure Vitest tests in Node.js).
    * `50-changesets.md` — Model Decision (release operations and SemVer).
-3. **Specialized skills (`.agents/skills/*/SKILL.md`):** Loaded dynamically by the semantic trigger in the `description` field:
+3. **Specialized skills (`.agents/skills/*/SKILL.md`):** Loaded dynamically by semantic trigger in `description` or slash command invocation:
    * `obsidian-architect` — Plugin architecture, memory leak prevention, ports and adapters.
    * `complexity-guard` — Reducing cognitive and cyclomatic complexity, refactoring branching.
    * `biome-refactor` — Eliminating `any`, `enum`, non-null assertion `!`, parameter properties.
    * `reference-migrator` — Analyzing Repomix Markdown snapshots and adapting third-party references.
    * `semver-changeset` — Calculating the SemVer increment for Obsidian and formatting changesets.
    * `subagent-driven-development` — Executing implementation plans via isolated subagent roles.
+   * `new-plugin` — Scaffolding a new plugin, manifests, tsconfig aliases and pure tests (`/new-plugin`).
+   * `refactor-reference` — Auditing third-party Repomix reference snapshots and decomposition (`/refactor-reference`).
+   * `verify` — Autonomous verification cycle: `biome check` -> `typecheck` -> `test` -> `build` (`/verify`).
+   * `prepare-release` — SemVer increment calculation and changeset generation (`/prepare-release`).
 4. **Role-based subagent catalog (`.agents/agents/*.md`):** Antigravity 2.0 subagent specifications:
    * `executor.md` — Execution subagent (Flash): sub-second coding of the core and Vitest tests.
    * `verifier.md` — Verification subagent (Flash): Biome -> TS -> Vitest -> Turbo cycle.
    * `researcher.md` — Audit subagent (Flash): symbol search and Repomix snapshot analysis.
    * `reviewer.md` — Review subagent (Pro): checking invariants, complexity limits and memory.
-5. **Workflows (`.agents/workflows/*.md`):** Regulated step-by-step scenarios invoked via Slash commands (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
-6. **MCP context protocol (`.agents/mcp.json`):** An external `fetch` server for retrieving current Obsidian API and CodeMirror 6 documentation.
+5. **MCP context protocol (`.agents/mcp.json`):** An external `fetch` server for retrieving current Obsidian API and CodeMirror 6 documentation.
 
 ## 3. Fundamental architectural invariants (Hard taboos)
 
@@ -119,13 +122,13 @@ The **`fetch`** server is configured in `.agents/mcp.json`:
 * **Purpose:** Reading current Obsidian API documentation (`docs.obsidian.md`), CodeMirror 6 specifications and changelogs.
 * **Context-saving rule:** The agent calls `fetch` only when researching new, previously unknown API methods or to verify type signatures. The tool is not called for trivial methods (`addCommand`, `registerView`).
 
-## 7. Catalog of executable workflows
+## 7. Catalog of operational skills & slash commands
 
-Workflows are launched by the developer via Slash commands in the Antigravity chat:
-* **`/new-plugin` (`.agents/workflows/new-plugin.md`):** Scaffolding a plugin, manifests, tsconfig aliases and pure tests.
-* **`/refactor-reference` (`.agents/workflows/refactor-reference.md`):** Auditing third-party Repomix reference snapshots and decomposition.
-* **`/verify` (`.agents/workflows/verify.md`):** Autonomous Gemini Flash cycle: `biome check` -> `typecheck` -> `test` -> `build`. Protected against infinite loops (Max Retries = 3).
-* **`/prepare-release` (`.agents/workflows/prepare-release.md`):** SemVer increment calculation and changeset generation.
+Operational skills can be invoked directly or triggered via Slash commands in the Antigravity chat:
+* **`/new-plugin` ([`.agents/skills/new-plugin/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/new-plugin/SKILL.md)):** Scaffolding a plugin, manifests, tsconfig aliases and pure tests.
+* **`/refactor-reference` ([`.agents/skills/refactor-reference/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/refactor-reference/SKILL.md)):** Auditing third-party Repomix reference snapshots and decomposition.
+* **`/verify` ([`.agents/skills/verify/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/verify/SKILL.md)):** Autonomous Gemini Flash cycle: `biome check` -> `typecheck` -> `test` -> `build`. Protected against infinite loops (Max Retries = 3).
+* **`/prepare-release` ([`.agents/skills/prepare-release/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/prepare-release/SKILL.md)):** SemVer increment calculation and changeset generation.
 
 ## 8. Toolchain console command reference
 

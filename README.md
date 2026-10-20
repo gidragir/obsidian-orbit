@@ -109,9 +109,8 @@ The monorepo is optimized for a tandem of **Gemini Pro (Orchestrator)** and **Ge
 
 * **`.agents/` directory hierarchy** (the directory ends with `s`; the `.agent/` directory is abolished):
   * `.agents/rules/` — granular rules with selective glob triggers (architecture invariants, Biome standards, complexity limits).
-  * `.agents/skills/` — specialized skills (`obsidian-architect`, `complexity-guard`, `biome-refactor`, `reference-migrator`, `semver-changeset`, `subagent-driven-development`, etc.).
+  * `.agents/skills/` — specialized skills and procedures (`obsidian-architect`, `complexity-guard`, `biome-refactor`, `reference-migrator`, `semver-changeset`, `subagent-driven-development`, `/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
   * `.agents/agents/` — role-based subagent specifications (`executor.md`, `verifier.md`, `researcher.md`, `reviewer.md`).
-  * `.agents/workflows/` — regulated scenarios via slash commands (`/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
   * `.agents/mcp.json` — MCP server configuration (`fetch` for reading up-to-date Obsidian API documentation).
 * **OpenViking protocol:**
   * **L0 (Mental map):** [`.agents/knowledge/L0_index.json`](.agents/knowledge/L0_index.json).
@@ -130,8 +129,7 @@ The monorepo is optimized for a tandem of **Gemini Pro (Orchestrator)** and **Ge
 │   ├── knowledge/                # OpenViking knowledge base (L0, L1, L2)
 │   ├── mcp.json                  # MCP server configuration (fetch)
 │   ├── rules/                    # Granular rules for the context window
-│   ├── skills/                   # On-demand skills and procedures
-│   └── workflows/                # Executable scenarios (/verify, /new-plugin, etc.)
+│   └── skills/                   # On-demand skills and procedures (/verify, /new-plugin, etc.)
 ├── .changeset/                   # Configuration and accumulated changesets
 ├── .github/                      # GitHub Actions CI/CD pipelines
 │   └── workflows/
