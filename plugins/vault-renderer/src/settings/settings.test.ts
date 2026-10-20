@@ -5,6 +5,7 @@ describe('settings', () => {
   it('normalizes empty settings with installed plugins', () => {
     const normalized = normalizeSettings(null, ['plugin-1', 'plugin-2'])
     expect(normalized.enableScheduler).toBe(true)
+    expect(normalized.enableBootstrapSync).toBe(true)
     expect(normalized.plugins['plugin-1']?.phase).toBe('interactive')
     expect(normalized.plugins['plugin-2']?.syncMode).toBe('bidirectional')
   })
@@ -149,5 +150,72 @@ describe('settings', () => {
     expect(normalized.plugins['desktop-tool']?.enabled).toBe(true)
     // remote-only-tool is not installed here, so its config must be preserved
     expect(normalized.plugins['remote-only-tool']?.enabled).toBe(true)
+  })
+
+  it('preserves deferred and idle plugins enabled state during startup even when not in Obsidian bootstrap', () => {
+    const raw = {
+      plugins: {
+        'deferred-heavy-plugin': {
+          id: 'deferred-heavy-plugin',
+          enabled: true,
+          filter: 'all' as const,
+          phase: 'deferred' as const,
+        },
+        'idle-indexer-plugin': {
+          id: 'idle-indexer-plugin',
+          enabled: true,
+          filter: 'all' as const,
+          phase: 'idle' as const,
+        },
+      },
+    }
+
+    // Obsidian initially only enabled foundation instant/interactive plugins
+    const currentlyEnabled = new Set(['vault-renderer'])
+    const installed = ['deferred-heavy-plugin', 'idle-indexer-plugin', 'vault-renderer']
+
+    const normalized = normalizeSettings(raw, installed, currentlyEnabled, 'desktop')
+
+    expect(normalized.plugins['deferred-heavy-plugin']?.enabled).toBe(true)
+    expect(normalized.plugins['idle-indexer-plugin']?.enabled).toBe(true)
+  })
+
+  it('preserves all active plugins when loaded with combined on-disk active set', () => {
+    const raw = {
+      plugins: {
+        'instant-plugin': {
+          id: 'instant-plugin',
+          enabled: true,
+          filter: 'all' as const,
+          phase: 'instant' as const,
+        },
+        'interactive-plugin': {
+          id: 'interactive-plugin',
+          enabled: true,
+          filter: 'all' as const,
+          phase: 'interactive' as const,
+        },
+        'deferred-plugin': {
+          id: 'deferred-plugin',
+          enabled: true,
+          filter: 'all' as const,
+          phase: 'deferred' as const,
+        },
+      },
+    }
+
+    const activeFromDisk = new Set([
+      'vault-renderer',
+      'instant-plugin',
+      'interactive-plugin',
+      'deferred-plugin',
+    ])
+    const installed = ['vault-renderer', 'instant-plugin', 'interactive-plugin', 'deferred-plugin']
+
+    const normalized = normalizeSettings(raw, installed, activeFromDisk, 'desktop')
+
+    expect(normalized.plugins['instant-plugin']?.enabled).toBe(true)
+    expect(normalized.plugins['interactive-plugin']?.enabled).toBe(true)
+    expect(normalized.plugins['deferred-plugin']?.enabled).toBe(true)
   })
 })

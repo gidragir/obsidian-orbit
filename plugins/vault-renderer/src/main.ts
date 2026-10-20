@@ -1,20 +1,25 @@
+import { CanaryStorageAdapter } from '@adapters/canary-storage-adapter'
+import { CommunityPluginsAdapter } from '@adapters/community-plugins-adapter'
 import { DomInteractionAdapter } from '@adapters/dom-interaction-adapter'
 import { ObsidianPlatformAdapter } from '@adapters/obsidian-platform-adapter'
 import { ObsidianPluginAdapter } from '@adapters/obsidian-plugin-adapter'
+import { ObsidianPluginInterceptor } from '@adapters/obsidian-plugin-interceptor'
 import { ObsidianStorageAdapter } from '@adapters/obsidian-storage-adapter'
 import type { SlowPluginEntry, TelemetrySummary } from '@core/telemetry'
 import type {
+  BootstrapSyncStatus,
   InstalledPluginInfo,
   PlatformType,
   TelemetryBootRecord,
   VaultRendererSettings,
 } from '@core/types'
+import { BootstrapSyncService } from '@services/bootstrap-sync-service'
 import { SchedulerService } from '@services/scheduler-service'
 import { ShadowStorageService } from '@services/shadow-storage-service'
 import { TelemetryService } from '@services/telemetry-service'
 import { DEFAULT_SETTINGS, normalizeSettings } from '@settings/settings'
 import { type VaultRendererHost, VaultRendererSettingTab } from '@settings/settings-tab'
-import { Plugin } from 'obsidian'
+import { Notice, Plugin } from 'obsidian'
 
 export default class VaultRendererPlugin extends Plugin implements VaultRendererHost {
   settings: VaultRendererSettings = DEFAULT_SETTINGS
@@ -25,16 +30,18 @@ export default class VaultRendererPlugin extends Plugin implements VaultRenderer
   private telemetryService: TelemetryService | null = null
   private shadowStorageService: ShadowStorageService | null = null
   private schedulerService: SchedulerService | null = null
+  private bootstrapSyncService: BootstrapSyncService | null = null
 
   async onload(): Promise<void> {
     await this.loadPluginSettings()
     this.initAdaptersAndServices()
     this.registerSettings()
     this.registerCommands()
-    this.startLifecycle()
+    await this.startLifecycle()
   }
 
   onunload(): void {
+    this.bootstrapSyncService?.teardown()
     this.schedulerService?.teardown()
     this.shadowStorageService?.teardown()
     this.domAdapter?.detach()
@@ -45,11 +52,21 @@ export default class VaultRendererPlugin extends Plugin implements VaultRenderer
   }
 
   async updateSettings(partial: Partial<VaultRendererSettings>): Promise<void> {
+    const prevBootstrapSync = this.settings.enableBootstrapSync
     this.settings = {
       ...this.settings,
       ...partial,
     }
     await this.saveData(this.settings)
+
+    if (
+      partial.enableBootstrapSync !== undefined &&
+      partial.enableBootstrapSync !== prevBootstrapSync
+    ) {
+      await this.bootstrapSyncService?.onSettingChanged(partial.enableBootstrapSync)
+    } else if (partial.plugins && this.settings.enableBootstrapSync) {
+      await this.bootstrapSyncService?.syncBootstrap()
+    }
   }
 
   getInstalledPlugins(): Record<string, InstalledPluginInfo> {
@@ -95,16 +112,46 @@ export default class VaultRendererPlugin extends Plugin implements VaultRenderer
     await this.pluginAdapter.togglePlugin(id, enabled)
   }
 
+  async syncBootstrapPlugins(): Promise<void> {
+    await this.bootstrapSyncService?.syncBootstrap()
+  }
+
+  async restoreNativeCommunityPlugins(): Promise<void> {
+    await this.bootstrapSyncService?.restoreFullNativePlugins()
+  }
+
+  async getBootstrapSyncStatus(): Promise<BootstrapSyncStatus> {
+    return (
+      (await this.bootstrapSyncService?.getStatus()) ?? {
+        isEnabled: false,
+        bootstrapCount: 0,
+        totalActiveCount: 0,
+        deferredCount: 0,
+        backupExists: false,
+      }
+    )
+  }
+
   private async loadPluginSettings(): Promise<void> {
     const loadedData = (await this.loadData()) as unknown
     const tempPluginAdapter = new ObsidianPluginAdapter(this.app)
     const tempPlatformAdapter = new ObsidianPlatformAdapter()
+    const communityAdapter = new CommunityPluginsAdapter(this.app)
+
     const installed = Object.keys(tempPluginAdapter.getInstalledPlugins())
-    const enabledIds = tempPluginAdapter.getEnabledPluginIds()
+
+    // Read on-disk community plugins and backup to determine active plugins without sequential onload omission
+    const onDiskBootstrap = await communityAdapter.readCommunityPlugins()
+    const onDiskBackup = await communityAdapter.readBackupPlugins()
+    const allActiveFromDisk = new Set<string>([...(onDiskBackup ?? []), ...(onDiskBootstrap ?? [])])
+
+    const activePluginIds =
+      allActiveFromDisk.size > 0 ? allActiveFromDisk : tempPluginAdapter.getEnabledPluginIds()
+
     this.settings = normalizeSettings(
       loadedData,
       installed,
-      enabledIds,
+      activePluginIds,
       tempPlatformAdapter.getCurrentPlatform()
     )
   }
@@ -143,6 +190,24 @@ export default class VaultRendererPlugin extends Plugin implements VaultRenderer
       () => this.settings,
       this.manifest.id
     )
+
+    const communityPluginsAdapter = new CommunityPluginsAdapter(this.app)
+    const canaryAdapter = new CanaryStorageAdapter()
+    const pluginInterceptor = new ObsidianPluginInterceptor(this.app)
+
+    this.bootstrapSyncService = new BootstrapSyncService(
+      this.app,
+      communityPluginsAdapter,
+      canaryAdapter,
+      this.pluginAdapter,
+      this.platformAdapter,
+      pluginInterceptor,
+      () => this.settings,
+      async (partial) => {
+        await this.updateSettings(partial)
+      },
+      this.manifest.id
+    )
   }
 
   private registerSettings(): void {
@@ -157,11 +222,34 @@ export default class VaultRendererPlugin extends Plugin implements VaultRenderer
         await this.schedulerService?.executeStartupSequence()
       },
     })
+
+    this.addCommand({
+      id: 'vault-renderer-sync-bootstrap',
+      name: 'Vault Renderer: Sync native bootstrap plugins list',
+      callback: async () => {
+        await this.syncBootstrapPlugins()
+        new Notice('Vault Renderer: Native bootstrap synchronized.')
+      },
+    })
+
+    this.addCommand({
+      id: 'vault-renderer-restore-native',
+      name: 'Vault Renderer: Restore full native community-plugins.json (Emergency / Uninstall)',
+      callback: async () => {
+        await this.restoreNativeCommunityPlugins()
+        new Notice('Vault Renderer: Restored full community plugins list.')
+      },
+    })
   }
 
-  private startLifecycle(): void {
+  private async startLifecycle(): Promise<void> {
+    await this.bootstrapSyncService?.initOnStartup()
+
     this.app.workspace.onLayoutReady(() => {
-      void this.schedulerService?.executeStartupSequence()
+      void (async () => {
+        await this.schedulerService?.executeStartupSequence()
+        this.bootstrapSyncService?.markStartupSuccess()
+      })()
     })
   }
 }

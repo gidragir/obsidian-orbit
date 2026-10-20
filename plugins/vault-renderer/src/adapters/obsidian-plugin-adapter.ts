@@ -80,12 +80,15 @@ export class ObsidianPluginAdapter {
     }
 
     try {
-      if (typeof manager.enablePluginAndSave === 'function') {
-        await manager.enablePluginAndSave(id)
-      } else if (typeof manager.enablePlugin === 'function') {
+      if (typeof manager.enablePlugin === 'function') {
         await manager.enablePlugin(id)
+      } else if (typeof manager.enablePluginAndSave === 'function') {
+        await manager.enablePluginAndSave(id)
       }
-      return true
+      if (manager.enabledPlugins instanceof Set) {
+        manager.enabledPlugins.add(id)
+      }
+      return manager.enabledPlugins instanceof Set ? manager.enabledPlugins.has(id) : true
     } catch (error) {
       console.error(`[vault-renderer] Failed to enable plugin '${id}':`, error)
       return false
@@ -99,12 +102,15 @@ export class ObsidianPluginAdapter {
     }
 
     try {
-      if (typeof manager.disablePluginAndSave === 'function') {
-        await manager.disablePluginAndSave(id)
-      } else if (typeof manager.disablePlugin === 'function') {
+      if (typeof manager.disablePlugin === 'function') {
         await manager.disablePlugin(id)
+      } else if (typeof manager.disablePluginAndSave === 'function') {
+        await manager.disablePluginAndSave(id)
       }
-      return true
+      if (manager.enabledPlugins instanceof Set) {
+        manager.enabledPlugins.delete(id)
+      }
+      return manager.enabledPlugins instanceof Set ? !manager.enabledPlugins.has(id) : true
     } catch (error) {
       console.error(`[vault-renderer] Failed to disable plugin '${id}':`, error)
       return false

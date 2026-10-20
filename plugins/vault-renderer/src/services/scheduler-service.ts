@@ -125,8 +125,13 @@ export class SchedulerService {
   ): Promise<readonly string[]> {
     const settings = this.getSettings()
     if (!settings.enablePlatformFilter) {
-      const enabled = this.pluginAdapter.getEnabledPluginIds()
-      return installedIds.filter((id) => enabled.has(id))
+      return installedIds.filter((id) => {
+        if (id === this.selfPluginId) {
+          return false
+        }
+        const cfg = settings.plugins[id]
+        return cfg ? cfg.enabled !== false && cfg.filter !== 'disabled' : true
+      })
     }
 
     const { toEnable, toDisable } = evaluatePlatformMatrix(settings.plugins, platform, installedIds)

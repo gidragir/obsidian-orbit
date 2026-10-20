@@ -1,6 +1,7 @@
 import { isPluginActiveOnPlatform, isPluginAllowedOnPlatform } from '@core/platform-matrix'
 import { formatDurationMs, type SlowPluginEntry, type TelemetrySummary } from '@core/telemetry'
 import type {
+  BootstrapSyncStatus,
   InstalledPluginInfo,
   PlatformType,
   PluginPlatformFilter,
@@ -31,6 +32,9 @@ export interface VaultRendererHost {
   isPluginCurrentlyEnabled(id: string): boolean
   togglePlugin(id: string, enabled: boolean): Promise<void>
   clearTelemetryHistory(): Promise<void>
+  syncBootstrapPlugins(): Promise<void>
+  restoreNativeCommunityPlugins(): Promise<void>
+  getBootstrapSyncStatus(): Promise<BootstrapSyncStatus>
 }
 
 type DisplayFilterMode = 'active' | 'all' | 'disabled'
@@ -54,6 +58,7 @@ export class VaultRendererSettingTab extends PluginSettingTab {
 
     this.renderHeader(containerEl)
     this.renderTelemetrySummary(containerEl)
+    this.renderBootstrapSection(containerEl)
     this.renderGlobalSettings(containerEl)
     this.renderPluginMatrix(containerEl)
   }
@@ -157,9 +162,74 @@ export class VaultRendererSettingTab extends PluginSettingTab {
     }
   }
 
+  private renderBootstrapSection(containerEl: HTMLElement): void {
+    const section = containerEl.createDiv({
+      cls: 'vault-renderer-bootstrap-panel orbit-card',
+    })
+    const headRow = section.createDiv({ cls: 'panel-header' })
+    headRow.createEl('h3', { text: 'Native Bootstrap & Disaster Recovery' })
+
+    section.createEl('p', {
+      cls: 'setting-item-description',
+      text:
+        'Maintains a minimal community-plugins.json on disk (instant/interactive phases only) ' +
+        'to prevent synchronous cold-start blocking, with full backup in community-plugins.vault-renderer.bak.',
+    })
+
+    const statusRow = section.createDiv({ cls: 'bootstrap-status-row' })
+    const badge = statusRow.createSpan({
+      cls: 'orbit-badge orbit-badge--pill orbit-badge--outline',
+      text: 'Checking status...',
+    })
+
+    const actionsRow = section.createDiv({ cls: 'bootstrap-actions-row' })
+    const syncBtn = actionsRow.createEl('button', {
+      cls: 'mod-cta',
+      text: 'Sync bootstrap now',
+    })
+    syncBtn.addEventListener('click', async () => {
+      syncBtn.disabled = true
+      await this.host.syncBootstrapPlugins()
+      syncBtn.disabled = false
+      this.display()
+    })
+
+    const restoreBtn = actionsRow.createEl('button', {
+      cls: 'mod-warning',
+      text: 'Restore full plugins (Emergency / Uninstall)',
+    })
+    restoreBtn.title = 'Restores all enabled plugins into native Obsidian community-plugins.json'
+    restoreBtn.addEventListener('click', async () => {
+      restoreBtn.disabled = true
+      await this.host.restoreNativeCommunityPlugins()
+      restoreBtn.disabled = false
+      this.display()
+    })
+
+    void this.host.getBootstrapSyncStatus().then((status) => {
+      badge.setText(
+        `Bootstrap: ${status.bootstrapCount} early / ${status.deferredCount} deferred (${status.totalActiveCount} total active)`
+      )
+    })
+  }
+
   private renderGlobalSettings(containerEl: HTMLElement): void {
     containerEl.createEl('h3', { text: 'Core Orchestration' })
     const settings = this.host.getSettings()
+
+    createSetting(containerEl, {
+      name: 'Enable Native Bootstrap Optimization',
+      desc: 'Maintains only early plugins on disk to bypass Obsidian synchronous loading trap.',
+    }).addToggle((toggle) =>
+      toggle.setValue(settings.enableBootstrapSync).onChange(async (val) => {
+        await this.host.updateSettings({ enableBootstrapSync: val })
+        if (val) {
+          await this.host.syncBootstrapPlugins()
+        } else {
+          await this.host.restoreNativeCommunityPlugins()
+        }
+      })
+    )
 
     createSetting(containerEl, {
       name: 'Enable Multi-phase Startup Scheduler',

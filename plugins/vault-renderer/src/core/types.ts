@@ -40,11 +40,20 @@ export interface VaultRendererSettings {
   readonly enablePlatformFilter: boolean
   readonly enableShadowStorage: boolean
   readonly enableTelemetry: boolean
+  readonly enableBootstrapSync: boolean
   readonly interactionGuardTimeoutMs: number
   readonly deferredPhaseDelayMs: number
   readonly idlePhaseDelayMs: number
   readonly plugins: Record<string, PluginProfileConfig>
   readonly telemetryHistory: readonly TelemetryBootRecord[]
+}
+
+export interface BootstrapSyncStatus {
+  readonly isEnabled: boolean
+  readonly bootstrapCount: number
+  readonly totalActiveCount: number
+  readonly deferredCount: number
+  readonly backupExists: boolean
 }
 
 export interface InstalledPluginInfo {

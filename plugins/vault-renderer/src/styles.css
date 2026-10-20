@@ -273,6 +273,32 @@
   user-select: none;
 }
 
+/* Bootstrap & Disaster Recovery Panel */
+.vault-renderer-bootstrap-panel {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vault-renderer-bootstrap-panel .panel-header {
+  margin-bottom: 0;
+}
+
+.vault-renderer-bootstrap-panel h3 {
+  margin: 0;
+  font-size: var(--font-ui-medium, 14px);
+  font-weight: var(--font-semibold, 600);
+}
+
+.vault-renderer-bootstrap-panel .bootstrap-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
 /* -------------------------------------------------------------
  * Responsive Layout Adaptations (Mobile & Narrow Windows)
  * ------------------------------------------------------------- */

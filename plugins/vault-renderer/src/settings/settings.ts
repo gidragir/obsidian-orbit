@@ -1,4 +1,9 @@
-import type { PlatformType, PluginProfileConfig, VaultRendererSettings } from '@core/types'
+import type {
+  PlatformType,
+  PluginProfileConfig,
+  StartupPhase,
+  VaultRendererSettings,
+} from '@core/types'
 import {
   createDefaultPluginConfig,
   isPluginAllowedOnPlatform,
@@ -10,6 +15,7 @@ export const DEFAULT_SETTINGS: VaultRendererSettings = {
   enablePlatformFilter: true,
   enableShadowStorage: true,
   enableTelemetry: true,
+  enableBootstrapSync: true,
   interactionGuardTimeoutMs: 1500,
   deferredPhaseDelayMs: 800,
   idlePhaseDelayMs: 2500,
@@ -45,9 +51,13 @@ function normalizeStoredPluginConfig(
     ? isPluginAllowedOnPlatform(normalizedFilter, currentPlatform)
     : true
 
+  const phase = (rawObj.phase as StartupPhase | undefined) ?? defaultConfig.phase
+  const isDeferredOrIdle = phase === 'deferred' || phase === 'idle'
+
   if (
     normalizedFilter === 'disabled' ||
-    (currentlyEnabledPluginIds &&
+    (!isDeferredOrIdle &&
+      currentlyEnabledPluginIds &&
       isInstalledHere &&
       isAllowedHere &&
       !currentlyEnabledPluginIds.has(id))
@@ -140,6 +150,10 @@ export function normalizeSettings(
       DEFAULT_SETTINGS.enableShadowStorage
     ),
     enableTelemetry: parseBoolean(raw.enableTelemetry, DEFAULT_SETTINGS.enableTelemetry),
+    enableBootstrapSync: parseBoolean(
+      raw.enableBootstrapSync,
+      DEFAULT_SETTINGS.enableBootstrapSync
+    ),
     interactionGuardTimeoutMs: parseNumber(
       raw.interactionGuardTimeoutMs,
       DEFAULT_SETTINGS.interactionGuardTimeoutMs
