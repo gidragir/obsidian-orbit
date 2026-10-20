@@ -41,3 +41,19 @@ description: "Standards for Obsidian plugins lifecycle, DOM event registration, 
     * **Respecting the Obsidian system status:** On first initialization, orchestrators must reconcile state with `app.plugins.enabledPlugins`. Forcing `enabled: true` on plugins that the user disabled in the main Obsidian interface is strictly prohibited.
     * **Protecting cross-platform configurations:** Settings normalization on one host (e.g. Desktop) must take the current platform into account and preserve the `enabled: true` state for mobile plugins (`mobile-only`) and remote modules absent on the current device.
     * **Blocking incompatible runtime launch:** Before calling `enablePlugin`, the adapter must strictly validate platform compatibility (`isPluginAllowedOnPlatform`), preventing mobile plugins from launching on desktop when settings are toggled.
+15. **Cold Start & Plugin Orchestration (Native Bootstrap Separation):**
+    * **Obsidian Synchronous Loading Trap:** The `<configDir>/community-plugins.json` file is read and evaluated synchronously by the Obsidian engine upon startup. All plugins listed in it are parsed and executed on the main UI thread before `app.workspace.onLayoutReady`.
+    * **Isolation of Deferred Plugins:** To prevent main thread freezing and optimize Time-to-Interactive (TTI), heavy plugins (databases, canvases, search indexers, Markdown block renderers) must be omitted from native `community-plugins.json`.
+    * **Dynamic Execution & In-Memory Registry Synchronization:**
+      - Plugin orchestrators must keep only `instant` (themes, UI frame) and `interactive` plugins in `community-plugins.json`, while launching `deferred` and `idle` plugins dynamically via runtime API (`app.plugins.enablePlugin(id)`).
+      - **Mandatory In-Memory Parity:** Obsidian's `enablePlugin(id)` does NOT add the plugin to `app.plugins.enabledPlugins`. The orchestrator adapter MUST explicitly execute `manager.enabledPlugins.add(id)` so native settings UI and third-party integrations detect the plugin as active.
+    * **`saveConfig` Interception Architecture:**
+      - The plugin list in Obsidian is persisted strictly via `app.plugins.saveConfig()` (invoked through debounced `requestSaveConfig = debounce(this.saveConfig, 1000)`).
+      - Monkey-patching `enablePluginAndSave`/`disablePluginAndSave` or `savePluginData` is strictly prohibited. Intercept `saveConfig()` exclusively.
+      - When intercepted: if `!manager.enabledPlugins.has(selfPluginId)`, the user is disabling the orchestrator. The interceptor MUST immediately call `uninstall()` and restore the full active plugins list without `selfPluginId`.
+    * **Lifecycle Separation (Quitting vs Disabling):**
+      - Detect application shutdown (`isAppQuitting = true`) via `window.addEventListener('beforeunload')` and `app.workspace.on('quit')`.
+      - On application shutdown, preserve the lightweight bootstrap stub on disk for the next cold boot.
+      - On manual plugin disablement (`isAppQuitting === false`), `onunload()` MUST immediately restore the complete native plugin list from the mirror backup (`.obsidian/community-plugins.<plugin>.bak`).
+    * **Reactive Settings Sync:** Any modification to plugin phases or active filters in the orchestrator GUI must reactively synchronize the bootstrap stub on disk without requiring manual button presses.
+
