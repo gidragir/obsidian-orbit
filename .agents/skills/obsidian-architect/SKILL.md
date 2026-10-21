@@ -27,4 +27,13 @@ description: "Provides architectural patterns, lifecycle safety contracts, event
     * Ensure in-memory registry parity: when dynamically enabling deferred plugins via `enablePlugin(id)`, always invoke `manager.enabledPlugins.add(id)`.
     * Guard against self-disabling loops: if `!manager.enabledPlugins.has(selfPluginId)` during `saveConfig()`, unbind the interceptor immediately and flush the restored native plugin list.
     * Maintain an emergency mirror `.obsidian/community-plugins.<orchestrator>.bak` and differentiate application shutdown (preserve minimal stub on disk) from manual plugin disablement (restore full list).
+12. **Runtime Memory Optimization Invariant (The Electron Memory Ceiling Taboo):**
+    * **Prohibition of Runtime Plugin & Tab Hibernation:** Never attempt to dynamically disable/suspend community plugins or swap `WorkspaceLeaf` instances with placeholder views during runtime to reduce RAM usage.
+    * **Root Cause & Architectural Ceiling:**
+      - In Chromium/Electron, `PartitionAlloc` does not eagerly return freed virtual pages to the OS Working Set. The hardware floor for 2 Electron windows with GPU acceleration is ~400–450 MB; attempting to drop below this is physically impossible without terminating processes.
+      - Disabling plugins at runtime (`disablePlugin`) unregisters their command palette entries and breaks user hotkeys (e.g. Omnisearch, QuickAdd), introducing unacceptable user friction and state desync.
+    * **Valid Optimization Vector:**
+      - Focus optimization exclusively on **Startup Phase Orchestration** (TTI, DAG scheduler, deferring initialization), not runtime memory swapping.
+      - Low-overhead non-invasive techniques (e.g. Low Power Mode via CSS animation disabling on window blur) are acceptable, but must never manipulate plugin lifecycle or workspace leaf DOM at runtime.
+
 
