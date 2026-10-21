@@ -2,7 +2,21 @@
 
 Author: **gidragir**
 
+[![GitHub Repository](https://img.shields.io/badge/GitHub-obsidian--orbit-blue?logo=github)](https://github.com/gidragir/obsidian-orbit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/gidragir/obsidian-orbit/actions/workflows/ci.yml/badge.svg)](https://github.com/gidragir/obsidian-orbit/actions/workflows/ci.yml)
+
 A centralized monorepo (Single Source of Truth, SSOT) for designing, developing, testing, building and independently distributing plugins for the Obsidian.md ecosystem, along with their shared libraries.
+
+### 🔗 Quick Navigation
+
+| Plugin | Monorepo Source | Satellite Repository | BRAT Path |
+|---|---|---|---|
+| **HTML Renderer** | [`plugins/html-renderer`](plugins/html-renderer) | [`obsidian-html-renderer`](https://github.com/gidragir/obsidian-html-renderer) | `gidragir/obsidian-html-renderer` |
+| **Snippet Renderer** | [`plugins/snippet-renderer`](plugins/snippet-renderer) | [`obsidian-snippet-renderer`](https://github.com/gidragir/obsidian-snippet-renderer) | `gidragir/obsidian-snippet-renderer` |
+| **Tabs Renderer** | [`plugins/tabs-renderer`](plugins/tabs-renderer) | [`obsidian-tabs-renderer`](https://github.com/gidragir/obsidian-tabs-renderer) | `gidragir/obsidian-tabs-renderer` |
+| **Tiling Renderer** | [`plugins/tiling-renderer`](plugins/tiling-renderer) | [`obsidian-tiling-renderer`](https://github.com/gidragir/obsidian-tiling-renderer) | `gidragir/obsidian-tiling-renderer` |
+| **Vault Renderer** | [`plugins/vault-renderer`](plugins/vault-renderer) | [`obsidian-vault-renderer`](https://github.com/gidragir/obsidian-vault-renderer) | `gidragir/obsidian-vault-renderer` |
 
 ## 🚀 Architectural Principles
 
@@ -47,11 +61,13 @@ The `@packages/*` architecture follows modular separation of concerns:
 
 Each plugin is an independent module with its own `manifest.json`, `versions.json` history, unit tests and downstream satellite:
 
-| Plugin | Purpose | Code block tag | Satellite repository |
-|---|---|---|---|
-| [`html-renderer`](plugins/html-renderer) | Isolated rendering of HTML, CSS and JavaScript inside an iframe sandbox with theme support. | ```` ```html-renderer ```` | `obsidian-html-renderer` |
-| [`snippet-renderer`](plugins/snippet-renderer) | Interactive widget for script templates with dynamic variable substitution and live preview. | ```` ```snippet-renderer ```` | `obsidian-snippet-renderer` |
-| [`tabs-renderer`](plugins/tabs-renderer) | Tabs for structuring notes, a CodeMirror 6 modal tab editor, Drag-and-Drop and cache. | ```` ```tabs ```` / ```` ```tabs-renderer ```` | `obsidian-tabs-renderer` |
+| Plugin | Purpose | Activation / Tag | Monorepo Source | Satellite Repository |
+|---|---|---|---|---|
+| **HTML Renderer** | Isolated rendering of HTML, CSS and JavaScript inside an iframe sandbox with theme inheritance and split editor. | ```` ```html-renderer ```` | [`plugins/html-renderer`](plugins/html-renderer) | [`obsidian-html-renderer`](https://github.com/gidragir/obsidian-html-renderer) |
+| **Snippet Renderer** | Interactive widget for script templates with dynamic variable substitution (`$NAME` / `${NAME}`), form inputs, and live copy. | ```` ```snippet-renderer ```` | [`plugins/snippet-renderer`](plugins/snippet-renderer) | [`obsidian-snippet-renderer`](https://github.com/gidragir/obsidian-snippet-renderer) |
+| **Tabs Renderer** | Tabs for structuring notes, Markdown-first definition, CodeMirror 6 modal tab editor, Drag-and-Drop, and styling options. | ```` ```tabs ```` / ```` ```tabs-renderer ```` | [`plugins/tabs-renderer`](plugins/tabs-renderer) | [`obsidian-tabs-renderer`](https://github.com/gidragir/obsidian-tabs-renderer) |
+| **Tiling Renderer** | Hyprland / Niri style tiled layout for notes split by `***`, proportional splitters, bidirectional sync, and full navigation hotkeys. | Ribbon icon / Command Palette | [`plugins/tiling-renderer`](plugins/tiling-renderer) | [`obsidian-tiling-renderer`](https://github.com/gidragir/obsidian-tiling-renderer) |
+| **Vault Renderer** | Intelligent plugin lifecycle orchestrator, 4-phase staged cold-start scheduler (TTI boost 4x–8x), platform filtering, and directional settings sync. | Startup sequence / Settings tab | [`plugins/vault-renderer`](plugins/vault-renderer) | [`obsidian-vault-renderer`](https://github.com/gidragir/obsidian-vault-renderer) |
 
 ---
 
@@ -147,7 +163,9 @@ The monorepo is optimized for a tandem of **Gemini Pro (Orchestrator)** and **Ge
 ├── plugins/                      # Obsidian plugin family
 │   ├── html-renderer/            # HTML Renderer (isolated iframe)
 │   ├── snippet-renderer/         # Snippet Renderer (interactive templates)
-│   └── tabs-renderer/            # Tabs Renderer (note organization in tabs)
+│   ├── tabs-renderer/            # Tabs Renderer (note organization in tabs)
+│   ├── tiling-renderer/          # Tiling Renderer (Hyprland/Niri tiled notes)
+│   └── vault-renderer/           # Vault Renderer (staged startup & settings sync)
 ├── reference/                    # Third-party plugin reference snapshots (in .gitignore)
 ├── scripts/                      # TypeScript utility toolchain (tsx)
 │   ├── build.ts                  # Centralized esbuild bundler
