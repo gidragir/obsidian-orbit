@@ -1,7 +1,13 @@
 # Vault Renderer for Obsidian
 
+[![Part of Obsidian Orbit](https://img.shields.io/badge/Monorepo-Obsidian%20Orbit-7C3AED?logo=orbit)](https://github.com/gidragir/obsidian-orbit)
 [![Obsidian Plugin](https://img.shields.io/badge/Obsidian-Community%20Plugin-7C3AED?logo=obsidian&logoColor=white)](https://obsidian.md)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-obsidian--vault--renderer-blue?logo=github)](https://github.com/gidragir/obsidian-vault-renderer)
+[![Latest Release](https://img.shields.io/github/v/release/gidragir/obsidian-vault-renderer?label=Release)](https://github.com/gidragir/obsidian-vault-renderer/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+> 🪐 **Monorepo:** Developed and maintained as part of [Obsidian Orbit](https://github.com/gidragir/obsidian-orbit).  
+> 📦 **Standalone Satellite Repository:** [gidragir/obsidian-vault-renderer](https://github.com/gidragir/obsidian-vault-renderer)
 
 **Vault Renderer** is an intelligent lifecycle orchestrator, delayed startup scheduler, and platform-aware sync manager for Obsidian. It eliminates startup freezes and slashes cold-boot times by staging plugin initialization across prioritized phases.
 
@@ -149,6 +155,20 @@ With <code>isolated</code> or <code>from-cloud</code> mode, Vault Renderer route
 
 ---
 
+## 🪐 Monorepo & Development
+
+This plugin is developed within the [Obsidian Orbit](https://github.com/gidragir/obsidian-orbit) monorepo.
+
+To build from source:
+```bash
+git clone https://github.com/gidragir/obsidian-orbit.git
+cd obsidian-orbit
+pnpm install
+pnpm build
+```
+
+---
+
 ## License
 
-MIT © [gidragir](https://github.com/gidragir)
+MIT © [Obsidian Orbit](https://github.com/gidragir/obsidian-orbit) / [gidragir](https://github.com/gidragir)
