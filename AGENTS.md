@@ -55,11 +55,13 @@ To prevent degradation of model attention, the monorepo context is structured in
    * `refactor-reference` — Auditing third-party Repomix reference snapshots and decomposition (`/refactor-reference`).
    * `verify` — Autonomous verification cycle: `biome check` -> `typecheck` -> `test` -> `build` (`/verify`).
    * `prepare-release` — SemVer increment calculation and changeset generation (`/prepare-release`).
+   * `release-plugin` — Delegating pre-compiled release CLI pipelines to a lightweight Flash subagent without re-scanning code (`/release-plugin`).
 4. **Role-based subagent catalog (`.agents/agents/*.md`):** Antigravity 2.0 subagent specifications:
    * `executor.md` — Execution subagent (Flash): sub-second coding of the core and Vitest tests.
    * `verifier.md` — Verification subagent (Flash): Biome -> TS -> Vitest -> Turbo cycle.
    * `researcher.md` — Audit subagent (Flash): symbol search and Repomix snapshot analysis.
    * `reviewer.md` — Review subagent (Pro): checking invariants, complexity limits and memory.
+   * `release-runner.md` — Release subagent (Flash): zero-scan execution of pre-compiled release CLI pipelines.
 5. **MCP context protocol (`.agents/mcp.json`):** An external `fetch` server for retrieving current Obsidian API and CodeMirror 6 documentation.
 
 ## 3. Fundamental architectural invariants (Hard taboos)
@@ -129,6 +131,7 @@ Operational skills can be invoked directly or triggered via Slash commands in th
 * **`/refactor-reference` ([`.agents/skills/refactor-reference/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/refactor-reference/SKILL.md)):** Auditing third-party Repomix reference snapshots and decomposition.
 * **`/verify` ([`.agents/skills/verify/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/verify/SKILL.md)):** Autonomous Gemini Flash cycle: `biome check` -> `typecheck` -> `test` -> `build`. Protected against infinite loops (Max Retries = 3).
 * **`/prepare-release` ([`.agents/skills/prepare-release/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/prepare-release/SKILL.md)):** SemVer increment calculation and changeset generation.
+* **`/release-plugin` ([`.agents/skills/release-plugin/SKILL.md`](file:///home/gidragir/projects/obsidian-orbit/.agents/skills/release-plugin/SKILL.md)):** Zero-scan release execution via lightweight Flash subagent.
 
 ## 8. Toolchain console command reference
 

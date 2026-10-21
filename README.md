@@ -109,8 +109,8 @@ The monorepo is optimized for a tandem of **Gemini Pro (Orchestrator)** and **Ge
 
 * **`.agents/` directory hierarchy** (the directory ends with `s`; the `.agent/` directory is abolished):
   * `.agents/rules/` — granular rules with selective glob triggers (architecture invariants, Biome standards, complexity limits).
-  * `.agents/skills/` — specialized skills and procedures (`obsidian-architect`, `complexity-guard`, `biome-refactor`, `reference-migrator`, `semver-changeset`, `subagent-driven-development`, `/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`).
-  * `.agents/agents/` — role-based subagent specifications (`executor.md`, `verifier.md`, `researcher.md`, `reviewer.md`).
+  * `.agents/skills/` — specialized skills and procedures (`obsidian-architect`, `complexity-guard`, `biome-refactor`, `reference-migrator`, `semver-changeset`, `subagent-driven-development`, `/new-plugin`, `/refactor-reference`, `/verify`, `/prepare-release`, `/release-plugin`).
+  * `.agents/agents/` — role-based subagent specifications (`executor.md`, `verifier.md`, `researcher.md`, `reviewer.md`, `release-runner.md`).
   * `.agents/mcp.json` — MCP server configuration (`fetch` for reading up-to-date Obsidian API documentation).
 * **OpenViking protocol:**
   * **L0 (Mental map):** [`.agents/knowledge/L0_index.json`](.agents/knowledge/L0_index.json).
