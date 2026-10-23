@@ -1,5 +1,11 @@
 # tiling-renderer
 
+## 1.1.0
+
+### Minor Changes
+
+- 8dc4f0b: feat(tiling-renderer): seamless edit UX and layout controls (zoom, collapse, blur/escape auto-preview)
+
 ## 1.0.2
 
 ### Patch Changes
