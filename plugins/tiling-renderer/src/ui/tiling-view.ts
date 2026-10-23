@@ -17,7 +17,14 @@ import type { TilingSyncService } from '@services/tiling-sync-service'
 import type { FileLayoutState } from '@settings/settings'
 import { createPanelDndController, type PanelDndController } from '@ui/panel-dnd-controller'
 import { type TilingPanelHost, TilingPanelRenderer } from '@ui/tiling-panel-renderer'
-import { type Component, ItemView, TFile, type ViewStateResult, type WorkspaceLeaf } from 'obsidian'
+import {
+  type Component,
+  ItemView,
+  setIcon,
+  TFile,
+  type ViewStateResult,
+  type WorkspaceLeaf,
+} from 'obsidian'
 
 export const TILING_VIEW_TYPE = 'orbit-tiling-view'
 
@@ -41,6 +48,8 @@ export class TilingView extends ItemView implements TilingPanelHost {
   private readonly panelRenderer: TilingPanelRenderer
   private cleanups: (() => void)[] = []
   private activeLeafId: string | null = null
+  private zoomedLeafId: string | null = null
+  private collapsedLeaves: Set<string> = new Set()
 
   constructor(leaf: WorkspaceLeaf, syncService: TilingSyncService, layoutHost: TilingLayoutHost) {
     super(leaf)
@@ -98,6 +107,9 @@ export class TilingView extends ItemView implements TilingPanelHost {
 
     const sections = this.syncService.getSections()
     const savedLayout = this.layoutHost.getLayout(file.path)
+
+    this.collapsedLeaves = new Set(savedLayout?.collapsedLeafIds ?? [])
+    this.zoomedLeafId = null
 
     this.currentTree = savedLayout?.tree
       ? reconcileTreeWithSections(savedLayout.tree, sections.length)
@@ -244,6 +256,7 @@ export class TilingView extends ItemView implements TilingPanelHost {
     if (!this.currentFile || !this.currentTree) return
     await this.layoutHost.saveLayout(this.currentFile.path, {
       tree: this.currentTree,
+      collapsedLeafIds: Array.from(this.collapsedLeaves),
     })
   }
 
@@ -260,11 +273,93 @@ export class TilingView extends ItemView implements TilingPanelHost {
       }
       return
     }
+
+    const prevLeafId = this.activeLeafId
+    if (prevLeafId && this.panelModes.get(prevLeafId) === 'edit') {
+      const prevEl = this.panelElements.get(prevLeafId)
+      if (prevEl) {
+        const bodyEl = prevEl.querySelector('.orbit-tiling-panel-body') as HTMLElement | null
+        const toggleBtn = prevEl.querySelector('.orbit-tiling-mode-btn') as HTMLElement | null
+        const prevLeaf = this.currentTree
+          ? getAllLeaves(this.currentTree).find((l) => l.id === prevLeafId)
+          : null
+        if (bodyEl && toggleBtn && prevLeaf) {
+          this.panelRenderer.setLeafMode(bodyEl, prevLeaf, 'preview', toggleBtn)
+        }
+      }
+    }
+
     this.activeLeafId = leafId
     this.highlightFocusedPanel(leafId)
     if (focusEditor) {
       this.activeEditors.get(leafId)?.focus()
     }
+  }
+
+  isLeafZoomed(leafId: string): boolean {
+    return this.zoomedLeafId === leafId
+  }
+
+  toggleZoomLeaf(leafId?: string): void {
+    const targetId = leafId ?? this.activeLeafId
+    if (!targetId) return
+
+    if (this.zoomedLeafId === targetId) {
+      this.zoomedLeafId = null
+    } else {
+      this.zoomedLeafId = targetId
+      this.setActiveLeaf(targetId)
+    }
+
+    for (const [id, el] of this.panelElements.entries()) {
+      const zoomBtn = el.querySelector('.orbit-tiling-zoom-btn') as HTMLElement | null
+      if (id === this.zoomedLeafId) {
+        el.addClass('is-zoomed')
+        if (zoomBtn) {
+          setIcon(zoomBtn, 'minimize-2')
+          zoomBtn.title = 'Exit full screen'
+        }
+      } else {
+        el.removeClass('is-zoomed')
+        if (zoomBtn) {
+          setIcon(zoomBtn, 'maximize-2')
+          zoomBtn.title = 'Full screen panel'
+        }
+      }
+    }
+  }
+
+  isLeafCollapsed(leafId: string): boolean {
+    return this.collapsedLeaves.has(leafId)
+  }
+
+  toggleCollapseLeaf(leafId?: string): void {
+    const targetId = leafId ?? this.activeLeafId
+    if (!targetId) return
+
+    if (this.collapsedLeaves.has(targetId)) {
+      this.collapsedLeaves.delete(targetId)
+    } else {
+      this.collapsedLeaves.add(targetId)
+    }
+
+    const panelEl = this.panelElements.get(targetId)
+    if (panelEl) {
+      const isCollapsed = this.collapsedLeaves.has(targetId)
+      if (isCollapsed) {
+        panelEl.addClass('is-collapsed')
+      } else {
+        panelEl.removeClass('is-collapsed')
+      }
+
+      const collapseBtn = panelEl.querySelector('.orbit-tiling-collapse-btn') as HTMLElement | null
+      if (collapseBtn) {
+        setIcon(collapseBtn, isCollapsed ? 'chevron-right' : 'chevron-down')
+        collapseBtn.title = isCollapsed ? 'Expand panel' : 'Collapse panel'
+      }
+    }
+
+    void this.persistGeometry()
   }
 
   private highlightFocusedPanel(leafId: string): void {
@@ -316,7 +411,7 @@ export class TilingView extends ItemView implements TilingPanelHost {
     }
   }
 
-  toggleActivePanelMode(): void {
+  toggleActivePanelMode(forceMode?: 'preview' | 'edit'): void {
     if (!this.activeLeafId) return
     const activeEl = this.panelElements.get(this.activeLeafId)
     if (!activeEl) return
@@ -329,8 +424,10 @@ export class TilingView extends ItemView implements TilingPanelHost {
 
     if (bodyEl && toggleBtn && leaf) {
       const activeMode = this.panelModes.get(leaf.id) ?? 'preview'
-      const nextMode = activeMode === 'preview' ? 'edit' : 'preview'
-      this.panelRenderer.setLeafMode(bodyEl, leaf, nextMode, toggleBtn)
+      const nextMode = forceMode ?? (activeMode === 'preview' ? 'edit' : 'preview')
+      if (activeMode !== nextMode) {
+        this.panelRenderer.setLeafMode(bodyEl, leaf, nextMode, toggleBtn)
+      }
     }
   }
 

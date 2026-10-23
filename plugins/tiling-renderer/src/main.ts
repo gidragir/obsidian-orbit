@@ -241,6 +241,45 @@ export default class TilingRendererPlugin extends Plugin implements TilingLayout
         return true
       },
     })
+
+    this.addCommand({
+      id: 'tiling-edit-active-panel',
+      name: 'Tiling renderer: Edit active panel',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          activeView.toggleActivePanelMode('edit')
+        }
+        return true
+      },
+    })
+
+    this.addCommand({
+      id: 'tiling-toggle-fullscreen',
+      name: 'Tiling renderer: Toggle full screen for active panel',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          activeView.toggleZoomLeaf()
+        }
+        return true
+      },
+    })
+
+    this.addCommand({
+      id: 'tiling-toggle-collapse',
+      name: 'Tiling renderer: Toggle collapse for active panel',
+      checkCallback: (checking: boolean) => {
+        const activeView = this.app.workspace.getActiveViewOfType(TilingView)
+        if (!activeView) return false
+        if (!checking) {
+          activeView.toggleCollapseLeaf()
+        }
+        return true
+      },
+    })
   }
 
   private registerRibbon(): void {

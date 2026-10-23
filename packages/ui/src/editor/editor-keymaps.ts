@@ -1,8 +1,26 @@
 import { defaultKeymap, historyKeymap, redo, undo } from '@codemirror/commands'
 import type { KeyBinding } from '@codemirror/view'
 
-export function createEditorKeymaps(tabSize: number, onSave?: () => void): readonly KeyBinding[] {
+export function createEditorKeymaps(
+  tabSize: number,
+  onSave?: () => void,
+  onEscape?: () => void
+): readonly KeyBinding[] {
   return [
+    {
+      key: 'Escape',
+      run: (editor) => {
+        if (onEscape) {
+          onEscape()
+          const contentDOM = 'contentDOM' in editor ? editor.contentDOM : null
+          if (contentDOM && typeof (contentDOM as { blur?: unknown }).blur === 'function') {
+            ;(contentDOM as { blur: () => void }).blur()
+          }
+          return true
+        }
+        return false
+      },
+    },
     {
       key: 'Mod-z',
       run: (editor) => undo(editor),

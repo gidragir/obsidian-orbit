@@ -86,9 +86,10 @@ Every agent action must strictly observe the following constraints:
 5. **Inviolability of the test vault `.vault/`:**
    * Directly modifying files in `.vault/.obsidian/plugins/` is prohibited.
    * Plugin access to the vault is configured exclusively via symlinks with the `pnpm vault:link` script.
-6. **Changesets release cycle contract:**
+6. **Changesets release cycle contract & Full-Cycle End-to-End Delivery:**
    * Manually changing versions in `manifest.json`, `package.json` and `versions.json` is prohibited.
    * Versioning is done via changesets (`pnpm change`) and the `scripts/sync-versions.ts` script.
+   * **Mandatory Full-Cycle Delivery:** Any user request for a release («релиз», «выпусти релиз», `/release-plugin`, etc.) contractually requires executing the entire pipeline from end to end until the new version is published on GitHub: changeset generation -> `pnpm check` -> git add/commit -> `git push origin main` -> monitoring CI/CD -> merging the release PR (`pnpm release:merge`) -> publication on GitHub. Stopping halfway or leaving manual CLI instructions is strictly prohibited unless insurmountable environment failures occur.
 7. **Mandatory shared styles and UI reuse (`@packages/ui`):**
    * All plugins (`plugins/*`) must declare `"@packages/ui": "workspace:*"` in `package.json` dependencies and import shared styles via `@import '../../../packages/ui/src/styles.css';` on line 1 of `src/styles.css`.
    * Reusing shared classes (`.orbit-badge`, `.orbit-card`, `.orbit-stat-card`, `.orbit-filter-tabs`, `.orbit-empty-state`, `.orbit-control-label`) and native Obsidian theme variables is strictly mandatory to eliminate boilerplate and prevent styling fragmentation across plugins.

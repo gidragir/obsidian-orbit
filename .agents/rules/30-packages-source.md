@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["packages/**"]
+globs: "packages/**"
 description: "Guidelines for shared internal packages using the Direct TS Source model, export maps, and peer dependency declarations for obsidian."
 ---
 

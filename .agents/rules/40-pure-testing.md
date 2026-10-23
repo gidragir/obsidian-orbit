@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["**/*.test.ts"]
+globs: "**/*.test.ts"
 description: "Enforces pure unit testing standards in Node.js runtime using Vitest. Prohibits DOM emulators, happy-dom, jsdom, and Obsidian runtime mocks."
 ---
 

@@ -4,6 +4,7 @@ export interface FileLayoutState {
   readonly tree?: TileNode
   readonly masterRatio?: number
   readonly stackWeights?: ReadonlyArray<number>
+  readonly collapsedLeafIds?: ReadonlyArray<string>
 }
 
 export interface TilingSettings {

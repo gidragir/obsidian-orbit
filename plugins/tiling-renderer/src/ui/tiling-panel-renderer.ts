@@ -34,6 +34,10 @@ export interface TilingPanelHost {
   scheduleSave(): void
   flushSave(): Promise<void>
   saveAndRerender(): Promise<void>
+  isLeafZoomed(leafId: string): boolean
+  toggleZoomLeaf(leafId: string): void
+  isLeafCollapsed(leafId: string): boolean
+  toggleCollapseLeaf(leafId: string): void
 }
 
 /**
@@ -128,8 +132,15 @@ export class TilingPanelRenderer {
     const section = sections[leaf.sectionIndex]
     const sectionContent = section?.content ?? ''
     const currentMode = this.host.panelModes.get(leaf.id) ?? 'preview'
+    const isZoomed = this.host.isLeafZoomed(leaf.id)
+    const isCollapsed = this.host.isLeafCollapsed(leaf.id)
 
-    const panel = parentEl.createDiv({ cls: 'orbit-tiling-panel' })
+    let panelCls = 'orbit-tiling-panel'
+    if (isZoomed) panelCls += ' is-zoomed'
+    if (isCollapsed) panelCls += ' is-collapsed'
+
+    const panel = parentEl.createDiv({ cls: panelCls })
+    panel.tabIndex = 0
     panel.style.flex = `${leaf.weight} 1 0`
     this.host.panelElements.set(leaf.id, panel)
 
@@ -152,6 +163,26 @@ export class TilingPanelRenderer {
     title.createSpan({ text: `Panel ${leaf.sectionIndex + 1}` })
 
     const actions = header.createDiv({ cls: 'orbit-tiling-panel-actions' })
+
+    const collapseBtn = actions.createEl('button', {
+      cls: 'clickable-icon orbit-tiling-collapse-btn',
+    })
+    setIcon(collapseBtn, isCollapsed ? 'chevron-right' : 'chevron-down')
+    collapseBtn.title = isCollapsed ? 'Expand panel' : 'Collapse panel'
+    collapseBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      this.host.toggleCollapseLeaf(leaf.id)
+    })
+
+    const zoomBtn = actions.createEl('button', {
+      cls: 'clickable-icon orbit-tiling-zoom-btn',
+    })
+    setIcon(zoomBtn, isZoomed ? 'minimize-2' : 'maximize-2')
+    zoomBtn.title = isZoomed ? 'Exit full screen' : 'Full screen panel'
+    zoomBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      this.host.toggleZoomLeaf(leaf.id)
+    })
 
     const toggleModeBtn = actions.createEl('button', {
       cls: 'clickable-icon orbit-tiling-mode-btn',
@@ -190,6 +221,8 @@ export class TilingPanelRenderer {
       const nextMode = activeMode === 'preview' ? 'edit' : 'preview'
       this.setLeafMode(bodyEl, leaf, nextMode, toggleModeBtn)
     })
+
+    this.attachPanelKeybindings(panel, bodyEl, leaf, toggleModeBtn)
 
     return panel
   }
@@ -246,12 +279,31 @@ export class TilingPanelRenderer {
       )
     } else {
       const editorEl = bodyEl.createDiv({ cls: 'orbit-tiling-panel-editor-container' })
+      let blurTimeout: ReturnType<typeof setTimeout> | null = null
+
       const editor = new CodeEditor(editorEl, initialContent, {
         minimal: true,
         language: 'markdown',
         onDocChange: (newContent) => {
           this.host.syncService.updateSectionContent(leaf.sectionIndex, newContent)
           this.host.scheduleSave()
+        },
+        onEscape: () => {
+          if (blurTimeout) clearTimeout(blurTimeout)
+          this.setLeafMode(bodyEl, leaf, 'preview', toggleBtn)
+        },
+        onBlur: () => {
+          if (blurTimeout) clearTimeout(blurTimeout)
+          blurTimeout = setTimeout(() => {
+            const activeEl = document.activeElement
+            const panelEl = this.host.panelElements.get(leaf.id)
+            if (panelEl && activeEl && panelEl.contains(activeEl)) {
+              return
+            }
+            if (this.host.panelModes.get(leaf.id) === 'edit') {
+              this.setLeafMode(bodyEl, leaf, 'preview', toggleBtn)
+            }
+          }, 150)
         },
       })
       this.host.activeEditors.set(leaf.id, editor)
@@ -367,6 +419,38 @@ export class TilingPanelRenderer {
     })
     headerEl.addEventListener('dragend', () => {
       this.host.dndController.onDragEnd()
+    })
+  }
+
+  private attachPanelKeybindings(
+    panelEl: HTMLElement,
+    bodyEl: HTMLElement,
+    leaf: TileLeafNode,
+    toggleBtn: HTMLElement
+  ): void {
+    panelEl.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (this.host.isLeafZoomed(leaf.id)) {
+          e.stopPropagation()
+          this.host.toggleZoomLeaf(leaf.id)
+          return
+        }
+      }
+
+      if (e.key === 'Enter') {
+        const target = e.target as HTMLElement | null
+        const isEditing = this.host.panelModes.get(leaf.id) === 'edit'
+        const inInputOrEditor =
+          target?.tagName === 'INPUT' ||
+          target?.tagName === 'TEXTAREA' ||
+          Boolean(target?.closest('.cm-editor'))
+
+        if (!isEditing && !inInputOrEditor) {
+          e.preventDefault()
+          e.stopPropagation()
+          this.setLeafMode(bodyEl, leaf, 'edit', toggleBtn)
+        }
+      }
     })
   }
 }

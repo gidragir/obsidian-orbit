@@ -15,6 +15,8 @@ export interface CodeEditorOptions {
   readonly toolbarOptions?: EditorToolbarOptions
   readonly onSave?: () => void
   readonly onDocChange?: (doc: string) => void
+  readonly onBlur?: () => void
+  readonly onEscape?: () => void
 }
 
 export class CodeEditor {
@@ -42,6 +44,12 @@ export class CodeEditor {
 
     const langExtension: Extension = opts.language === 'html' ? html() : markdown()
 
+    const domHandlers = EditorView.domEventHandlers({
+      blur: () => {
+        opts.onBlur?.()
+      },
+    })
+
     const state = EditorState.create({
       doc: initialDoc,
       extensions: [
@@ -49,7 +57,8 @@ export class CodeEditor {
         baseHighlight,
         langExtension,
         history(),
-        keymap.of(createEditorKeymaps(tabSize, opts.onSave)),
+        keymap.of(createEditorKeymaps(tabSize, opts.onSave, opts.onEscape)),
+        domHandlers,
         updateListener,
       ],
     })

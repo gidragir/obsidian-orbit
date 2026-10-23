@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["**/*.ts", "**/*.tsx", "**/*.json", "**/*.css"]
+globs: "**/*.ts, **/*.tsx, **/*.json, **/*.css"
 description: "Strict TypeScript compilation rules, Biome linter invariants, and code formatting standards. Prohibits any, enum, non-null assertions, and parameter properties."
 ---
 

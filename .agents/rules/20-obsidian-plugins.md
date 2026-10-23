@@ -1,6 +1,6 @@
 ---
 trigger: glob
-globs: ["plugins/**"]
+globs: "plugins/**"
 description: "Standards for Obsidian plugins lifecycle, DOM event registration, manifest compliance, DND data isolation, and theme-safe CSS variable styling."
 ---
 

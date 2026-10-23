@@ -10,6 +10,7 @@
     "./styles.css": "./src/styles.css"
   },
   "scripts": {
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@packages/tsconfig": "workspace:*",
     "obsidian": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }
