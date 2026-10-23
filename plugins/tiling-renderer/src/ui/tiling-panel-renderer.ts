@@ -359,14 +359,14 @@ export class TilingPanelRenderer {
     panelEl.addEventListener('dragover', (e: DragEvent) => {
       this.host.dndController.onDragOver(e, leafId, panelEl)
     })
-    panelEl.addEventListener('dragleave', () => {
-      this.host.dndController.onDragLeave(panelEl)
+    panelEl.addEventListener('dragleave', (e: DragEvent) => {
+      this.host.dndController.onDragLeave(e, panelEl)
     })
     panelEl.addEventListener('drop', (e: DragEvent) => {
-      this.host.dndController.onDrop(e, leafId, panelEl)
+      this.host.dndController.onDrop(e, leafId)
     })
     headerEl.addEventListener('dragend', () => {
-      this.host.dndController.onDragEnd(panelEl)
+      this.host.dndController.onDragEnd()
     })
   }
 }

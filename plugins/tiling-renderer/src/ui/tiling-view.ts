@@ -15,7 +15,7 @@ import {
 import type { CodeEditor } from '@packages/ui'
 import type { TilingSyncService } from '@services/tiling-sync-service'
 import type { FileLayoutState } from '@settings/settings'
-import { PanelDndController } from '@ui/panel-dnd-controller'
+import { createPanelDndController, type PanelDndController } from '@ui/panel-dnd-controller'
 import { type TilingPanelHost, TilingPanelRenderer } from '@ui/tiling-panel-renderer'
 import { type Component, ItemView, TFile, type ViewStateResult, type WorkspaceLeaf } from 'obsidian'
 
@@ -47,7 +47,7 @@ export class TilingView extends ItemView implements TilingPanelHost {
     this.syncService = syncService
     this.layoutHost = layoutHost
     this.fileAdapter = new DebouncedWorkspaceFileAdapter(this.app)
-    this.dndController = new PanelDndController({
+    this.dndController = createPanelDndController({
       onMoveToPosition: (fromId, toId, position) => {
         void this.handleMoveLeafToPosition(fromId, toId, position)
       },
