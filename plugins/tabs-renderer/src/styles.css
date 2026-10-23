@@ -47,6 +47,10 @@
   color: var(--text-normal);
 }
 
+.tabs-nav-item.is-dragging {
+  opacity: 0.45;
+}
+
 .tabs-nav-item-dragover {
   background-color: var(--interactive-accent-hover);
 }

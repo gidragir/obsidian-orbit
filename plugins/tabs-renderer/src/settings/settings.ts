@@ -33,7 +33,7 @@ export const DEFAULT_SETTINGS: TabsSettings = {
   actionButtonType: 'action-add',
   ignoreNotice: false,
   autorefreshMarkdownView: true,
-  dragAndDrop: false,
+  dragAndDrop: true,
 
   doubleClickToEdit: false,
   showToolbar: true,

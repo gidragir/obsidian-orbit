@@ -1,4 +1,11 @@
 import { replaceCodeBlock } from '@packages/adapters'
+import {
+  computeInsertIndex,
+  computeSortZone,
+  DndController,
+  type ListDropZone,
+  remapIndexAfterMove,
+} from '@packages/ui'
 import type { EditorService } from '@services/editor-service'
 import type { TabsCacheService } from '@services/tabs-cache-service'
 import type { TabsSettings } from '@settings/settings'
@@ -12,8 +19,9 @@ import {
   MarkdownRenderer,
   type MarkdownSectionInformation,
 } from 'obsidian'
-import { DndController } from './dnd-controller'
 import type { TabsEditorModal } from './editor/tab-editor-modal'
+
+const TABS_DND_MIME = 'application/x-orbit-tabs-item'
 
 export class TabsView extends MarkdownRenderChild {
   private readonly app: App
@@ -28,6 +36,28 @@ export class TabsView extends MarkdownRenderChild {
   private activeIndex = 0
   private navEl: HTMLElement | null = null
   private contentElContainer: HTMLElement | null = null
+  private readonly dnd = new DndController<number, ListDropZone>({
+    mime: TABS_DND_MIME,
+    resolveZone: (_e, _itemEl, fromIndex, targetIndex) => computeSortZone(fromIndex, targetIndex),
+    showIndicator: (itemEl, zone) => {
+      itemEl.classList.add('tabs-nav-item-dragover')
+      itemEl.classList.toggle('tabs-nav-item-dragover-after', zone === 'after')
+      itemEl.classList.toggle('tabs-nav-item-dragover-before', zone === 'before')
+    },
+    clearIndicator: (itemEl) => {
+      itemEl.classList.remove(
+        'tabs-nav-item-dragover',
+        'tabs-nav-item-dragover-before',
+        'tabs-nav-item-dragover-after'
+      )
+    },
+    onDrop: (fromIndex, targetIndex, zone) => {
+      const toIndex = computeInsertIndex(fromIndex, targetIndex, zone)
+      if (toIndex !== fromIndex) {
+        this.handleReorder(fromIndex, toIndex)
+      }
+    },
+  })
 
   constructor(
     containerEl: HTMLElement,
@@ -87,10 +117,6 @@ export class TabsView extends MarkdownRenderChild {
     } else {
       this.navEl = this.containerEl.createDiv({ cls: 'tabs-nav' })
     }
-    const dnd = new DndController({
-      onReorder: (from, to) => this.handleReorder(from, to),
-    })
-
     this.parsedResult.tabs.forEach((tab, index) => {
       const itemEl = this.navEl?.createDiv({
         cls: `tabs-nav-item${index === this.activeIndex ? ' is-active' : ''}`,
@@ -99,17 +125,20 @@ export class TabsView extends MarkdownRenderChild {
 
       itemEl.textContent = tab.title
       if (this.settings.dragAndDrop) {
-        itemEl.setAttribute('draggable', 'true')
-        this.registerDomEvent(itemEl, 'dragstart', (e) =>
-          dnd.onDragStart(e, index, itemEl, tab.title)
-        )
-        this.registerDomEvent(itemEl, 'dragover', (e) => dnd.onDragOver(e, index, itemEl))
-        this.registerDomEvent(itemEl, 'dragleave', () => dnd.onDragLeave(itemEl))
-        this.registerDomEvent(itemEl, 'drop', (e) => dnd.onDrop(e, index, itemEl))
+        this.attachDndEvents(itemEl, index)
       }
 
       this.registerDomEvent(itemEl, 'click', () => this.switchTab(index))
     })
+  }
+
+  private attachDndEvents(itemEl: HTMLElement, index: number): void {
+    itemEl.draggable = true
+    this.registerDomEvent(itemEl, 'dragstart', (e) => this.dnd.onDragStart(e, index, itemEl))
+    this.registerDomEvent(itemEl, 'dragover', (e) => this.dnd.onDragOver(e, index, itemEl))
+    this.registerDomEvent(itemEl, 'dragleave', (e) => this.dnd.onDragLeave(e, itemEl))
+    this.registerDomEvent(itemEl, 'drop', (e) => this.dnd.onDrop(e, index))
+    this.registerDomEvent(itemEl, 'dragend', () => this.dnd.onDragEnd())
   }
 
   private renderContentArea(): void {
@@ -163,9 +192,13 @@ export class TabsView extends MarkdownRenderChild {
       tabs: reordered,
     }
 
+    // the active tab stays the same tab, only its index follows the move
+    this.activeIndex = remapIndexAfterMove(this.activeIndex, fromIndex, toIndex)
+    this.cacheService.setActiveIndex(this.getCacheKey(), this.activeIndex)
+    this.renderNav()
+
     const newDoc = serializeTabs(reordered, this.settings.split, this.parsedResult.rawConfig)
     this.updateDocument(newDoc)
-    this.switchTab(toIndex)
   }
 
   private openEditorModal(): void {
