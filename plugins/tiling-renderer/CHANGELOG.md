@@ -1,5 +1,11 @@
 # tiling-renderer
 
+## 1.0.2
+
+### Patch Changes
+
+- c6c134f: Make tab drag-and-drop reliable (enabled by default, sortable semantics, stable active tab) and move drag-and-drop logic to a shared controller reused by tiling panels
+
 ## 1.0.1
 
 ### Patch Changes
